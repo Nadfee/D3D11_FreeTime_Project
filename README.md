@@ -5,7 +5,7 @@ My main purpose with this project is to play around with DX11, DirectX Tool Kit 
 
 - Current focus is to create a game with minimal graphical techniques to get experience in organizing possible abstractions (e.g model, where to draw, etc.)
 
-Main top-level logic will reside in Application.cpp
+Main top-level logic resides in Application.cpp
 
 Controls:
 A - Toggle between Absolute and Relative mouse mode (visible/invisible)
