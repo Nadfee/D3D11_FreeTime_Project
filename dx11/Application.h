@@ -12,8 +12,8 @@ struct InputTK
 {
 	std::unique_ptr<DirectX::Keyboard> keyboard;
 	std::unique_ptr<DirectX::Mouse> mouse;
-	DirectX::Keyboard::State keyboardCurrState;
-	DirectX::Mouse::State mouseCurrState;
+	DirectX::Keyboard::State keyboardCurrState = { };
+	DirectX::Mouse::State mouseCurrState = { };
 	DirectX::Keyboard::KeyboardStateTracker keyboardTracker;
 	DirectX::Mouse::ButtonStateTracker mouseTracker;
 

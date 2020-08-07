@@ -113,6 +113,7 @@ LRESULT Application::HandleProc(const UINT& uMsg, const WPARAM& wParam, const LP
 
 	}
 
+	return 0;
 
 }
 
