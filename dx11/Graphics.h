@@ -1,5 +1,13 @@
 #pragma once
-#include "DXDeviceManager.h"
+#include "Renderer.h"
+#include "Mesh.h"
+
+#include <memory>
+#include <string>
+#include <vector>
+
+using RendererPtr = std::shared_ptr<Renderer>;
+using MeshPtr = std::shared_ptr<Mesh>;
 
 class Graphics
 {
@@ -7,14 +15,18 @@ public:
 	Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHeight);
 	~Graphics();
 
-	// Temporary (checking if rendering works in Application)
-	devicePtr GetDevice() { return this->deviceManager.GetDevice(); }
-	deviceContextPtr GetDeviceContext() { return this->deviceManager.GetDeviceContext(); }
-	DXDeviceManager GetDeviceManager() { return this->deviceManager; }
+	MeshPtr CreateMesh(const std::vector<Vertex>& initVertexData);
+
+	// Functions that interface with the Renderer
+	void Frame();
+	void Present(int vsync = 0);
 
 
 private:
-	DXDeviceManager deviceManager;
+	RendererPtr renderer;
+
+	// MeshManager
+	// TextureManager (Factories?)
 
 
 };

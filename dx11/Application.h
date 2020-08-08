@@ -1,15 +1,21 @@
 #pragma once
 #include "Window.h"
 #include "Graphics.h"
+#include "Object.h"
 
-#include <DirectXColors.h>
 #include <Mouse.h>
 #include <Keyboard.h>
+#include <DirectXColors.h>
+#include <SimpleMath.h>
 
 #include <memory>
 #include <string>
-#include <array>
+#include <vector>
 
+#include <math.h>
+
+using namespace DirectX::SimpleMath;
+using GraphicsPtr = std::unique_ptr<Graphics>;
 
 struct InputTK
 {
@@ -32,7 +38,7 @@ struct InputTK
 struct MenuBar
 {
 	HMENU mainMenu;
-	std::array<HMENU, 1> subMenus;
+	std::vector<HMENU> subMenus;
 };
 
 class Application : public Window
@@ -44,18 +50,21 @@ public:
 		const INT& clientHeight = 720,
 		const DWORD& style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
 		const DWORD& exStyle = 0);
-	~Application();
+	~Application();	
 
 	virtual LRESULT HandleProc(const UINT& uMsg, const WPARAM& wParam, const LPARAM& lParam) override;
 	void Run();
 
 private:
 
-	MenuBar menuBar;	// Win32
-	std::unique_ptr<Graphics> graphics;	// DX11
-	InputTK input;		// Input
+	GraphicsPtr graphics;	// DX11
+	MenuBar menuBar;		// Win32 GUI
+	InputTK input;			// Input (DXTK)
+
+	std::vector<Object> objects;
 
 	// Helper functions
+	void InitializeScene();
 
 	// Input
 	void UpdateInput();

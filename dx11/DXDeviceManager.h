@@ -6,24 +6,29 @@
 #include <assert.h>
 #include <wrl/client.h>
 
+#include <BufferHelpers.h>
+#include <SimpleMath.h>
+#include <DirectXColors.h>
+
 using Microsoft::WRL::ComPtr;
+using namespace DirectX::SimpleMath;
 
 // C++ style type definitions
-using swapChainPtr = ComPtr<IDXGISwapChain>;
-using devicePtr = ComPtr<ID3D11Device>;
-using deviceContextPtr = ComPtr<ID3D11DeviceContext>;
-using debugPtr = ComPtr<ID3D11Debug>;
-using rtvPtr = ComPtr<ID3D11RenderTargetView>;
+using SwapChainPtr = ComPtr<IDXGISwapChain>;
+using DevicePtr = ComPtr<ID3D11Device>;
+using DeviceContextPtr = ComPtr<ID3D11DeviceContext>;
+using DebugPtr = ComPtr<ID3D11Debug>;
+using RtvPtr = ComPtr<ID3D11RenderTargetView>;
 
 class DXDeviceManager
 {
 private:
-	swapChainPtr swapChain;
-	devicePtr device;
-	deviceContextPtr deviceContext;
-	debugPtr debug;
+	SwapChainPtr swapChain;
+	DevicePtr device;
+	DeviceContextPtr deviceContext;
+	DebugPtr debug;
 
-	rtvPtr bbRTV;
+	RtvPtr bbRTV;
 
 	D3D11_VIEWPORT mainVP;
 
@@ -40,11 +45,11 @@ public:
 	~DXDeviceManager();
 
 	// Function is const (cannot modify 'this')
-	deviceContextPtr GetDeviceContext() const { return deviceContext; };
-	devicePtr GetDevice() const { return device; };
-	rtvPtr GetRTV() const { return bbRTV; };
-	swapChainPtr GetSwapChain() const { return swapChain; };
-	debugPtr GetDebug() const { return debug; };
+	DeviceContextPtr GetDeviceContext() const { return deviceContext; };
+	DevicePtr GetDevice() const { return device; };
+	RtvPtr GetRTV() const { return bbRTV; };
+	SwapChainPtr GetSwapChain() const { return swapChain; };
+	DebugPtr GetDebug() const { return debug; };
 	D3D11_VIEWPORT GetVP() const { return mainVP; };
 
 };

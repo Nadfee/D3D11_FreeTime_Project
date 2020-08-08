@@ -1,10 +1,10 @@
 #include "Application.h"
 
-Application::Application(const HINSTANCE& hInstance, 
-	const wchar_t* winName, 
-	const INT& clientWidth, 
-	const INT& clientHeight, 
-	const DWORD& style, 
+Application::Application(const HINSTANCE& hInstance,
+	const wchar_t* winName,
+	const INT& clientWidth,
+	const INT& clientHeight,
+	const DWORD& style,
 	const DWORD& exStyle)
 	
 {
@@ -13,12 +13,12 @@ Application::Application(const HINSTANCE& hInstance,
 	this->winName = winName;
 	this->clientWidth = clientWidth;
 	this->clientHeight = clientHeight;
-	this->exStyle = style;
-	this->style = exStyle;
+	this->exStyle = exStyle;
+	this->style = style;
 
 	Window::InitializeWindow();
 
-	// Win32 - Re-size again but with bMenu on for AdjustWindowRect
+	// Win32 - Re-size again but with menu considered for AdjustWindowRect
 	Window::SetClientSize(true);
 	SetMenu(hwnd, menuBar.mainMenu);
 
@@ -28,7 +28,7 @@ Application::Application(const HINSTANCE& hInstance,
 	// XTK Mouse & Keyboard
 	input.Initialize(hwnd);
 
-
+	
 
 }
 
@@ -120,39 +120,80 @@ LRESULT Application::HandleProc(const UINT& uMsg, const WPARAM& wParam, const LP
 
 
 	default:
-		return DefWindowProc(hwnd, uMsg, wParam, lParam);	// default action for msg if not handled
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
 	}
 
-	return 0;
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
 }
 
+static float xd = 0;
+
 void Application::Run()
 {
-	auto devMan = graphics->GetDeviceManager();
-	auto devCon = graphics->GetDeviceContext();
+	InitializeScene();
+
 
 	MSG msg = { };
 	while (!isClosed)
 	{
-		UpdateInput();
 
 		while (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		
+
+		// Maybe this kind of setup?
+		// SceneManager.SetActiveScene(ID);	--> Should hold Scenes 
+		// SceneManager.Run();
+			// Objects.Render()	 --> Requires a shared ptr to a device context
+				// Mesh.Render() --> Interfaces with a device context 
+
 		// Rendering - Clear screen for now - Temporary
-		devCon->ClearRenderTargetView(devMan.GetRTV().Get(), DirectX::Colors::BurlyWood);
-		devCon->OMSetRenderTargets(1, devMan.GetRTV().GetAddressOf(), NULL);
+		//graphics->GetRenderer()->Render();
+		//devCon->ClearRenderTargetView(devMan->GetRTV().Get(), DirectX::Colors::BurlyWood);
+		//devCon->OMSetRenderTargets(1, devMan->GetRTV().GetAddressOf(), NULL);
 
-		devCon->RSSetViewports(1, &devMan.GetVP());
+		//devCon->RSSetViewports(1, &devMan->GetVP());
 
-		devMan.GetSwapChain()->Present(0, 0);
+		//devMan->GetSwapChain()->Present(0, 0);
+
+		UpdateInput();
+		graphics->Frame();
+
+		for (auto& obj : objects)
+		{
+			obj.Render();
+		}
+
+		graphics->Present();
+
+
+		xd += 0.01f;
+
+		objects[0].SetPosition(Vector3(0.5f * sinf(xd / 100.f), 0.f, 0.f));
 
 	}
+
+}
+
+void Application::InitializeScene()
+{
+	std::vector<Vertex> triVerts =
+	{
+		{ Vector3(1.f, -0.5f, 0.f), Vector2(1.f, 0.f)},
+		{ Vector3(-1.f, -0.5f, 0.f), Vector2(0.f, 1.f)},
+		{ Vector3(0.f, 1.f, 0.f), Vector2(1.f, 1.f)}
+	};
+
+	// Vertex Buffer done, Matrix Buffer done (no init data and updated every frame via SetPosition()), texture: to-do
+	objects.push_back(
+		Object(graphics->CreateMesh(triVerts)		// Create Mesh (vbuf, mat, texture, devcon)
+
+		));		
+
 
 }
 
@@ -174,8 +215,10 @@ void Application::HandleKeyboardInput()
 	auto& msTr = input.mouseTracker;
 	auto& msSt = input.mouseCurrState;
 
+	using key = DirectX::Keyboard;
+
 	// Toggle between absolute and relative mouse mode
-	if (kbTr.pressed.A)
+	if (kbTr.IsKeyPressed(key::A))
 	{
 		OutputDebugStringW(L"Toggle absolute/relative mouse\n");
 
@@ -189,10 +232,11 @@ void Application::HandleKeyboardInput()
 		}
 	}
 
-	else if (kbTr.pressed.G)
+	else if (kbTr.IsKeyPressed(key::G))
 	{
 		OutputDebugStringW(L"Pressed G\n");
 	}
+
 }
 
 void Application::HandleMouseInput()
@@ -218,15 +262,15 @@ void Application::HandleMouseInput()
 
 void Application::InitializeMenu()
 {
+	// Win32 menu
 	auto& mainMenu = menuBar.mainMenu;
 	auto& subMenus = menuBar.subMenus;
 
 	mainMenu = CreateMenu();
-	subMenus[0] = CreateMenu();
 
+	subMenus.push_back(CreateMenu());
 	AppendMenuW(subMenus[0], MF_STRING, 0, L"Open");	// ID 0 (wParam)
 	AppendMenuW(subMenus[0], MF_STRING, 1, L"Close");	// ID 1
-
 	AppendMenuW(mainMenu, MF_POPUP, (UINT_PTR)subMenus[0], L"Options");		// Drop down options
 
 }

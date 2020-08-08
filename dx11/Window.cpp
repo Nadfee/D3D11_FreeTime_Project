@@ -41,10 +41,10 @@ void Window::CreateWin()
 
 	// create window
 	hwnd = CreateWindowEx(
-		0,				// Default behaviour (optionals)
-		wc.lpszClassName,				// Class name (identifier)
-		wc.lpszClassName,				// Window title 
-		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,					// Window style 
+		0,					// Default behaviour (optionals)
+		winName,				// Class name (identifier)
+		winName,				// Window title 
+		style,					// Window style 
 		CW_USEDEFAULT,			// Window x-pos
 		CW_USEDEFAULT,			// Window y-pos 
 		CW_USEDEFAULT,			// Default width
