@@ -10,5 +10,5 @@ Main top-level logic resides in Application.cpp
 Controls:
 A - Toggle between Absolute and Relative mouse mode (visible/invisible)
 
-Project should build (DirectXTK Desktop Win10 is installed so make sure it is restored)
-Otherwise, make sure that SubSystem is set to Windows and the dependencies "d3d11.lib", "dxgi.lib", "d3dcompiler.lib" is added.
+Project should build (DirectXTK Desktop Win10 NuGet package is installed so make sure it is restored)
+Make sure that SubSystem is set to Windows and the dependencies "d3d11.lib", "dxgi.lib", "d3dcompiler.lib" are added
