@@ -5,8 +5,11 @@
 #include <DirectXColors.h>
 #include <Mouse.h>
 #include <Keyboard.h>
+
 #include <memory>
 #include <string>
+#include <array>
+
 
 struct InputTK
 {
@@ -26,6 +29,12 @@ struct InputTK
 	}
 };
 
+struct MenuBar
+{
+	HMENU mainMenu;
+	std::array<HMENU, 1> subMenus;
+};
+
 class Application : public Window
 {
 public:
@@ -41,13 +50,22 @@ public:
 	void Run();
 
 private:
-	std::unique_ptr<Graphics> graphics;		// DX11
-	InputTK input;
+
+	MenuBar menuBar;	// Win32
+	std::unique_ptr<Graphics> graphics;	// DX11
+	InputTK input;		// Input
 
 	// Helper functions
+
+	// Input
 	void UpdateInput();
 	void HandleKeyboardInput();
 	void HandleMouseInput();
+
+	// Application specific menu bars
+	void InitializeMenu();
+	void HandleWinGUI(const WPARAM& wParam);
+	void Quit();
 
 };
 

@@ -18,6 +18,10 @@ Application::Application(const HINSTANCE& hInstance,
 
 	Window::InitializeWindow();
 
+	// Win32 - Re-size again but with bMenu on for AdjustWindowRect
+	Window::SetClientSize(true);
+	SetMenu(hwnd, menuBar.mainMenu);
+
 	// Graphics (D3D inside)
 	graphics = std::make_unique<Graphics>(hwnd, clientWidth, clientHeight);
 
@@ -40,11 +44,7 @@ LRESULT Application::HandleProc(const UINT& uMsg, const WPARAM& wParam, const LP
 	{
 	case WM_CLOSE:
 	{
-		if (MessageBox(hwnd, L"Really quit?", L"My application", MB_OKCANCEL) == IDOK)
-		{
-			DestroyWindow(hwnd);
-		}
-
+		DestroyWindow(hwnd);	// Immediately destroy window if X is pressed
 		break;
 	}
 
@@ -68,7 +68,18 @@ LRESULT Application::HandleProc(const UINT& uMsg, const WPARAM& wParam, const LP
 		break;
 	}
 
-	// Application related procedures below
+	// Win32 GUI
+	case WM_CREATE:
+	{
+		InitializeMenu();
+		break;
+	}
+	
+	case WM_COMMAND:
+	{
+		HandleWinGUI(wParam);
+		break;
+	}
 
 	// XTK Mouse & Keyboard
 	case WM_ACTIVATEAPP:
@@ -203,4 +214,47 @@ void Application::HandleMouseInput()
 		OutputDebugStringW(L"\n");
 	}
 
+}
+
+void Application::InitializeMenu()
+{
+	auto& mainMenu = menuBar.mainMenu;
+	auto& subMenus = menuBar.subMenus;
+
+	mainMenu = CreateMenu();
+	subMenus[0] = CreateMenu();
+
+	AppendMenuW(subMenus[0], MF_STRING, 0, L"Open");	// ID 0 (wParam)
+	AppendMenuW(subMenus[0], MF_STRING, 1, L"Close");	// ID 1
+
+	AppendMenuW(mainMenu, MF_POPUP, (UINT_PTR)subMenus[0], L"Options");		// Drop down options
+
+}
+
+void Application::HandleWinGUI(const WPARAM& wParam)
+{
+	switch (wParam)
+	{
+	case 0:
+	{
+		OutputDebugStringW(L"Open\n");
+		MessageBeep(MB_OK);
+		break;
+	}
+	case 1:
+	{
+		OutputDebugStringW(L"Close\n");
+		Quit();
+		break;
+	}
+
+	}
+}
+
+void Application::Quit()
+{
+	if (MessageBox(hwnd, L"Really quit?", L"Application", MB_OKCANCEL) == IDOK)
+	{
+		DestroyWindow(hwnd);
+	}
 }

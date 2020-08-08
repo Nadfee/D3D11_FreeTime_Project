@@ -24,7 +24,7 @@ void Window::InitializeWindow()
 {
 	// Call this in Application constructor
 	CreateWin();
-	SetClientSize(clientWidth, clientHeight);	// Setup so that we have desired client size
+	SetClientSize(false);	// Setup so that we have desired client size
 	ShowWindow(hwnd, SW_SHOWDEFAULT);
 }
 
@@ -108,21 +108,21 @@ void Window::SetTitle(const LPCWSTR& title) const
 	SetWindowText(hwnd, title);
 }
 
-void Window::SetClientSize(const INT& width, const INT& height) const
+void Window::SetClientSize(bool bMenu) const
 {
 	RECT rect = { 0 };
-	rect.right = width;
-	rect.bottom = height;
+	rect.right = clientWidth;
+	rect.bottom = clientHeight;
 
 	// We pass a rect that has our desired client area dimensions
-	if (!AdjustWindowRectEx(&rect, style, 0, exStyle))
+	if (!AdjustWindowRectEx(&rect, style, bMenu, exStyle))
 	{
 		assert(false);
 	}
 	// Rect that pops out with information for the Window that accomodates that client area dimension
 
-	// cx, cy are width and height! - We are just placing it at 70, 70
-	if (!SetWindowPos(hwnd, HWND_TOP, 70, 70, rect.right - rect.left, rect.bottom - rect.top, SWP_NOREPOSITION))
+	// cx, cy are width and height! - We are just placing it at 0, 0
+	if (!SetWindowPos(hwnd, HWND_TOP, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOREPOSITION))
 	{
 		assert(false);
 	}

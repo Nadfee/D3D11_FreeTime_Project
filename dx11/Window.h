@@ -16,7 +16,7 @@ public:
 	virtual LRESULT HandleProc(const UINT& uMsg, const WPARAM& wParam, const LPARAM& lParam) = 0;
 
 	void SetTitle(const LPCWSTR& title) const;
-	void SetClientSize(const INT& width, const INT& height) const;
+	void SetClientSize(bool bMenu) const;
 
 	const HWND GetHWND() const { return this->hwnd; };
 	int GetClientWidth() const { return this->clientWidth; };
@@ -44,9 +44,11 @@ protected:
 	void CreateWin();
 	void InitializeWindow();
 
+
 	// If called outside needs to use namespace Window::
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		
 		// WindowProc needs to be a static function for class initialization! (We pass function ptr)
 		// But remember that we want our action handling to happen in functions of classes (non static members)
 
@@ -60,8 +62,8 @@ protected:
 			CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
 			Window* currWin = reinterpret_cast<Window*>(pCreate->lpCreateParams);
 			SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)currWin);
-			return 0;
-			
+			//return 0;
+			return currWin->HandleProc(uMsg, wParam, lParam);		// Handle WM_CREATE in Application too!
 		}
 		else
 		{
