@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Graphics.h"
 #include "Object.h"
+#include "Camera.h"
 
 #include <Mouse.h>
 #include <Keyboard.h>
@@ -41,6 +42,22 @@ struct MenuBar
 	std::vector<HMENU> subMenus;
 };
 
+struct PlayerPosition
+{
+	// [-1, 1]
+	float moveForwardBack = 0.f;
+	float moveLeftRight = 0.f;
+	float moveUpDown = 0.f;
+
+	void Reset()
+	{
+		moveForwardBack = 0.f;
+		moveLeftRight = 0.f;
+		moveUpDown = 0.f;
+	}
+
+};
+
 class Application : public Window
 {
 public:
@@ -60,11 +77,25 @@ private:
 	GraphicsPtr graphics;	// DX11
 	MenuBar menuBar;		// Win32 GUI
 	InputTK input;			// Input (DXTK)
+	PlayerPosition ply;
 
 	std::vector<Object> objects;
+	Camera fpc;
+
+	// Timer
+	uint64_t frequency;
+	uint64_t offset;
+	double deltaTime;
+
+	// Taken from unknown source (old project)
+	// Initialise timer variables for build’s platform
+	void InitTimer();
+	// Get the current time in seconds with up to nanosecond precision
+	double GetSeconds();
 
 	// Helper functions
 	void InitializeScene();
+	void UpdateCamera();
 
 	// Input
 	void UpdateInput();
@@ -75,6 +106,7 @@ private:
 	void InitializeMenu();
 	void HandleWinGUI(const WPARAM& wParam);
 	void Quit();
+
 
 };
 

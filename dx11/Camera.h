@@ -1,0 +1,37 @@
+#pragma once
+
+#include <SimpleMath.h>
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+
+using namespace DirectX::SimpleMath;
+
+class Camera
+{
+public:
+	Camera() { };
+	Camera(float fovAngle, float aspectRatio, float nearZ = 0.1f, float farZ = 500.f);
+	~Camera();
+
+	Matrix GetViewMatrix() { return viewMatrix; };
+	Matrix GetProjectionMatrix() { return projectionMatrix; };
+	Vector4 GetPosition() { return position; };
+
+	void Update(float deltaX, float deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, double frameTime);
+
+private:
+	Matrix viewMatrix, projectionMatrix;
+
+	Vector4 camForward, camRight, camUp, upDir;
+	Vector4 position;
+
+	float fovAngle, aspectRatio, nearZ, farZ;
+	float camPitch, camYaw;
+	float speed;
+
+
+
+};
+

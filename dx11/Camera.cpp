@@ -1,0 +1,78 @@
+#include "Camera.h"
+
+Camera::Camera(float fovAngle, float aspectRatio, float nearZ, float farZ) :
+	position(Vector4(0.f, 0.f, 0.f, 1.f)),
+	fovAngle(fovAngle),
+	aspectRatio(aspectRatio),
+	nearZ(nearZ),
+	farZ(farZ),
+	camForward(Vector4(0.f, 0.f, 1.f, 0.f)),
+	camUp(Vector4(0.f, 1.f, 0.f, 0.f)),
+	camRight(Vector4(1.f, 0.f, 0.f, 0.f)),
+	upDir(Vector4(0.f, 1.f, 0.f, 0.f)),
+	camYaw(0),
+	camPitch(0),
+	speed(1.f)
+{
+	float fovAngleRad = (M_PI / 180.f) * (fovAngle);
+
+	projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fovAngleRad, aspectRatio, nearZ, farZ);
+	viewMatrix = DirectX::XMMatrixLookAtLH(Vector4(0.f, 0.f, 0.f, 1.f), Vector4(0.f, 0.f, 1.f, 1.f), Vector4(0.f, 1.f, 0.f, 0.f));
+
+	DirectX::XMMATRIX test1 = DirectX::XMMatrixPerspectiveFovLH(fovAngleRad, aspectRatio, nearZ, farZ);;
+	DirectX::XMMATRIX test2 = DirectX::XMMatrixLookAtLH(Vector4(0.f, 0.f, 0.f, 1.f), Vector4(0.f, 0.f, 1.f, 1.f), Vector4(0.f, 1.f, 0.f, 0.f));
+
+}
+
+Camera::~Camera()
+{
+}
+
+void Camera::Update(float deltaX, float deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, double frameTime)
+{
+	// Default world
+	camForward = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+	camRight = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+	camUp = Vector4(0.f, 1.f, 0.f, 0.f);
+
+	// Update the pitch and yaw values for camera
+	float deltaPitch = deltaY * 0.002f;
+	float deltaYaw = deltaX * 0.002f;
+
+	camPitch += deltaPitch;
+	camYaw += deltaYaw;
+
+	// Set camera rotation limit (up/down)
+	if (camPitch > 89.f * (M_PI / 180.f))
+	{
+		camPitch = 89.f * (M_PI / 180.f);
+	}
+	else if (camPitch < -89.f * (M_PI / 180.f))
+	{
+		camPitch = -89.f * (M_PI / 180.f);
+	}
+
+	Matrix camRotationMatrix = Matrix::CreateFromYawPitchRoll(camYaw, camPitch, 0.f);
+	Vector4 camTarget = Vector4::Transform(camForward, camRotationMatrix);
+	camTarget.Normalize();
+
+	// New orientation
+	camRight = Vector4::Transform(camRight, camRotationMatrix);
+	camUp = Vector4::Transform(camUp, camRotationMatrix);
+	camForward = Vector4::Transform(camForward, camRotationMatrix);
+
+	// Make sure to move with the correct orientation and correct speed (diagonal fix)
+	Vector4 moveDirection = moveLeftRight * camRight + moveForwardBack * camForward + moveUpDown * camUp;
+	moveDirection.Normalize();
+
+	position += moveDirection * speed * (float)frameTime;
+
+	// Position the target 'infront' of the camera.
+	camTarget = position + camTarget;
+
+
+
+
+	viewMatrix = DirectX::XMMatrixLookAtLH(position, position + camForward, camUp);
+
+}

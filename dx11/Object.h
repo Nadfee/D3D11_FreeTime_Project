@@ -16,7 +16,7 @@ public:
 
 	void Render() { mesh->Draw(); };
 
-	void SetPosition(Vector3 newPos);
+	void SetPosition(const Vector3& newPos);
 
 private:
 	MeshPtr mesh;

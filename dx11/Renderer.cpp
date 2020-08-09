@@ -16,10 +16,34 @@ void Renderer::ClearMainRenderTarget(const float* RGBA)
 	GetDeviceContext()->ClearRenderTargetView(deviceManager->GetRTV().Get(), RGBA);
 }
 
-void Renderer::Present(int vsync)
+void Renderer::Present()
 {
-	GetDeviceManager()->GetSwapChain()->Present(vsync, 0);
+	GetDeviceManager()->GetSwapChain()->Present(0, 0);
 }
+
+void Renderer::UpdateMatrix(ComPtr<ID3D11Buffer> buf, const Matrix& mat)
+{
+	D3D11_MAPPED_SUBRESOURCE subres;
+	auto devCon = deviceManager->GetDeviceContext();
+	HRESULT hr = devCon->Map(buf.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subres);
+
+	if (FAILED(hr))
+		assert(false);
+
+	memcpy(subres.pData, &mat, sizeof(Matrix));
+	devCon->Unmap(buf.Get(), 0);
+}
+
+void Renderer::UpdateViewMatrix(const Matrix& mat)
+{
+	UpdateMatrix(viewMatrixBuffer, mat);
+}
+
+void Renderer::UpdateProjectionMatrix(const Matrix& mat)
+{
+	UpdateMatrix(projectionMatrixBuffer, mat);
+}
+
 
 
 ComPtr<ID3D11Buffer> Renderer::CreateVertexBuffer(const std::vector<Vertex>& initVertexData)
@@ -137,6 +161,11 @@ void Renderer::ForwardRenderSetup()
 	if (FAILED(hr))
 		assert(false);
 
+
+	// Create Buffer for View and Projection Matrix
+	viewMatrixBuffer = CreateConstantBuffer(nullptr, sizeof(Matrix), true, true);
+	projectionMatrixBuffer = CreateConstantBuffer(nullptr, sizeof(Matrix), true, true);
+
 	// Setting environment
 
 	// VS
@@ -152,6 +181,9 @@ void Renderer::ForwardRenderSetup()
 	devCon->OMSetRenderTargets(1, deviceManager->GetRTV().GetAddressOf(), NULL);
 	devCon->RSSetViewports(1, &deviceManager->GetVP());
 
+	// View and Projection Matrix
+	devCon->VSSetConstantBuffers(1, 1, viewMatrixBuffer.GetAddressOf());
+	devCon->VSSetConstantBuffers(2, 1, projectionMatrixBuffer.GetAddressOf());
 }
 
 // Shader Types: vs_5_0, ps_5_0, hs_5_0, gs_5_0, ds_5_0, cs_5_0

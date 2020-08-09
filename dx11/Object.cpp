@@ -9,7 +9,7 @@ Object::~Object()
 {
 }
 
-void Object::SetPosition(Vector3 newPos)
+void Object::SetPosition(const Vector3& newPos)
 {
 	position = newPos;
 	mesh->UpdateWorldMatrix(newPos);

@@ -36,13 +36,14 @@ public:
 	DevManPtr GetDeviceManager() { return this->deviceManager; }
 
 	void ClearMainRenderTarget(const float* RGBA);
-	void Present(int vsync = 0);
+	void Present();
+
+	void UpdateViewMatrix(const Matrix& mat);
+	void UpdateProjectionMatrix(const Matrix& mat);
 
 
 	ComPtr<ID3D11Buffer> CreateVertexBuffer(const std::vector<Vertex>& initVertexData);
 	ComPtr<ID3D11Buffer> CreateConstantBuffer(void* initBufferData, unsigned int bufferSize, bool cpuWrite, bool dynamic);
-
-
 
 	// Let's start
 	void ForwardRenderSetup();
@@ -59,7 +60,12 @@ private:
 
 	// CBuffer (matrices) stored in Mesh class (impl. later)
 	// SRVs stored in Mesh class
+	
 	DevManPtr deviceManager;
+
+	ComPtr<ID3D11Buffer> viewMatrixBuffer;
+	ComPtr<ID3D11Buffer> projectionMatrixBuffer;
+
 
 	// Shaders
 	ComPtr<ID3DBlob> vsBlob;
@@ -74,6 +80,7 @@ private:
 
 	// Helper functions
 	void LoadShaderBlob(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shaderType, ID3DBlob** blob);
+	void UpdateMatrix(ComPtr<ID3D11Buffer> buf, const Matrix& mat);
 
 
 

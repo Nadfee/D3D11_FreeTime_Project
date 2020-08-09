@@ -19,7 +19,10 @@ public:
 
 	// Functions that interface with the Renderer
 	void Frame();
-	void Present(int vsync = 0);
+	void Present();
+
+	void UpdateViewMatrix(const Matrix& mat);
+	void UpdateProjectionMatrix(const Matrix& mat);
 
 
 private:

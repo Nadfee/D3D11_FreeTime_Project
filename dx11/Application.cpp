@@ -5,8 +5,10 @@ Application::Application(const HINSTANCE& hInstance,
 	const INT& clientWidth,
 	const INT& clientHeight,
 	const DWORD& style,
-	const DWORD& exStyle)
-	
+	const DWORD& exStyle) :
+	frequency(1000000),
+	offset(0),
+	deltaTime(0)
 {
 	// Window creation
 	this->hInstance = hInstance;
@@ -27,6 +29,9 @@ Application::Application(const HINSTANCE& hInstance,
 
 	// XTK Mouse & Keyboard
 	input.Initialize(hwnd);
+
+	// Setup camera
+	fpc = Camera(70.f, (float)clientWidth / (float)clientHeight);
 
 	
 
@@ -128,22 +133,24 @@ LRESULT Application::HandleProc(const UINT& uMsg, const WPARAM& wParam, const LP
 
 }
 
-static float xd = 0;
-
 void Application::Run()
 {
 	InitializeScene();
 
+	double endTime = 0;
+	double startTime = 0;
 
 	MSG msg = { };
 	while (!isClosed)
 	{
-
 		while (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+		deltaTime = endTime - startTime;
+		startTime = GetSeconds();
 
 		// Maybe this kind of setup?
 		// SceneManager.SetActiveScene(ID);	--> Should hold Scenes 
@@ -160,7 +167,10 @@ void Application::Run()
 
 		//devMan->GetSwapChain()->Present(0, 0);
 
+
 		UpdateInput();
+		UpdateCamera();
+
 		graphics->Frame();
 
 		for (auto& obj : objects)
@@ -170,11 +180,8 @@ void Application::Run()
 
 		graphics->Present();
 
-
-		xd += 0.01f;
-
-		objects[0].SetPosition(Vector3(0.5f * sinf(xd / 100.f), 0.f, 0.f));
-
+		endTime = GetSeconds();
+		SetWindowTextW(hwnd, std::to_wstring(1.f / deltaTime).c_str());
 	}
 
 }
@@ -188,13 +195,43 @@ void Application::InitializeScene()
 		{ Vector3(0.f, 1.f, 0.f), Vector2(1.f, 1.f)}
 	};
 
+	std::vector<Vertex> quadVerts =
+	{
+		{ Vector3(1.f, -1.f, 0.f), Vector2(0.f, 0.f)},
+		{ Vector3(-1.f, -1.f, 0.f), Vector2(1.f, 0.f)},
+		{ Vector3(-1.f, 1.f, 0.f), Vector2(0.f, 1.f)},
+
+		{ Vector3(-1.f, 1.f, 0.f), Vector2(0.f, 1.f)},
+		{ Vector3(1.f, 1.f, 0.f), Vector2(1.f, 1.f)},
+		{ Vector3(1.f, -1.f, 0.f), Vector2(0.f, 0.f)}
+	};
+
 	// Vertex Buffer done, Matrix Buffer done (no init data and updated every frame via SetPosition()), texture: to-do
 	objects.push_back(
-		Object(graphics->CreateMesh(triVerts)		// Create Mesh (vbuf, mat, texture, devcon)
-
+		Object(graphics->CreateMesh(triVerts)	
 		));		
 
+	objects.push_back(
+		Object(graphics->CreateMesh(quadVerts)
+		));
 
+	objects[0].SetPosition(Vector3(0.f, 0.f, 3.f));
+	objects[1].SetPosition(Vector3(3.f, 1.f, 5.f));
+
+
+}
+
+void Application::UpdateCamera()
+{
+	auto& msSt = input.mouseCurrState;
+
+	if (msSt.positionMode == DirectX::Mouse::MODE_RELATIVE)
+		fpc.Update(msSt.x, msSt.y, ply.moveLeftRight, ply.moveForwardBack, ply.moveUpDown, deltaTime);
+
+	graphics->UpdateViewMatrix(fpc.GetViewMatrix());
+	graphics->UpdateProjectionMatrix(fpc.GetProjectionMatrix());
+	
+	ply.Reset();
 }
 
 void Application::UpdateInput()
@@ -218,7 +255,7 @@ void Application::HandleKeyboardInput()
 	using key = DirectX::Keyboard;
 
 	// Toggle between absolute and relative mouse mode
-	if (kbTr.IsKeyPressed(key::A))
+	if (kbTr.IsKeyPressed(key::T))
 	{
 		OutputDebugStringW(L"Toggle absolute/relative mouse\n");
 
@@ -232,9 +269,34 @@ void Application::HandleKeyboardInput()
 		}
 	}
 
-	else if (kbTr.IsKeyPressed(key::G))
+	if (kbSt.IsKeyDown(key::A))
 	{
-		OutputDebugStringW(L"Pressed G\n");
+		ply.moveLeftRight = -1.f;
+	}
+
+	if (kbSt.IsKeyDown(key::D))
+	{
+		ply.moveLeftRight = 1.f;
+	}
+
+	if (kbSt.IsKeyDown(key::W))
+	{
+		ply.moveForwardBack = 1.f;
+	}
+
+	if (kbSt.IsKeyDown(key::S))
+	{
+		ply.moveForwardBack = -1.f;
+	}
+
+	if (kbSt.IsKeyDown(key::E))
+	{
+		ply.moveUpDown = 1.f;
+	}
+
+	if (kbSt.IsKeyDown(key::Q))
+	{
+		ply.moveUpDown = -1.f;
 	}
 
 }
@@ -301,4 +363,19 @@ void Application::Quit()
 	{
 		DestroyWindow(hwnd);
 	}
+}
+
+
+
+
+void Application::InitTimer() {
+	//frequency = 1000; // QueryPerformanceCounter default
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+	QueryPerformanceCounter((LARGE_INTEGER*)&offset);
+}
+
+double Application::GetSeconds() {
+	uint64_t counter = 0;
+	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
+	return (double)(counter - offset) / frequency;
 }

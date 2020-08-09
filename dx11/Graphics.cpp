@@ -20,9 +20,19 @@ void Graphics::Frame()
 
 }
 
-void Graphics::Present(int vsync)
+void Graphics::Present()
 {
-	renderer->Present(vsync);
+	renderer->Present();
+}
+
+void Graphics::UpdateViewMatrix(const Matrix& mat)
+{
+	renderer->UpdateViewMatrix(mat);
+}
+
+void Graphics::UpdateProjectionMatrix(const Matrix& mat)
+{
+	renderer->UpdateProjectionMatrix(mat);
 }
 
 MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData)
