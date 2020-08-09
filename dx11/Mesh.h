@@ -17,7 +17,7 @@ public:
 	~Mesh();
 
 	void Draw();
-	void UpdateWorldMatrix(Vector3 newPos);
+	void UpdateWorldMatrix(const Matrix& newMat);
 
 private:
 	ComPtr<ID3D11Buffer> vertexBuffer;

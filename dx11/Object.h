@@ -22,8 +22,7 @@ public:
 private:
 	MeshPtr mesh;
 	Vector3 position;
-
-	Matrix worldMatrix;
+	Matrix worldMatrix;		// This takes up a lot of storage!
 
 };
 

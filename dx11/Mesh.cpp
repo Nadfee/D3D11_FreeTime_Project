@@ -33,17 +33,10 @@ void Mesh::Draw()
 	devCon->Draw(vertexElementCount, 0);
 }
 
-void Mesh::UpdateWorldMatrix(Vector3 newPos)
+void Mesh::UpdateWorldMatrix(const Matrix& newMat)
 {
 	D3D11_MAPPED_SUBRESOURCE subres;
 	HRESULT hr = devCon->Map(worldMatrixBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subres);
-
-	Matrix newMat(
-		Vector4(1.f, 0.f, 0.f, 0.f),
-		Vector4(0.f, 1.f, 0.f, 0.f),
-		Vector4(0.f, 0.f, 1.f, 0.f),
-		Vector4(newPos.x, newPos.y, newPos.z, 1.f)
-	);
 
 	Matrix* mat = (Matrix*)subres.pData;
 	*mat = newMat;

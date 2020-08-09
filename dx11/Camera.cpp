@@ -83,9 +83,6 @@ void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwa
 	// Position the target 'infront' of the camera.
 	camTarget = position + camTarget;
 
-
-
-
 	viewMatrix = DirectX::XMMatrixLookAtLH(position, position + camForward, camUp);
 
 }
