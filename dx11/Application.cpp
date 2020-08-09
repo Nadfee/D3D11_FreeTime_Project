@@ -8,7 +8,8 @@ Application::Application(const HINSTANCE& hInstance,
 	const DWORD& exStyle) :
 	frequency(1000000),
 	offset(0),
-	deltaTime(0)
+	deltaTime(0),
+	counter(0)
 {
 	// Window creation
 	this->hInstance = hInstance;
@@ -150,6 +151,9 @@ void Application::Run()
 		}
 
 		deltaTime = endTime - startTime;
+		counter += deltaTime;
+		if (counter > 100.f)
+			counter = 0.f;
 		startTime = GetSeconds();
 
 		// Maybe this kind of setup?
@@ -167,7 +171,7 @@ void Application::Run()
 
 		//devMan->GetSwapChain()->Present(0, 0);
 
-
+		UpdateObjects();
 		UpdateInput();
 		UpdateCamera();
 
@@ -188,6 +192,8 @@ void Application::Run()
 
 void Application::InitializeScene()
 {
+	// To-do : Implement a Depth Stencil View to enable depth storage and depth testing!
+
 	std::vector<Vertex> triVerts =
 	{
 		{ Vector3(1.f, -0.5f, 0.f), Vector2(1.f, 0.f)},
@@ -211,14 +217,13 @@ void Application::InitializeScene()
 		Object(graphics->CreateMesh(triVerts)	
 		));		
 
-	objects.push_back(
-		Object(graphics->CreateMesh(quadVerts)
-		));
+	for (int i = -50; i < 50; ++i)
+	{
+		Object obj(graphics->CreateMesh(quadVerts));
+		obj.SetPosition(Vector3(i, i, i));
 
-	objects[0].SetPosition(Vector3(0.f, 0.f, 3.f));
-	objects[1].SetPosition(Vector3(3.f, 1.f, 5.f));
-
-
+		objects.push_back(obj);
+	}
 }
 
 void Application::UpdateCamera()
@@ -232,6 +237,17 @@ void Application::UpdateCamera()
 	graphics->UpdateProjectionMatrix(fpc.GetProjectionMatrix());
 	
 	ply.Reset();
+}
+
+void Application::UpdateObjects()
+{
+	objects[0].SetPosition(Vector3(4.f, sinf(counter), cosf(counter)));
+
+	for (int i = 1; i < objects.size(); ++i)
+	{
+		objects[i].SetPosition(Vector3(i - 26.f, i - 26.f + cosf(counter), i - 26.f + sinf(counter)));
+	}
+
 }
 
 void Application::UpdateInput()
@@ -307,18 +323,18 @@ void Application::HandleMouseInput()
 	auto& msSt = input.mouseCurrState;
 
 	// Print delta mouse position
-	if (msSt.positionMode == DirectX::Mouse::MODE_RELATIVE)
-	{
-		OutputDebugStringW(L"X: ");
-		OutputDebugStringW(std::to_wstring(msSt.x).c_str());
-		OutputDebugStringW(L"\n");
+	//if (msSt.positionMode == DirectX::Mouse::MODE_RELATIVE)
+	//{
+	//	OutputDebugStringW(L"X: ");
+	//	OutputDebugStringW(std::to_wstring(msSt.x).c_str());
+	//	OutputDebugStringW(L"\n");
 
-		OutputDebugStringW(L"Y: ");
-		OutputDebugStringW(std::to_wstring(msSt.y).c_str());
-		OutputDebugStringW(L"\n");
+	//	OutputDebugStringW(L"Y: ");
+	//	OutputDebugStringW(std::to_wstring(msSt.y).c_str());
+	//	OutputDebugStringW(L"\n");
 
-		OutputDebugStringW(L"\n");
-	}
+	//	OutputDebugStringW(L"\n");
+	//}
 
 }
 

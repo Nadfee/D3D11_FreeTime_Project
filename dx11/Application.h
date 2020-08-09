@@ -86,6 +86,7 @@ private:
 	uint64_t frequency;
 	uint64_t offset;
 	double deltaTime;
+	double counter;
 
 	// Taken from unknown source (old project)
 	// Initialise timer variables for build’s platform
@@ -96,6 +97,7 @@ private:
 	// Helper functions
 	void InitializeScene();
 	void UpdateCamera();
+	void UpdateObjects();
 
 	// Input
 	void UpdateInput();
