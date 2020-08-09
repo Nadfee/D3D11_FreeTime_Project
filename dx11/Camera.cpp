@@ -12,14 +12,14 @@ Camera::Camera() :
 	upDir(Vector4(0.f, 1.f, 0.f, 0.f)),
 	camYaw(0),
 	camPitch(0),
-	speed(1.f)
+	speed(14.f)
 {
 
 }
 
 Camera::Camera(float fovAngleDeg, float aspectRatio, float nearZ, float farZ) :
 	position(Vector4(0.f, 0.f, 0.f, 1.f)),
-	fovAngle(fovAngle),
+	fovAngle(fovAngleDeg),
 	aspectRatio(aspectRatio),
 	nearZ(nearZ),
 	farZ(farZ),

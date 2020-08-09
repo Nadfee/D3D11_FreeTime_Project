@@ -11,7 +11,9 @@ Mesh::Mesh() :
 
 Mesh::Mesh(ComPtr<ID3D11Buffer> vBuf, unsigned int elementStride, unsigned int elementCount,
 	ComPtr<ID3D11Buffer> matBuf,
+	ComPtr<ID3D11ShaderResourceView> textureSRV,
 	DeviceContextPtr devCon) :
+	diffuseTextureSRV(textureSRV),
 	stride(elementStride),
 	offset(0),
 	vertexBuffer(vBuf),
@@ -29,6 +31,7 @@ Mesh::~Mesh()
 void Mesh::Draw()
 {
 	devCon->VSSetConstantBuffers(0, 1, worldMatrixBuffer.GetAddressOf());
+	devCon->PSSetShaderResources(0, 1, diffuseTextureSRV.GetAddressOf());
 	devCon->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 	devCon->Draw(vertexElementCount, 0);
 }

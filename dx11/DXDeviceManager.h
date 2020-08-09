@@ -9,6 +9,7 @@
 #include <BufferHelpers.h>
 #include <SimpleMath.h>
 #include <DirectXColors.h>
+#include <WICTextureLoader.h>
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX::SimpleMath;

@@ -1,7 +1,9 @@
 #include "Renderer.h"
 
 Renderer::Renderer(const HWND& hwnd, const int& clientWidth, const int& clientHeight) :
-	deviceManager(std::make_shared<DXDeviceManager>(hwnd, clientWidth, clientHeight))
+	deviceManager(std::make_shared<DXDeviceManager>(hwnd, clientWidth, clientHeight)),
+	clientWidth(clientWidth),
+	clientHeight(clientHeight)
 {
 
 
@@ -11,14 +13,16 @@ Renderer::~Renderer()
 {
 }
 
+// Note: We are also clearing depth stencil view in conjunction with render target
 void Renderer::ClearMainRenderTarget(const float* RGBA)
 {
+	GetDeviceContext()->ClearDepthStencilView(dsv.Get(), D3D11_CLEAR_DEPTH, 1.f, 0.f);
 	GetDeviceContext()->ClearRenderTargetView(deviceManager->GetRTV().Get(), RGBA);
 }
 
 void Renderer::SetBackBufferRTV()
 {
-	deviceManager->GetDeviceContext()->OMSetRenderTargets(1, deviceManager->GetRTV().GetAddressOf(), NULL);
+	GetDeviceContext()->OMSetRenderTargets(1, deviceManager->GetRTV().GetAddressOf(), dsv.Get());
 }
 
 void Renderer::Present()
@@ -126,6 +130,35 @@ ComPtr<ID3D11Buffer> Renderer::CreateConstantBuffer(void* initBufferData, unsign
 	return buffer;
 }
 
+ComPtr<ID3D11ShaderResourceView> Renderer::CreateSRVFromFileWIC(std::wstring fileName, bool mipMapOn)
+{
+	ComPtr<ID3D11ShaderResourceView> srv;
+
+	HRESULT hr;
+	if (mipMapOn)
+	{
+		hr = DirectX::CreateWICTextureFromFile(
+			deviceManager->GetDevice().Get(),
+			deviceManager->GetDeviceContext().Get(),
+			fileName.c_str(),
+			nullptr,
+			srv.GetAddressOf()
+		);
+	}
+	else
+	{
+		hr = DirectX::CreateWICTextureFromFile(
+			deviceManager->GetDevice().Get(),
+			fileName.c_str(),
+			nullptr,
+			srv.GetAddressOf()
+		);
+	}
+
+	assert(SUCCEEDED(hr));
+	return srv;
+}
+
 void Renderer::ForwardRenderSetup()
 {
 	// We will go with normal Draw function for now
@@ -166,10 +199,56 @@ void Renderer::ForwardRenderSetup()
 	if (FAILED(hr))
 		assert(false);
 
-
 	// Create Buffer for View and Projection Matrix
 	viewMatrixBuffer = CreateConstantBuffer(nullptr, sizeof(Matrix), true, true);
 	projectionMatrixBuffer = CreateConstantBuffer(nullptr, sizeof(Matrix), true, true);
+
+	// ***** We may perhaps want to abstract these into functions later *****
+	// Create depth stencil view
+	ComPtr<ID3D11Texture2D> dsvText;
+	D3D11_TEXTURE2D_DESC textDesc = { };
+	textDesc.Width = clientWidth;
+	textDesc.Height = clientHeight;
+	textDesc.MipLevels = 0;
+	textDesc.ArraySize = 1;
+	textDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+	textDesc.SampleDesc.Count = 1;
+	textDesc.SampleDesc.Quality = 0;
+	textDesc.Usage = D3D11_USAGE_DEFAULT;
+	textDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	textDesc.CPUAccessFlags = 0;
+	textDesc.MiscFlags = 0;
+
+	hr = dev->CreateTexture2D(&textDesc, NULL, dsvText.GetAddressOf());
+	assert(SUCCEEDED(hr));
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = { };
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Flags = 0;		
+	dsvDesc.Texture2D.MipSlice = 0;					// The index of the first mipmap level to use.
+
+	hr = dev->CreateDepthStencilView(dsvText.Get(), &dsvDesc, dsv.GetAddressOf());
+	assert(SUCCEEDED(hr));
+
+	// Create sampler state
+	D3D11_SAMPLER_DESC samplerDesc = { };
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0;
+	samplerDesc.MaxAnisotropy = 1;									// not used for current filter
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;		// read in detail another time
+	samplerDesc.BorderColor[0] = 0.f;
+	samplerDesc.BorderColor[1] = 0.f;
+	samplerDesc.BorderColor[2] = 0.f;
+	samplerDesc.BorderColor[3] = 0.f;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;		// no upper limit to LOD selection
+
+	hr = dev->CreateSamplerState(&samplerDesc, this->sampler.GetAddressOf());
+	assert(SUCCEEDED(hr));
 
 	// Setting environment
 
@@ -177,8 +256,8 @@ void Renderer::ForwardRenderSetup()
 	devCon->VSSetShader(vs.Get(), NULL, NULL);
 	devCon->IASetInputLayout(il.Get());
 
-
 	devCon->PSSetShader(ps.Get(), NULL, NULL);
+	devCon->PSSetSamplers(0, 1, sampler.GetAddressOf());	// default wrap minmaglinear, mippoint sampler for texture
 
 	// Misc.
 	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

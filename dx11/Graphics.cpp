@@ -51,7 +51,7 @@ void Graphics::UpdateProjectionMatrix(const Matrix& mat)
 	renderer->UpdateProjectionMatrix(mat);
 }
 
-MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData)
+MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData, std::wstring textureFilePath)
 {
 	// Not done
 	MeshPtr mesh = std::make_shared<Mesh>(
@@ -59,6 +59,7 @@ MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData)
 		sizeof(Vertex),
 		initVertexData.size(),
 		renderer->CreateConstantBuffer(nullptr, sizeof(Matrix), true, true),		// world matrix buffer
+		renderer->CreateSRVFromFileWIC(textureFilePath),
 		renderer->GetDeviceContext()						// done: pass devcon ref
 															// todo: init texture
 														

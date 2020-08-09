@@ -3,6 +3,7 @@
 
 #include <DirectXColors.h>
 
+#include <string>
 #include <assert.h>
 #include <memory>
 #include <array>
@@ -45,12 +46,16 @@ public:
 
 	ComPtr<ID3D11Buffer> CreateVertexBuffer(const std::vector<Vertex>& initVertexData);
 	ComPtr<ID3D11Buffer> CreateConstantBuffer(void* initBufferData, unsigned int bufferSize, bool cpuWrite, bool dynamic);
+	ComPtr<ID3D11ShaderResourceView> CreateSRVFromFileWIC(std::wstring fileName, bool mipMapOn = true);
 
 	// Let's start
 	void ForwardRenderSetup();
 	void Render();
 
 private:
+
+	int clientWidth;
+	int clientHeight;
 
 	// DX Resources
 	// Samplers..
@@ -66,6 +71,9 @@ private:
 
 	ComPtr<ID3D11Buffer> viewMatrixBuffer;
 	ComPtr<ID3D11Buffer> projectionMatrixBuffer;
+
+	ComPtr<ID3D11DepthStencilView> dsv;
+	ComPtr<ID3D11SamplerState> sampler;		// D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT
 
 
 	// Shaders (Should be abstracted away in their respective classes)

@@ -6,7 +6,7 @@ Application::Application(const HINSTANCE& hInstance,
 	const INT& clientHeight,
 	const DWORD& style,
 	const DWORD& exStyle) :
-	frequency(1000000),
+	frequency(10000000),		// get in second
 	offset(0),
 	deltaTime(0),
 	counter(0)
@@ -187,15 +187,18 @@ void Application::Run()
 		graphics->Present();
 
 		endTime = GetSeconds();
+		
 		SetWindowTextW(hwnd, std::to_wstring(1.f / deltaTime).c_str());
+		//OutputDebugStringW(std::to_wstring(1.f / deltaTime).c_str());
+		//OutputDebugStringW(L"\n");
 	}
 
 }
 
 void Application::InitializeScene()
 {
-	// To-do : Implement a Depth Stencil View to enable depth storage and depth testing!
-	// To-do : Implement Texture creation functionality and add onto object-mesh initialization (WICTextureLoader)
+	// DONE  : Implement a Depth Stencil View to enable depth storage and depth testing!
+	// DONE  : Implement Texture creation functionality and add onto object-mesh initialization (WICTextureLoader)
 
 	// To-do : Create a cube mesh (Prepare for lights)
 	// To-do : Modify input layout to also support Normals (Prepare for lights)
@@ -227,12 +230,12 @@ void Application::InitializeScene()
 
 	// Vertex Buffer done, Matrix Buffer done (no init data and updated every frame via SetPosition()), texture: to-do
 	objects.push_back(
-		Object(graphics->CreateMesh(triVerts)	
+		Object(graphics->CreateMesh(triVerts, L"Textures/moss.jpg")	
 		));		
 
 	for (int i = -100; i < 100; ++i)
 	{
-		Object obj(graphics->CreateMesh(quadVerts));
+		Object obj(graphics->CreateMesh(quadVerts, L"Textures/minecraftstonebrick.jpg"));
 		obj.SetPosition(Vector3(i, i, i));
 
 		objects.push_back(obj);
