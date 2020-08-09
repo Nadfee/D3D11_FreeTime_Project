@@ -9,6 +9,7 @@ Controls:
 T - Toggle between Absolute and Relative mouse mode (visible/invisible)
 
 WASD - Move
+
 Q - Descend
 E - Ascend
 
