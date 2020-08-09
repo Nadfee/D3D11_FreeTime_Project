@@ -5,7 +5,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-
 using namespace DirectX::SimpleMath;
 
 class Camera

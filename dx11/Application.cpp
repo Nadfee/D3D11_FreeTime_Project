@@ -195,6 +195,17 @@ void Application::Run()
 void Application::InitializeScene()
 {
 	// To-do : Implement a Depth Stencil View to enable depth storage and depth testing!
+	// To-do : Implement Texture creation functionality and add onto object-mesh initialization (WICTextureLoader)
+
+	// To-do : Create a cube mesh (Prepare for lights)
+	// To-do : Modify input layout to also support Normals (Prepare for lights)
+
+	// To-do : Implement Light (Point light with radius)
+	// To-do : Implement Phong Shading
+
+	// To-do : Add tinyobjloader functionality and hook to CreateMesh 
+	//		   (either by creating a finalized vertex vector or overriding the CreateMesh and passing a wrapper-implementation around tinyobjloader)
+	// To-do : Implement a material constant buffer for meshes
 
 	std::vector<Vertex> triVerts =
 	{
