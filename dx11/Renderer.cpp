@@ -16,6 +16,11 @@ void Renderer::ClearMainRenderTarget(const float* RGBA)
 	GetDeviceContext()->ClearRenderTargetView(deviceManager->GetRTV().Get(), RGBA);
 }
 
+void Renderer::SetBackBufferRTV()
+{
+	deviceManager->GetDeviceContext()->OMSetRenderTargets(1, deviceManager->GetRTV().GetAddressOf(), NULL);
+}
+
 void Renderer::Present()
 {
 	GetDeviceManager()->GetSwapChain()->Present(0, 0);
@@ -51,7 +56,7 @@ ComPtr<ID3D11Buffer> Renderer::CreateVertexBuffer(const std::vector<Vertex>& ini
 	ComPtr<ID3D11Buffer> buffer;
 
 	D3D11_BUFFER_DESC desc = { 0 };
-	desc.ByteWidth = initVertexData.size() * sizeof(Vertex);
+	desc.ByteWidth = (UINT)(initVertexData.size() * sizeof(Vertex));
 	desc.Usage = D3D11_USAGE_IMMUTABLE;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	desc.CPUAccessFlags = 0;
@@ -178,7 +183,6 @@ void Renderer::ForwardRenderSetup()
 	// Misc.
 	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	devCon->OMSetRenderTargets(1, deviceManager->GetRTV().GetAddressOf(), NULL);
 	devCon->RSSetViewports(1, &deviceManager->GetVP());
 
 	// View and Projection Matrix
@@ -213,7 +217,8 @@ void Renderer::LoadShaderBlob(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shader
 
 void Renderer::Render()
 {
-	auto devCon = deviceManager->GetDeviceContext();
+	//auto devCon = deviceManager->GetDeviceContext();
+	//ClearMainRenderTarget(DirectX::Colors::Bisque);
 
 	//devCon->Draw(3, 0);
 

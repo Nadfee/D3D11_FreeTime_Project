@@ -28,8 +28,7 @@ public:
 private:
 	RendererPtr renderer;
 
-	// MeshManager
-	// TextureManager (Factories?)
+	// MeshManager (Abstract one more layer to follow single-responsibility principle?)
 
 
 };

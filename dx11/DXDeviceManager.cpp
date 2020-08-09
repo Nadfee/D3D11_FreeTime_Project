@@ -41,10 +41,10 @@ void DXDeviceManager::CreateDevAndSC(const HWND& hwnd)
 	scDesc.SampleDesc.Quality = 0;
 
 	scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scDesc.BufferCount = 1;		// one back buffer (that we draw to)
+	scDesc.BufferCount = 2;		//  One WINDOW front buffer and One back buffer
 	scDesc.OutputWindow = hwnd;
 	scDesc.Windowed = TRUE;
-	scDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;	// discard the already show buffer after present			------------- SWITCH TO FLIP? (read more)
+	scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;	// discard the already show buffer after present
 	scDesc.Flags = NULL;							// optional flags for swap chain behaviour
 
 	LRESULT hr = D3D11CreateDeviceAndSwapChain(

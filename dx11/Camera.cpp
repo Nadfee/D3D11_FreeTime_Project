@@ -1,6 +1,23 @@
 #include "Camera.h"
 
-Camera::Camera(float fovAngle, float aspectRatio, float nearZ, float farZ) :
+Camera::Camera() :
+	position(Vector4(0.f, 0.f, 0.f, 1.f)),
+	fovAngle(0.f),
+	aspectRatio(0.f),
+	nearZ(0.1f),
+	farZ(500.f),
+	camForward(Vector4(0.f, 0.f, 1.f, 0.f)),
+	camUp(Vector4(0.f, 1.f, 0.f, 0.f)),
+	camRight(Vector4(1.f, 0.f, 0.f, 0.f)),
+	upDir(Vector4(0.f, 1.f, 0.f, 0.f)),
+	camYaw(0),
+	camPitch(0),
+	speed(1.f)
+{
+
+}
+
+Camera::Camera(float fovAngleDeg, float aspectRatio, float nearZ, float farZ) :
 	position(Vector4(0.f, 0.f, 0.f, 1.f)),
 	fovAngle(fovAngle),
 	aspectRatio(aspectRatio),
@@ -14,21 +31,17 @@ Camera::Camera(float fovAngle, float aspectRatio, float nearZ, float farZ) :
 	camPitch(0),
 	speed(1.f)
 {
-	float fovAngleRad = (M_PI / 180.f) * (fovAngle);
+	float fovAngleRad = (M_PI / 180.f) * (fovAngleDeg);
 
 	projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fovAngleRad, aspectRatio, nearZ, farZ);
 	viewMatrix = DirectX::XMMatrixLookAtLH(Vector4(0.f, 0.f, 0.f, 1.f), Vector4(0.f, 0.f, 1.f, 1.f), Vector4(0.f, 1.f, 0.f, 0.f));
-
-	DirectX::XMMATRIX test1 = DirectX::XMMatrixPerspectiveFovLH(fovAngleRad, aspectRatio, nearZ, farZ);;
-	DirectX::XMMATRIX test2 = DirectX::XMMatrixLookAtLH(Vector4(0.f, 0.f, 0.f, 1.f), Vector4(0.f, 0.f, 1.f, 1.f), Vector4(0.f, 1.f, 0.f, 0.f));
-
 }
 
 Camera::~Camera()
 {
 }
 
-void Camera::Update(float deltaX, float deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, double frameTime)
+void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, double frameTime)
 {
 	// Default world
 	camForward = Vector4(0.0f, 0.0f, 1.0f, 0.0f);

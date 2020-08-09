@@ -14,7 +14,23 @@ Graphics::~Graphics()
 void Graphics::Frame()
 {
 	renderer->ClearMainRenderTarget(DirectX::Colors::Bisque);
+	renderer->SetBackBufferRTV();
 
+	// If we would like to have multiple passes (e.g deferred) then this is the place we would call various pass setups!
+	// For example:
+	/*
+	renderer->ShadowMapDepthPass();
+	DrawFromLight();
+	renderer->GeometryPass();
+	Draw();
+	renderer->SSAOPass();
+	renderer->LightPass();
+
+	-- Post-processing between Light Pass and Final Quad Pass --
+
+	renderer->FinalQuadPass();
+
+	*/
 
 
 

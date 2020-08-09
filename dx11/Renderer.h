@@ -36,6 +36,7 @@ public:
 	DevManPtr GetDeviceManager() { return this->deviceManager; }
 
 	void ClearMainRenderTarget(const float* RGBA);
+	void SetBackBufferRTV();
 	void Present();
 
 	void UpdateViewMatrix(const Matrix& mat);
@@ -67,16 +68,14 @@ private:
 	ComPtr<ID3D11Buffer> projectionMatrixBuffer;
 
 
-	// Shaders
+	// Shaders (Should be abstracted away in their respective classes)
+	// Note Input Layout and VS go together very well
 	ComPtr<ID3DBlob> vsBlob;
+	ComPtr<ID3D11InputLayout> il;
 	ComPtr<ID3DBlob> psBlob;
 	ComPtr<ID3D11VertexShader> vs;
 	ComPtr<ID3D11PixelShader> ps;
 
-	ComPtr<ID3D11Buffer> vBuf;
-	ComPtr<ID3D11Buffer> cBuf;
-
-	ComPtr<ID3D11InputLayout> il;
 
 	// Helper functions
 	void LoadShaderBlob(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shaderType, ID3DBlob** blob);

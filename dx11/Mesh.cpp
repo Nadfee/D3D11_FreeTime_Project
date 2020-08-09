@@ -1,6 +1,15 @@
 #include "Mesh.h"
 
-Mesh::Mesh(ComPtr<ID3D11Buffer> vBuf, unsigned int elementStride, unsigned int elementCount, 
+Mesh::Mesh() :
+	stride(0),
+	offset(0),
+	vertexBuffer(nullptr),
+	worldMatrixBuffer(nullptr),
+	devCon(nullptr),
+	vertexElementCount(0) {
+}
+
+Mesh::Mesh(ComPtr<ID3D11Buffer> vBuf, unsigned int elementStride, unsigned int elementCount,
 	ComPtr<ID3D11Buffer> matBuf,
 	DeviceContextPtr devCon) :
 	stride(elementStride),

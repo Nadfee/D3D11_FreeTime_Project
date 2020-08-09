@@ -11,15 +11,15 @@ using namespace DirectX::SimpleMath;
 class Camera
 {
 public:
-	Camera() { };
-	Camera(float fovAngle, float aspectRatio, float nearZ = 0.1f, float farZ = 500.f);
+	Camera();
+	Camera(float fovAngleDeg, float aspectRatio, float nearZ = 0.1f, float farZ = 500.f);
 	~Camera();
 
 	Matrix GetViewMatrix() { return viewMatrix; };
 	Matrix GetProjectionMatrix() { return projectionMatrix; };
 	Vector4 GetPosition() { return position; };
 
-	void Update(float deltaX, float deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, double frameTime);
+	void Update(int deltaX, int deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, double frameTime);
 
 private:
 	Matrix viewMatrix, projectionMatrix;

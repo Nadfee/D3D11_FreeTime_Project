@@ -10,7 +10,7 @@ using Microsoft::WRL::ComPtr;
 class Mesh
 {
 public:
-	Mesh() { };
+	Mesh();
 	Mesh(ComPtr<ID3D11Buffer> vBuf, unsigned int elementStride, unsigned int vBufElementCount, 
 		ComPtr<ID3D11Buffer> matBuf,
 		DeviceContextPtr devCon);

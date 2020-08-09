@@ -38,7 +38,7 @@ struct InputTK
 
 struct MenuBar
 {
-	HMENU mainMenu;
+	HMENU mainMenu = 0;
 	std::vector<HMENU> subMenus;
 };
 

@@ -144,17 +144,19 @@ void Application::Run()
 	MSG msg = { };
 	while (!isClosed)
 	{
+		deltaTime = endTime - startTime;
+		counter += deltaTime;
+		if (counter > 100.f)
+			counter = 0.f;
+		startTime = GetSeconds();
+
 		while (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 
-		deltaTime = endTime - startTime;
-		counter += deltaTime;
-		if (counter > 100.f)
-			counter = 0.f;
-		startTime = GetSeconds();
+
 
 		// Maybe this kind of setup?
 		// SceneManager.SetActiveScene(ID);	--> Should hold Scenes 
@@ -217,7 +219,7 @@ void Application::InitializeScene()
 		Object(graphics->CreateMesh(triVerts)	
 		));		
 
-	for (int i = -50; i < 50; ++i)
+	for (int i = -100; i < 100; ++i)
 	{
 		Object obj(graphics->CreateMesh(quadVerts));
 		obj.SetPosition(Vector3(i, i, i));
@@ -241,11 +243,11 @@ void Application::UpdateCamera()
 
 void Application::UpdateObjects()
 {
-	objects[0].SetPosition(Vector3(4.f, sinf(counter), cosf(counter)));
+	objects[0].SetPosition(Vector3(4.f, sin(counter), cos(counter)));
 
 	for (int i = 1; i < objects.size(); ++i)
 	{
-		objects[i].SetPosition(Vector3(i - 26.f, i - 26.f + cosf(counter), i - 26.f + sinf(counter)));
+		objects[i].SetPosition(Vector3(i - 26.f, i - 26.f + cos(counter), i - 26.f + sin(counter)));
 	}
 
 }
@@ -285,31 +287,27 @@ void Application::HandleKeyboardInput()
 		}
 	}
 
+	// Movement controls: WASD + QE
 	if (kbSt.IsKeyDown(key::A))
 	{
 		ply.moveLeftRight = -1.f;
 	}
-
 	if (kbSt.IsKeyDown(key::D))
 	{
 		ply.moveLeftRight = 1.f;
 	}
-
 	if (kbSt.IsKeyDown(key::W))
 	{
 		ply.moveForwardBack = 1.f;
 	}
-
 	if (kbSt.IsKeyDown(key::S))
 	{
 		ply.moveForwardBack = -1.f;
 	}
-
 	if (kbSt.IsKeyDown(key::E))
 	{
 		ply.moveUpDown = 1.f;
 	}
-
 	if (kbSt.IsKeyDown(key::Q))
 	{
 		ply.moveUpDown = -1.f;
@@ -380,9 +378,6 @@ void Application::Quit()
 		DestroyWindow(hwnd);
 	}
 }
-
-
-
 
 void Application::InitTimer() {
 	//frequency = 1000; // QueryPerformanceCounter default
