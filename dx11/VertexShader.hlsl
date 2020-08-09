@@ -17,13 +17,14 @@ struct VS_IN
 {
 	float3 pos : POSITION;
 	float2 uv : TEXCOORD;
-
+    float3 nor : NORMAL;
 };
 
 struct VS_OUT
 {
 	float4 pos : SV_POSITION;
 	float2 uv : TEXCOORD;
+    float3 nor : NORMAL;
 };
 
 
@@ -34,6 +35,7 @@ VS_OUT VSMAIN( VS_IN input )
     output.pos = mul(viewMatrix, output.pos);
     output.pos = mul(projectionMatrix, output.pos);
     output.uv = input.uv;
+    output.nor = normalize(mul(worldMatrix, float4(normalize(input.nor), 0.f)));
 	
 	return output;
 }

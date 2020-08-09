@@ -200,8 +200,10 @@ void Application::InitializeScene()
 	// DONE  : Implement a Depth Stencil View to enable depth storage and depth testing!
 	// DONE  : Implement Texture creation functionality and add onto object-mesh initialization (WICTextureLoader)
 
-	// To-do : Create a cube mesh (Prepare for lights)
-	// To-do : Modify input layout to also support Normals (Prepare for lights)
+	// DONE  : Create a cube mesh (Prepare for lights)
+	// DONE  : Modify input layout to also support Normals (Prepare for lights)
+	
+	// DONE  : Implement Set Rotation for Objects
 
 	// To-do : Implement Light (Point light with radius)
 	// To-do : Implement Phong Shading
@@ -212,34 +214,104 @@ void Application::InitializeScene()
 
 	std::vector<Vertex> triVerts =
 	{
-		{ Vector3(1.f, -0.5f, 0.f), Vector2(1.f, 0.f)},
-		{ Vector3(-1.f, -0.5f, 0.f), Vector2(0.f, 1.f)},
-		{ Vector3(0.f, 1.f, 0.f), Vector2(1.f, 1.f)}
+		{ Vector3(1.f, -0.5f, 0.f), Vector2(1.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(-1.f, -0.5f, 0.f), Vector2(0.f, 1.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(0.f, 1.f, 0.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, -1.f) }
 	};
 
 	std::vector<Vertex> quadVerts =
 	{
-		{ Vector3(1.f, -1.f, 0.f), Vector2(0.f, 0.f)},
-		{ Vector3(-1.f, -1.f, 0.f), Vector2(1.f, 0.f)},
-		{ Vector3(-1.f, 1.f, 0.f), Vector2(0.f, 1.f)},
-
-		{ Vector3(-1.f, 1.f, 0.f), Vector2(0.f, 1.f)},
-		{ Vector3(1.f, 1.f, 0.f), Vector2(1.f, 1.f)},
-		{ Vector3(1.f, -1.f, 0.f), Vector2(0.f, 0.f)}
+		// front face
+		// bottom left tri
+		{ Vector3(1.f, -1.f, -1.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(-1.f, -1.f, -1.f), Vector2(0.f, 1.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(-1.f, 1.f, -1.f), Vector2(0.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+		// top right tri
+		{ Vector3(-1.f, 1.f, -1.f), Vector2(0.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(1.f, 1.f, -1.f), Vector2(1.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(1.f, -1.f, -1.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, -1.f) },
 	};
+
+	std::vector<Vertex> cubeVerts =
+	{
+		// front face
+		// bottom left tri
+		{ Vector3(1.f, -1.f, -1.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(-1.f, -1.f, -1.f), Vector2(0.f, 1.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(-1.f, 1.f, -1.f), Vector2(0.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+		// top right tri
+		{ Vector3(-1.f, 1.f, -1.f), Vector2(0.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(1.f, 1.f, -1.f), Vector2(1.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(1.f, -1.f, -1.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, -1.f) },
+
+		// back face
+		{ Vector3(-1.f, -1.f, 1.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, 1.f) },
+		{ Vector3(1.f, -1.f, 1.f), Vector2(0.f, 1.f), Vector3(0.f, 0.f, 1.f) },
+		{ Vector3(1.f, 1.f, 1.f), Vector2(0.f, 0.f), Vector3(0.f, 0.f, 1.f) },
+
+		{ Vector3(1.f, 1.f, 1.f), Vector2(0.f, 0.f), Vector3(0.f, 0.f, 1.f) },
+		{ Vector3(-1.f, 1.f, 1.f), Vector2(1.f, 0.f), Vector3(0.f, 0.f, 1.f) },
+		{ Vector3(-1.f, -1.f, 1.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, 1.f) },
+
+		// left face
+		{ Vector3(-1.f, -1.f, -1.f), Vector2(1.f, 1.f), Vector3(-1.f, 0.f, 0.f) },
+		{ Vector3(-1.f, -1.f, 1.f), Vector2(0.f, 1.f), Vector3(-1.f, 0.f, 0.f) },
+		{ Vector3(-1.f, 1.f, 1.f), Vector2(0.f, 0.f), Vector3(-1.f, 0.f, 0.f) },
+
+		{ Vector3(-1.f, 1.f, 1.f), Vector2(0.f, 0.f), Vector3(-1.f, 0.f, 0.f) },
+		{ Vector3(-1.f, 1.f, -1.f), Vector2(1.f, 0.f), Vector3(-1.f, 0.f, 0.f) },
+		{ Vector3(-1.f, -1.f, -1.f), Vector2(1.f, 1.f), Vector3(-1.f, 0.f, 0.f) },
+
+		// right face
+		{ Vector3(1.f, -1.f, 1.f), Vector2(1.f, 1.f), Vector3(1.f, 0.f, 0.f)},
+		{ Vector3(1.f, -1.f, -1.f), Vector2(0.f, 1.f), Vector3(1.f, 0.f, 0.f)},
+		{ Vector3(1.f, 1.f, -1.f), Vector2(0.f, 0.f), Vector3(1.f, 0.f, 0.f)},
+
+		{ Vector3(1.f, 1.f, -1.f), Vector2(0.f, 0.f), Vector3(1.f, 0.f, 0.f)},
+		{ Vector3(1.f, 1.f, 1.f), Vector2(1.f, 0.f), Vector3(1.f, 0.f, 0.f)},
+		{ Vector3(1.f, -1.f, 1.f), Vector2(1.f, 1.f), Vector3(1.f, 0.f, 0.f)},
+
+		// top face
+		{ Vector3(1.f, 1.f, -1.f), Vector2(1.f, 1.f), Vector3(0.f, 1.f, 0.f)},
+		{ Vector3(-1.f, 1.f, -1.f), Vector2(0.f, 1.f), Vector3(0.f, 1.f, 0.f)},
+		{ Vector3(-1.f, 1.f, 1.f), Vector2(0.f, 0.f), Vector3(0.f, 1.f, 0.f)},
+
+		{ Vector3(-1.f, 1.f, 1.f), Vector2(0.f, 0.f), Vector3(0.f, 1.f, 0.f)},
+		{ Vector3(1.f, 1.f, 1.f), Vector2(1.f, 0.f), Vector3(0.f, 1.f, 0.f)},
+		{ Vector3(1.f, 1.f, -1.f), Vector2(1.f, 1.f), Vector3(0.f, 1.f, 0.f)},
+
+		// bottom face
+		{ Vector3(1.f, -1.f, 1.f), Vector2(1.f, 1.f), Vector3(0.f, -1.f, 0.f)},
+		{ Vector3(-1.f, -1.f, 1.f), Vector2(0.f, 1.f), Vector3(0.f, -1.f, 0.f)},
+		{ Vector3(-1.f, -1.f, -1.f), Vector2(0.f, 0.f), Vector3(0.f, -1.f, 0.f)},
+
+		{ Vector3(-1.f, -1.f, -1.f), Vector2(0.f, 0.f), Vector3(0.f, -1.f, 0.f)},
+		{ Vector3(1.f, -1.f, -1.f), Vector2(1.f, 0.f), Vector3(0.f, -1.f, 0.f)},
+		{ Vector3(1.f, -1.f, 1.f), Vector2(1.f, 1.f), Vector3(0.f, -1.f, 0.f)}
+	}; 
 
 	// Vertex Buffer done, Matrix Buffer done (no init data and updated every frame via SetPosition()), texture: to-do
 	objects.push_back(
 		Object(graphics->CreateMesh(triVerts, L"Textures/moss.jpg")	
 		));		
 
-	for (int i = -100; i < 100; ++i)
-	{
-		Object obj(graphics->CreateMesh(quadVerts, L"Textures/minecraftstonebrick.jpg"));
-		obj.SetPosition(Vector3(i, i, i));
+	//for (int i = -2; i < 2; ++i)
+	//{
+	//	Object obj(graphics->CreateMesh(quadVerts, L"Textures/minecraftstonebrick.jpg"));
+	//	obj.SetPosition(Vector3(i, i, i));
 
-		objects.push_back(obj);
-	}
+	//	objects.push_back(obj);
+	//}
+
+	Object obj1(graphics->CreateMesh(quadVerts, L"Textures/moss.jpg"));
+	obj1.SetPosition(Vector3(0.f, 0.f, 0.f));
+
+	objects.push_back(obj1);
+
+	Object obj2(graphics->CreateMesh(cubeVerts, L"Textures/minecraftstonebrick.jpg"));
+	obj2.SetPosition(Vector3(-7.f, 0.f, 4.f));
+
+	objects.push_back(obj2);
 }
 
 void Application::UpdateCamera()
@@ -259,10 +331,13 @@ void Application::UpdateObjects()
 {
 	objects[0].SetPosition(Vector3(4.f, sin(counter), cos(counter)));
 
-	for (int i = 1; i < objects.size(); ++i)
-	{
-		objects[i].SetPosition(Vector3(i - 26.f, i - 26.f + cos(counter), i - 26.f + sin(counter)));
-	}
+	objects[2].SetPosition(Vector3(2.f, 2.f + cos(counter), 2.f));
+	//objects[2].SetRotation(12.f * cos(counter) + 12.f, 0.f, 0.f);			//  counter clockwise
+	//objects[2].SetRotation(0.f, 12.f * cos(counter) + 12.f, 0.f);			//	counter clockwise
+	//objects[2].SetRotation(0.f, 0.f, 12.f * cos(counter) + 12.f);			//  counter clockwise
+
+	objects[2].SetRotation(0.f, counter * 100.f, 0.f);
+
 
 }
 

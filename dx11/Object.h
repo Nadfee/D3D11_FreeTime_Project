@@ -3,6 +3,9 @@
 
 #include <memory>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 using MeshPtr = std::shared_ptr<Mesh>;
 
 
@@ -18,11 +21,18 @@ public:
 
 	Vector3 GetPosition() { return position; }
 	void SetPosition(const Vector3& newPos);
+	void SetRotation(float xRad, float yRad, float zRad);
 
 private:
 	MeshPtr mesh;
 	Vector3 position;
-	Matrix worldMatrix;		// This takes up a lot of storage!
+	float xRotationDeg, yRotationDeg, zRotationDeg;
+
+	// These matrices take up a lot of space!
+	Matrix translationMatrix;		
+	Matrix rotationMatrix;
+
+	void FinalizeMatrixResults();
 
 };
 

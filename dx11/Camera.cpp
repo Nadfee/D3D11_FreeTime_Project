@@ -12,7 +12,7 @@ Camera::Camera() :
 	upDir(Vector4(0.f, 1.f, 0.f, 0.f)),
 	camYaw(0),
 	camPitch(0),
-	speed(14.f)
+	speed(7.f)
 {
 
 }
@@ -29,7 +29,7 @@ Camera::Camera(float fovAngleDeg, float aspectRatio, float nearZ, float farZ) :
 	upDir(Vector4(0.f, 1.f, 0.f, 0.f)),
 	camYaw(0),
 	camPitch(0),
-	speed(1.f)
+	speed(3.f)
 {
 	float fovAngleRad = (M_PI / 180.f) * (fovAngleDeg);
 
