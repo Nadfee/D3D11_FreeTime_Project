@@ -183,21 +183,9 @@ void Application::Run()
 		UpdateCamera();
 
 		graphics->Frame();
-
-		/*
-		Game Logic
-			DestroyCube
-				Object("Cube3").SetRender(false)
-
-
-		*/
-
-		graphics->DrawObjects();
-
 		graphics->Present();
 
 		endTime = GetSeconds();
-		
 		SetWindowTextW(hwnd, std::to_wstring(1.f / deltaTime).c_str());
 
 	}
@@ -214,7 +202,7 @@ void Application::InitializeScene()
 	
 	// DONE  : Implement Set Rotation for Objects
 
-	// DONE  : Implement Mesh Manager
+	// DONE  : Implement Mesh Manager (Dynamic insertion and removal of meshes implemented)
 
 	// To-do : Implement Light (Point light with radius)
 	// To-do : Implement Phong Shading
@@ -303,52 +291,30 @@ void Application::InitializeScene()
 		{ Vector3(1.f, -1.f, 1.f), Vector2(1.f, 1.f), Vector3(0.f, -1.f, 0.f)}
 	}; 
 
+	CreateObject("Triangle1", triVerts, L"Textures/moss.jpg");
 
-
-	Object obj1("Triangle1", graphics->CreateMesh(triVerts, L"Textures/moss.jpg"));
-	objectsv2.insert({ obj1.GetID(), obj1 });
-
-
-	Object obj2("Quad1", graphics->CreateMesh(quadVerts, L"Textures/sand.jpg"));
-	obj2.SetPosition(Vector3(0.f, -80.f, 0.f));
-	obj2.SetRotation(90.f, 0.f, 0.f);
-	obj2.SetScaling(76.f);
-	objectsv2.insert({ obj2.GetID(), obj2 });
+	auto& obj = CreateObject("Quad1", quadVerts, L"Textures/sand.jpg");
+	obj.SetPosition(0.f, -80.f, 0.f);
+	obj.SetRotation(90.f, 0.f, 0.f);
+	obj.SetScaling(76.f);
 
 	for (int i = 0; i < 10; ++i)
 	{
-		Object obj3("Cube" + std::to_string(i), graphics->CreateMesh(cubeVerts, L"Textures/minecraftstonebrick.jpg"));
-		obj3.SetPosition(Vector3(4.f * i, 0.f, 4.f));
-
-		objectsv2.insert({ obj3.GetID(), obj3 });
-
+		obj = CreateObject("Cube" + std::to_string(i), cubeVerts, L"Textures/minecraftstonebrick.jpg");
+		obj.SetPosition(4.f * i, 0.f, 4.f);
 	}
 
 	FindObject("Triangle1").SetRender(false);
-	FindObject("Quad1").SetRender(true);
-	FindObject("Cube0").SetRender(true);
-	FindObject("Cube1").SetRender(true);
-	FindObject("Cube2").SetRender(true);
-	FindObject("Cube3").SetRender(true);
-	FindObject("Cube4").SetRender(true);
-	FindObject("Cube5").SetRender(true);
-	FindObject("Cube6").SetRender(true);
-	FindObject("Cube7").SetRender(true);
-	FindObject("Cube8").SetRender(true);
-	FindObject("Cube9").SetRender(true);
-
 }
 
 
 void Application::UpdateObjects()
 {
 	auto cube2 = FindObject("Cube0");
-	cube2.SetPosition(Vector3(cube2.GetPosition().x, sin(counter), cube2.GetPosition().z));
+	cube2.SetPosition(cube2.GetPosition().x, sin(counter), cube2.GetPosition().z);
 	cube2.SetRotation(0.f, counter * 100.f, 0.f);
 
-	FindObject("Triangle1").SetPosition(Vector3(4.f, sin(counter), cos(counter)));
-
-
+	FindObject("Triangle1").SetPosition(4.f, sin(counter), cos(counter));
 
 }
 
@@ -375,6 +341,10 @@ void Application::UpdateCamera()
 	ply.Reset();
 	graphics->UpdateViewMatrix(fpc.GetViewMatrix());
 }
+
+// Used to test dynamic object deletion (Check Input Key G)
+static int deleteInt = 1;
+static int addInt = 1;
 
 void Application::HandleKeyboardInput()
 {
@@ -425,8 +395,10 @@ void Application::HandleKeyboardInput()
 	{
 		ply.moveUpDown = -1.f;
 	}
+
 	if (kbTr.IsKeyPressed(key::G))
 	{
+		// Hide/Unhide an object's render state
 		auto obj = FindObject("Cube0");
 		if (obj.ShouldRender() == true)
 		{
@@ -437,7 +409,36 @@ void Application::HandleKeyboardInput()
 			obj.SetRender(true);
 
 		}
-		OutputDebugStringW(L"Pressed G\n");
+	}
+
+	if (kbTr.IsKeyPressed(key::O))
+	{
+		// If we try to delete an Object and it is deleted, it should crash the program.
+		// Testing dynamic deletion while app is running
+		RemoveObject(std::string("Cube" + std::to_string(deleteInt++)));
+
+		// Set a breakpoint inside here to check unordered_map state
+		if (deleteInt == 8)
+		{
+			OutputDebugStringW(L"Pressed G\n");
+
+		}
+	}
+	if (kbTr.IsKeyPressed(key::P))
+	{
+		// Create a triangle infront of the player
+		std::vector<Vertex> triVerts =
+		{
+			{ Vector3(1.f, -0.5f, 0.f), Vector2(1.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+			{ Vector3(-1.f, -0.5f, 0.f), Vector2(0.f, 1.f), Vector3(0.f, 0.f, -1.f) },
+			{ Vector3(0.f, 1.f, 0.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, -1.f) }
+		};
+
+		auto& obj = CreateObject(std::string("NewTriangles" + std::to_string(addInt++)), triVerts, L"Textures/moss.jpg");
+
+		Vector4 placement = fpc.GetPosition() + fpc.GetForward() * 7.f;
+		obj.SetPosition(placement);
+
 	}
 
 }
@@ -466,7 +467,7 @@ void Application::HandleMouseInput()
 Object& Application::FindObject(const std::string& id)
 {
 	// not found
-	if (objectsv2.find(id) == objectsv2.end())
+	if (objects.find(id) == objects.end())
 	{
 		OutputDebugStringA("Object with name: ");
 		OutputDebugStringA(id.c_str());
@@ -474,7 +475,22 @@ Object& Application::FindObject(const std::string& id)
 		assert(false);
 	}
 
-	return objectsv2.find(id)->second;
+	return objects.find(id)->second;
+}
+
+bool Application::RemoveObject(const std::string& id)
+{
+	bool meshRemoved = graphics->RemoveMesh(FindObject(id).GetMeshID());
+	bool objectRemoved = objects.erase(id);
+
+	return meshRemoved && objectRemoved;
+}
+
+Object& Application::CreateObject(const std::string& id, std::vector<Vertex> verts, const std::wstring textureFilePath)
+{
+	Object obj(id, graphics->CreateMesh(verts, textureFilePath));
+	objects.insert({ obj.GetID(), obj });
+	return FindObject(obj.GetID());
 }
 
 void Application::InitializeMenu()

@@ -23,11 +23,14 @@ public:
 	bool ShouldRender() { return mesh->ShouldRender(); };
 	Vector3 GetPosition() { return position; };
 	const std::string& GetID() { return id; };
+	const std::size_t GetMeshID() { return mesh->GetID(); };
+	void SetPosition(float x, float y, float z);
 	void SetPosition(const Vector3& newPos);
+	void SetPosition(const Vector4& newPos);
 	void SetRotation(float xRad, float yRad, float zRad);
 	void SetScaling(float scale); // uniform scaling
 
-	bool operator==(Object const& other) const { return id == other.id; };		// For unordered map
+	bool operator==(Object const& other) const { return id == other.id; };		// For unordered map. Return false if same name ID! (Not allowed)
 
 private:
 	std::string id;

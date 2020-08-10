@@ -16,6 +16,8 @@ void Graphics::Frame()
 	renderer->ClearMainRenderTarget(DirectX::Colors::Bisque);
 	renderer->SetBackBufferRTV();
 
+	DrawObjects();
+
 	// If we would like to have multiple passes (e.g deferred) then this is the place we would call various pass setups!
 	// For example:
 	/*
@@ -63,9 +65,14 @@ MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData, std::wst
 			
 		);
 
-	meshManager.UpdateMeshes(mesh);
+	meshManager.AddMesh(mesh);
 
 	return mesh;
+}
+
+bool Graphics::RemoveMesh(std::size_t identifier)
+{
+	return meshManager.RemoveMesh(identifier);
 }
 
 

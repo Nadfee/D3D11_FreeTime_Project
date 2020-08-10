@@ -42,9 +42,9 @@ Camera::~Camera()
 void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, float speed, double frameTime)
 {
 	// Default world
-	camForward = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
-	camRight = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-	camUp = Vector4(0.f, 1.f, 0.f, 0.f);
+	Vector4 defaultForward = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+	Vector4 defaultRight = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+	Vector4 defaultUp = Vector4(0.f, 1.f, 0.f, 0.f);
 
 	// Update the pitch and yaw values for camera
 	float deltaPitch = deltaY * 0.002f;
@@ -67,9 +67,9 @@ void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwa
 	Matrix camRotationMatrix = Matrix::CreateFromYawPitchRoll(camYaw, camPitch, 0.f);
 
 	// New orientation
-	camRight = Vector4::Transform(camRight, camRotationMatrix);
-	camUp = Vector4::Transform(camUp, camRotationMatrix);
-	camForward = Vector4::Transform(camForward, camRotationMatrix);
+	camRight = Vector4::Transform(defaultRight, camRotationMatrix);
+	camUp = Vector4::Transform(defaultUp, camRotationMatrix);
+	camForward = Vector4::Transform(defaultForward, camRotationMatrix);
 
 	// Make sure to move with the correct orientation and correct speed (diagonal fix)
 	Vector4 moveDirection = moveLeftRight * camRight + moveForwardBack * camForward + moveUpDown * camUp;

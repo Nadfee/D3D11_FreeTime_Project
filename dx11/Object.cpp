@@ -26,13 +26,32 @@ Object::~Object()
 {
 }
 
+void Object::SetPosition(float x, float y, float z)
+{
+	position.x = x;
+	position.y = y;
+	position.z = z;
+	translationMatrix.Translation(Vector3(x, y, z));		// XMFLOAT provides matrices ready for Pre Mul: Vec x Matrix
+
+	FinalizeMatrixResults();
+}
+
 void Object::SetPosition(const Vector3& newPos)
 {
 	position = newPos;
-	translationMatrix.Translation(Vector3(newPos.x, newPos.y, newPos.z));		// XMFLOAT provides matrices ready for Pre Mul: Vec x Matrix
-
-
+	translationMatrix.Translation(newPos);	
 	FinalizeMatrixResults();
+
+}
+
+void Object::SetPosition(const Vector4& newPos)
+{
+	Vector3 newPosV3 = Vector3(newPos.x, newPos.y, newPos.z);
+
+	position = newPosV3;
+	translationMatrix.Translation(newPosV3);
+	FinalizeMatrixResults();
+
 }
 
 void Object::SetRotation(float xDeg, float yDeg, float zDeg)

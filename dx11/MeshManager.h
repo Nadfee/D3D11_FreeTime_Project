@@ -23,7 +23,9 @@ public:
 	~MeshManager();
 
 	const std::unordered_map<std::size_t, MeshHash>& GetMeshes() { return meshes; };
-	void UpdateMeshes(MeshPtr mesh);
+	void AddMesh(MeshPtr mesh);
+	bool RemoveMesh(std::size_t identifier);
+
 
 private:
 	std::unordered_map<std::size_t, MeshHash> meshes;

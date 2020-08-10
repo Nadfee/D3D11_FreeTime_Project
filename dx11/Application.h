@@ -80,8 +80,7 @@ private:
 	InputTK input;			// Input (DXTK)
 	PlayerInfo ply;
 
-	std::unordered_map<std::string, Object> objectsv2;
-	std::vector<Object> objects;
+	std::unordered_map<std::string, Object> objects;
 	Camera fpc;
 
 	// Timer
@@ -102,6 +101,8 @@ private:
 	void UpdateObjects();
 
 	Object& FindObject(const std::string& id);
+	bool RemoveObject(const std::string& id);
+	Object& CreateObject(const std::string& id, std::vector<Vertex> verts, const std::wstring textureFilePath);
 
 	// Input
 	void UpdateInput();

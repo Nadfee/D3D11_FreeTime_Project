@@ -21,7 +21,7 @@ Mesh::Mesh(ComPtr<ID3D11Buffer> vBuf, unsigned int elementStride, unsigned int e
 	vertexBuffer(vBuf),
 	worldMatrixBuffer(matBuf),
 	vertexElementCount(elementCount),
-	renderOn(false),
+	renderOn(true),
 	managerKey(0),
 	objectMatrix(Matrix::Identity)
 

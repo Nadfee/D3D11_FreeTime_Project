@@ -16,6 +16,7 @@ public:
 	~Graphics();
 
 	MeshPtr CreateMesh(const std::vector<Vertex>& initVertexData, std::wstring textureFilePath);
+	bool RemoveMesh(std::size_t identifier);
 	
 	// Functions that interface with the Renderer
 	void Frame();

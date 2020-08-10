@@ -17,6 +17,7 @@ public:
 	Matrix GetViewMatrix() { return viewMatrix; };
 	Matrix GetProjectionMatrix() { return projectionMatrix; };
 	Vector4 GetPosition() { return position; };
+	Vector4 GetForward() { return camForward; }
 
 	void Update(int deltaX, int deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, float speed, double frameTime);
 
