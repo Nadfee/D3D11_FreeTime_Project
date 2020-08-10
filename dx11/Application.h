@@ -99,6 +99,7 @@ private:
 	void InitializeScene();
 	void UpdateCamera();
 	void UpdateObjects();
+	void RestoreDefaultScene();
 
 	Object& FindObject(const std::string& id);
 	bool RemoveObject(const std::string& id);

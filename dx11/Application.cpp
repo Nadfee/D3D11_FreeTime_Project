@@ -204,12 +204,14 @@ void Application::InitializeScene()
 
 	// DONE  : Implement Mesh Manager (Dynamic insertion and removal of meshes implemented)
 
-	// To-do : Implement Light (Point light with radius)
-	// To-do : Implement Phong Shading
+	// To-do : Implement Light Class (Point light with radius)
+	// To-do : Implement Phong Shading (Point light with radius)
 
 	// To-do : Add tinyobjloader functionality and hook to CreateMesh 
 	//		   (either by creating a finalized vertex vector or overriding the CreateMesh and passing a wrapper-implementation around tinyobjloader)
 	// To-do : Implement a material constant buffer for meshes
+
+	// To-do further down the line : Abstractions for DX11 resources (e.g Vertex Shader, Pixel Shader, Bindable system, etc.)
 
 	graphics->UpdateProjectionMatrix(fpc.GetProjectionMatrix());
 
@@ -318,6 +320,24 @@ void Application::UpdateObjects()
 
 }
 
+// Used to test dynamic object deletion (Check Input Key G)
+static int deleteInt = 1;
+static int addInt = 1;
+
+void Application::RestoreDefaultScene()
+{
+	deleteInt = 1;
+	addInt = 1;
+
+	for (auto& pair : objects)
+	{
+		auto& obj = pair.second;
+		graphics->RemoveMesh(obj.GetMeshID());
+	}
+	objects.clear();
+	InitializeScene();
+}
+
 
 void Application::UpdateInput()
 {
@@ -341,10 +361,6 @@ void Application::UpdateCamera()
 	ply.Reset();
 	graphics->UpdateViewMatrix(fpc.GetViewMatrix());
 }
-
-// Used to test dynamic object deletion (Check Input Key G)
-static int deleteInt = 1;
-static int addInt = 1;
 
 void Application::HandleKeyboardInput()
 {
@@ -502,7 +518,7 @@ void Application::InitializeMenu()
 	mainMenu = CreateMenu();
 
 	subMenus.push_back(CreateMenu());
-	AppendMenuW(subMenus[0], MF_STRING, 0, L"Open");	// ID 0 (wParam)
+	AppendMenuW(subMenus[0], MF_STRING, 0, L"Restore Scene");	// ID 0 (wParam)
 	AppendMenuW(subMenus[0], MF_STRING, 1, L"Close");	// ID 1
 	AppendMenuW(mainMenu, MF_POPUP, (UINT_PTR)subMenus[0], L"Options");		// Drop down options
 
@@ -514,7 +530,8 @@ void Application::HandleWinGUI(const WPARAM& wParam)
 	{
 	case 0:
 	{
-		OutputDebugStringW(L"Open\n");
+		RestoreDefaultScene();
+		OutputDebugStringW(L"Scene Restored\n");
 		MessageBeep(MB_OK);
 		break;
 	}
