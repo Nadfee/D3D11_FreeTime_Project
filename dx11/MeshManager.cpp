@@ -8,9 +8,11 @@ MeshManager::~MeshManager()
 {
 }
 
-void MeshManager::UpdateMeshes(std::string identifier, MeshPtr mesh)
+void MeshManager::UpdateMeshes(MeshPtr mesh)
 {
+	std::size_t key = std::hash<MeshPtr>{}(mesh);
+	mesh->SetManagerKey(key);
 	MeshHash hash = { mesh };
 
-	meshes.insert({ identifier, hash });
+	meshes.insert({ key, hash });
 }

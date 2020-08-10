@@ -51,22 +51,19 @@ void Graphics::UpdateProjectionMatrix(const Matrix& mat)
 	renderer->UpdateProjectionMatrix(mat);
 }
 
-MeshPtr Graphics::CreateMesh(std::string identifier, const std::vector<Vertex>& initVertexData, std::wstring textureFilePath)
+MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData, std::wstring textureFilePath)
 {
-	// Not done
 	MeshPtr mesh = std::make_shared<Mesh>(
-		renderer->CreateVertexBuffer(initVertexData),		// Vertex Buffer of mesh initialized
+		renderer->CreateVertexBuffer(initVertexData ),	
 		sizeof(Vertex),
 		initVertexData.size(),
-		renderer->CreateConstantBuffer(nullptr, sizeof(Matrix), true, true),		// world matrix buffer
-		renderer->CreateSRVFromFileWIC(textureFilePath),
-		renderer->GetDeviceContext()						// done: pass devcon ref
-															// todo: init texture
+		renderer->CreateConstantBuffer(nullptr, sizeof(Matrix), true, true),
+		renderer->CreateSRVFromFileWIC(textureFilePath)	
 														
 			
 		);
 
-	meshManager.UpdateMeshes(identifier, mesh);
+	meshManager.UpdateMeshes(mesh);
 
 	return mesh;
 }
@@ -74,28 +71,13 @@ MeshPtr Graphics::CreateMesh(std::string identifier, const std::vector<Vertex>& 
 
 void Graphics::DrawObjects()
 {
-	for (const auto& mesh : meshManager.GetMeshes())
+	for (const auto& pair : meshManager.GetMeshes())
 	{
-		if (mesh.second.mesh->ShouldRender())
+		auto& mesh = pair.second.mesh;
+		if (mesh->ShouldRender())
 		{
-			renderer->DrawMeshes(mesh.second.mesh);
+			renderer->DrawMesh(mesh);
 		}
 	}
 }
-
-/**
-void Renderer::DrawMeshes(Mesh mesh)
-{
-	---mesh.GetWorldMatrixBuffer()...---
-
-	devCon->VSSetConstantBuffers(0, 1, worldMatrixBuffer.GetAddressOf());
-	devCon->PSSetShaderResources(0, 1, diffuseTextureSRV.GetAddressOf());
-	devCon->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	devCon->Draw(vertexElementCount, 0);
-
-
-}
-
-
-*/
 

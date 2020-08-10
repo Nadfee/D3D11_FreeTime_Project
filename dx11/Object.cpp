@@ -1,24 +1,25 @@
 #include "Object.h"
 
-Object::Object(MeshPtr initMesh) :
-	mesh(initMesh),
-	translationMatrix(Matrix(
-		Vector4(1.f, 0.f, 0.f, 0.f),
-		Vector4(0.f, 1.f, 0.f, 0.f),
-		Vector4(0.f, 0.f, 1.f, 0.f),
-		Vector4(0.f, 0.f, 0.f, 1.f)
-	)),
-	rotationMatrix(Matrix(
-		Vector4(1.f, 0.f, 0.f, 0.f),
-		Vector4(0.f, 1.f, 0.f, 0.f),
-		Vector4(0.f, 0.f, 1.f, 0.f),
-		Vector4(0.f, 0.f, 0.f, 1.f)
-	)),
+Object::Object() :
 	xRotationDeg(0.f),
 	yRotationDeg(0.f),
 	zRotationDeg(0.f)
 {
+	FinalizeMatrixResults();
+}
 
+
+Object::Object(const std::string& identifier, MeshPtr initMesh) :
+	mesh(initMesh),
+	translationMatrix(Matrix::Identity),
+	rotationMatrix(Matrix::Identity),
+	scalingMatrix(Matrix::Identity),
+	xRotationDeg(0.f),
+	yRotationDeg(0.f),
+	zRotationDeg(0.f),
+	id(identifier)
+{
+	FinalizeMatrixResults();
 }
 
 Object::~Object()
@@ -52,7 +53,13 @@ void Object::SetRotation(float xDeg, float yDeg, float zDeg)
 	FinalizeMatrixResults();
 }
 
+void Object::SetScaling(float scale)
+{
+	scalingMatrix = Matrix::CreateScale(scale);
+	FinalizeMatrixResults();
+}
+
 void Object::FinalizeMatrixResults()
 {
-	mesh->UpdateWorldMatrix(rotationMatrix * translationMatrix); // Rotation first in local space
+	mesh->UpdateWorldMatrix(scalingMatrix * rotationMatrix * translationMatrix); // Rotation first in local space
 }

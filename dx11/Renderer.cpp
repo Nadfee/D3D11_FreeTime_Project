@@ -11,6 +11,8 @@ Renderer::Renderer(const HWND& hwnd, const int& clientWidth, const int& clientHe
 
 Renderer::~Renderer()
 {
+	OutputDebugStringW(L"Hello\n");
+
 }
 
 // Note: We are also clearing depth stencil view in conjunction with render target
@@ -53,8 +55,11 @@ void Renderer::UpdateProjectionMatrix(const Matrix& mat)
 	UpdateMatrix(projectionMatrixBuffer, mat);
 }
 
-void Renderer::DrawMeshes(const MeshPtr& mesh)
+void Renderer::DrawMesh(const MeshPtr& mesh)
 {
+	// To-do Update buffers too here instead of inside the mesh to remove DeviceContext dependency for Mesh
+	MapUpdate(mesh->GetWorldMatrixBuffer(), (void*)&mesh->GetWorldMatrix(), sizeof(Matrix));
+
 	GetDeviceContext()->VSSetConstantBuffers(0, 1, mesh->GetWorldMatrixBuffer().GetAddressOf());
 	GetDeviceContext()->PSSetShaderResources(0, 1, mesh->GetDiffusedTextureSRV().GetAddressOf());
 	GetDeviceContext()->IASetVertexBuffers(0, 1, mesh->GetVertexBuffer().GetAddressOf(), &mesh->GetStride(), &mesh->GetOffset());
@@ -63,6 +68,17 @@ void Renderer::DrawMeshes(const MeshPtr& mesh)
 }
 
 
+
+void Renderer::MapUpdate(const ComPtr<ID3D11Buffer> buffer, void* data, unsigned int dataSize)
+{
+
+	D3D11_MAPPED_SUBRESOURCE subres;
+	HRESULT hr = GetDeviceContext()->Map(buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subres);
+
+	std::memcpy(subres.pData, data, dataSize);
+
+	GetDeviceContext()->Unmap(buffer.Get(), 0);
+}
 
 ComPtr<ID3D11Buffer> Renderer::CreateVertexBuffer(const std::vector<Vertex>& initVertexData)
 {

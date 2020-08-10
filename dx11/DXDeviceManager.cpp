@@ -17,7 +17,7 @@ DXDeviceManager::DXDeviceManager(const HWND& hwnd, const int& clientWidth, const
 
 DXDeviceManager::~DXDeviceManager()
 {
-	debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);			// Show whats alive
+	//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);			// Show whats alive
 
 	swapChain = nullptr;
 	device = nullptr;

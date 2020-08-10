@@ -22,11 +22,11 @@ public:
 	MeshManager();
 	~MeshManager();
 
-	const std::unordered_map<std::string, MeshHash>& GetMeshes() { return meshes; };
-	void UpdateMeshes(std::string identifier, MeshPtr mesh);
+	const std::unordered_map<std::size_t, MeshHash>& GetMeshes() { return meshes; };
+	void UpdateMeshes(MeshPtr mesh);
 
 private:
-	std::unordered_map<std::string, MeshHash> meshes;
+	std::unordered_map<std::size_t, MeshHash> meshes;
 	
 
 };

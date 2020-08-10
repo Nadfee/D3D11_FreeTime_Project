@@ -9,6 +9,7 @@
 #include <memory>
 #include <array>
 #include <vector>
+#include <cstring>
 
 using namespace DirectX::SimpleMath;
 
@@ -46,8 +47,9 @@ public:
 	void UpdateViewMatrix(const Matrix& mat);
 	void UpdateProjectionMatrix(const Matrix& mat);
 
-	void DrawMeshes(const MeshPtr& mesh);
+	void DrawMesh(const MeshPtr& mesh);
 
+	void MapUpdate(const ComPtr<ID3D11Buffer> buffer, void* data, unsigned int dataSize);
 	ComPtr<ID3D11Buffer> CreateVertexBuffer(const std::vector<Vertex>& initVertexData);
 	ComPtr<ID3D11Buffer> CreateConstantBuffer(void* initBufferData, unsigned int bufferSize, bool cpuWrite, bool dynamic);
 	ComPtr<ID3D11ShaderResourceView> CreateSRVFromFileWIC(std::wstring fileName, bool mipMapOn = true);

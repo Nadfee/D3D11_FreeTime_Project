@@ -173,16 +173,25 @@ void Application::Run()
 
 		//devMan->GetSwapChain()->Present(0, 0);
 
+		//for (auto& obj : objects)
+		//{
+		//	obj.SetRender(true);
+		//}
+
 		UpdateObjects();
 		UpdateInput();
 		UpdateCamera();
 
 		graphics->Frame();
 
-		for (auto& obj : objects)
-		{
-			obj.SetRenderOn();
-		}
+		/*
+		Game Logic
+			DestroyCube
+				Object("Cube3").SetRender(false)
+
+
+		*/
+
 		graphics->DrawObjects();
 
 		graphics->Present();
@@ -190,8 +199,7 @@ void Application::Run()
 		endTime = GetSeconds();
 		
 		SetWindowTextW(hwnd, std::to_wstring(1.f / deltaTime).c_str());
-		//OutputDebugStringW(std::to_wstring(1.f / deltaTime).c_str());
-		//OutputDebugStringW(L"\n");
+
 	}
 
 }
@@ -206,7 +214,7 @@ void Application::InitializeScene()
 	
 	// DONE  : Implement Set Rotation for Objects
 
-	// To-do : Implement Mesh Manager
+	// DONE  : Implement Mesh Manager
 
 	// To-do : Implement Light (Point light with radius)
 	// To-do : Implement Phong Shading
@@ -214,6 +222,8 @@ void Application::InitializeScene()
 	// To-do : Add tinyobjloader functionality and hook to CreateMesh 
 	//		   (either by creating a finalized vertex vector or overriding the CreateMesh and passing a wrapper-implementation around tinyobjloader)
 	// To-do : Implement a material constant buffer for meshes
+
+	graphics->UpdateProjectionMatrix(fpc.GetProjectionMatrix());
 
 	std::vector<Vertex> triVerts =
 	{
@@ -293,54 +303,55 @@ void Application::InitializeScene()
 		{ Vector3(1.f, -1.f, 1.f), Vector2(1.f, 1.f), Vector3(0.f, -1.f, 0.f)}
 	}; 
 
-	// Vertex Buffer done, Matrix Buffer done (no init data and updated every frame via SetPosition()), texture: to-do
-	objects.push_back(
-		Object(graphics->CreateMesh("Triangle1", triVerts, L"Textures/moss.jpg")	
-		));		
 
 
-	Object obj1(graphics->CreateMesh("RotatingCube1", quadVerts, L"Textures/moss.jpg"));
-	obj1.SetPosition(Vector3(0.f, 0.f, 0.f));
+	Object obj1("Triangle1", graphics->CreateMesh(triVerts, L"Textures/moss.jpg"));
+	objectsv2.insert({ obj1.GetID(), obj1 });
 
-	objects.push_back(obj1);
+
+	Object obj2("Quad1", graphics->CreateMesh(quadVerts, L"Textures/sand.jpg"));
+	obj2.SetPosition(Vector3(0.f, -80.f, 0.f));
+	obj2.SetRotation(90.f, 0.f, 0.f);
+	obj2.SetScaling(76.f);
+	objectsv2.insert({ obj2.GetID(), obj2 });
 
 	for (int i = 0; i < 10; ++i)
 	{
-		Object obj2(graphics->CreateMesh(std::string("Cube" + std::to_string(i)), cubeVerts, L"Textures/minecraftstonebrick.jpg"));
-		obj2.SetPosition(Vector3(4.f * i, 0.f, 4.f));
+		Object obj3("Cube" + std::to_string(i), graphics->CreateMesh(cubeVerts, L"Textures/minecraftstonebrick.jpg"));
+		obj3.SetPosition(Vector3(4.f * i, 0.f, 4.f));
 
-		objects.push_back(obj2);
+		objectsv2.insert({ obj3.GetID(), obj3 });
+
 	}
 
+	FindObject("Triangle1").SetRender(false);
+	FindObject("Quad1").SetRender(true);
+	FindObject("Cube0").SetRender(true);
+	FindObject("Cube1").SetRender(true);
+	FindObject("Cube2").SetRender(true);
+	FindObject("Cube3").SetRender(true);
+	FindObject("Cube4").SetRender(true);
+	FindObject("Cube5").SetRender(true);
+	FindObject("Cube6").SetRender(true);
+	FindObject("Cube7").SetRender(true);
+	FindObject("Cube8").SetRender(true);
+	FindObject("Cube9").SetRender(true);
 
-	graphics->UpdateProjectionMatrix(fpc.GetProjectionMatrix());
 }
 
-void Application::UpdateCamera()
-{
-	auto& msSt = input.mouseCurrState;
-
-	// Update only if mouse in relative mode
-	if (msSt.positionMode == DirectX::Mouse::MODE_RELATIVE)
-		fpc.Update(msSt.x, msSt.y, ply.moveLeftRight, ply.moveForwardBack, ply.moveUpDown, ply.speed, deltaTime);
-	
-	ply.Reset();
-	graphics->UpdateViewMatrix(fpc.GetViewMatrix());
-}
 
 void Application::UpdateObjects()
 {
-	objects[0].SetPosition(Vector3(4.f, sin(counter), cos(counter)));
+	auto cube2 = FindObject("Cube0");
+	cube2.SetPosition(Vector3(cube2.GetPosition().x, sin(counter), cube2.GetPosition().z));
+	cube2.SetRotation(0.f, counter * 100.f, 0.f);
 
-	objects[2].SetPosition(Vector3(2.f, 2.f + cos(counter), 2.f));
-	//objects[2].SetRotation(12.f * cos(counter) + 12.f, 0.f, 0.f);			//  counter clockwise
-	//objects[2].SetRotation(0.f, 12.f * cos(counter) + 12.f, 0.f);			//	counter clockwise
-	//objects[2].SetRotation(0.f, 0.f, 12.f * cos(counter) + 12.f);			//  counter clockwise
+	FindObject("Triangle1").SetPosition(Vector3(4.f, sin(counter), cos(counter)));
 
-	objects[2].SetRotation(0.f, counter * 100.f, 0.f);
 
 
 }
+
 
 void Application::UpdateInput()
 {
@@ -351,6 +362,18 @@ void Application::UpdateInput()
 
 	HandleKeyboardInput();
 	HandleMouseInput();
+}
+
+void Application::UpdateCamera()
+{
+	auto& msSt = input.mouseCurrState;
+
+	// Update only if mouse in relative mode
+	if (msSt.positionMode == DirectX::Mouse::MODE_RELATIVE)
+		fpc.Update(msSt.x, msSt.y, ply.moveLeftRight, ply.moveForwardBack, ply.moveUpDown, ply.speed, deltaTime);
+
+	ply.Reset();
+	graphics->UpdateViewMatrix(fpc.GetViewMatrix());
 }
 
 void Application::HandleKeyboardInput()
@@ -402,6 +425,20 @@ void Application::HandleKeyboardInput()
 	{
 		ply.moveUpDown = -1.f;
 	}
+	if (kbTr.IsKeyPressed(key::G))
+	{
+		auto obj = FindObject("Cube0");
+		if (obj.ShouldRender() == true)
+		{
+			obj.SetRender(false);
+		}
+		else
+		{
+			obj.SetRender(true);
+
+		}
+		OutputDebugStringW(L"Pressed G\n");
+	}
 
 }
 
@@ -424,6 +461,20 @@ void Application::HandleMouseInput()
 		//OutputDebugStringW(L"\n");
 	}
 
+}
+
+Object& Application::FindObject(const std::string& id)
+{
+	// not found
+	if (objectsv2.find(id) == objectsv2.end())
+	{
+		OutputDebugStringA("Object with name: ");
+		OutputDebugStringA(id.c_str());
+		OutputDebugStringA(" not found!\n");
+		assert(false);
+	}
+
+	return objectsv2.find(id)->second;
 }
 
 void Application::InitializeMenu()

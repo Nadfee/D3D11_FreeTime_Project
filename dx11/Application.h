@@ -80,6 +80,7 @@ private:
 	InputTK input;			// Input (DXTK)
 	PlayerInfo ply;
 
+	std::unordered_map<std::string, Object> objectsv2;
 	std::vector<Object> objects;
 	Camera fpc;
 
@@ -99,6 +100,8 @@ private:
 	void InitializeScene();
 	void UpdateCamera();
 	void UpdateObjects();
+
+	Object& FindObject(const std::string& id);
 
 	// Input
 	void UpdateInput();

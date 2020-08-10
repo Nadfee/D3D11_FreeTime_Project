@@ -5,24 +5,26 @@ Mesh::Mesh() :
 	offset(0),
 	vertexBuffer(nullptr),
 	worldMatrixBuffer(nullptr),
-	devCon(nullptr),
 	vertexElementCount(0),
-	renderOn(false)
+	renderOn(false),
+	managerKey(0),
+	objectMatrix(Matrix::Identity)
 {
 }
 
 Mesh::Mesh(ComPtr<ID3D11Buffer> vBuf, unsigned int elementStride, unsigned int elementCount,
 	ComPtr<ID3D11Buffer> matBuf,
-	ComPtr<ID3D11ShaderResourceView> textureSRV,
-	DeviceContextPtr devCon) :
+	ComPtr<ID3D11ShaderResourceView> textureSRV) :
 	diffuseTextureSRV(textureSRV),
 	stride(elementStride),
 	offset(0),
 	vertexBuffer(vBuf),
 	worldMatrixBuffer(matBuf),
-	devCon(devCon),
 	vertexElementCount(elementCount),
-	renderOn(false)
+	renderOn(false),
+	managerKey(0),
+	objectMatrix(Matrix::Identity)
+
 {
 
 }
@@ -31,23 +33,12 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::Draw()
+void Mesh::Draw(bool shouldDraw)
 {
-	//devCon->VSSetConstantBuffers(0, 1, worldMatrixBuffer.GetAddressOf());
-	//devCon->PSSetShaderResources(0, 1, diffuseTextureSRV.GetAddressOf());
-	//devCon->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	//devCon->Draw(vertexElementCount, 0);
-
-	renderOn = true;
+	renderOn = shouldDraw;
 }
 
 void Mesh::UpdateWorldMatrix(const Matrix& newMat)
 {
-	D3D11_MAPPED_SUBRESOURCE subres;
-	HRESULT hr = devCon->Map(worldMatrixBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subres);
-
-	Matrix* mat = (Matrix*)subres.pData;
-	*mat = newMat;
-
-	devCon->Unmap(worldMatrixBuffer.Get(), 0);
+	objectMatrix = newMat;
 }

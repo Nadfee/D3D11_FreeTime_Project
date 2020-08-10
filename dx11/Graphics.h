@@ -15,7 +15,7 @@ public:
 	Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHeight);
 	~Graphics();
 
-	MeshPtr CreateMesh(std::string identifier, const std::vector<Vertex>& initVertexData, std::wstring textureFilePath);
+	MeshPtr CreateMesh(const std::vector<Vertex>& initVertexData, std::wstring textureFilePath);
 	
 	// Functions that interface with the Renderer
 	void Frame();
