@@ -14,6 +14,7 @@ E : Ascend
 O : Remove the static cube objects in order (WARNING: Intentionally asserting false once you try to remove when there are none of the static cubes left)  
 P : Inserts a triangle infront of the camera  
 G : Toggle render state for the floating and rotating cube object (Object and mesh still lives but user can choose whether to render it or not)  
+GUI -> Options -> Restore Scene : Restores initial scene from startup  
   
 Project should build (DirectXTK Desktop Win10 NuGet package is installed so make sure it is restored)  
 Make sure that SubSystem is set to Windows and the dependencies "d3d11.lib", "dxgi.lib", "d3dcompiler.lib" are added  
