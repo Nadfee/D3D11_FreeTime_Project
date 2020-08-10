@@ -306,17 +306,17 @@ void Application::InitializeScene()
 		obj.SetPosition(4.f * i, 0.f, 4.f);
 	}
 
-	FindObject("Triangle1").SetRender(false);
+	FindObject("Triangle1").SetRender(true);
 }
 
 
 void Application::UpdateObjects()
 {
-	auto cube2 = FindObject("Cube0");
-	cube2.SetPosition(cube2.GetPosition().x, sin(counter), cube2.GetPosition().z);
-	cube2.SetRotation(0.f, counter * 100.f, 0.f);
+	auto cube0 = FindObject("Cube0");
+	cube0.SetPosition(cube0.GetPosition().x, sin(counter), cube0.GetPosition().z);
+	cube0.SetRotation(0.f, counter * 100.f, 0.f);
 
-	FindObject("Triangle1").SetPosition(4.f, sin(counter), cos(counter));
+	FindObject("Triangle1").SetPosition(4.f, cosf(counter), cos(counter));
 
 }
 
@@ -329,11 +329,15 @@ void Application::RestoreDefaultScene()
 	deleteInt = 1;
 	addInt = 1;
 
+	// Deleting meshes via iterator instead of RemoveObject
+	// We don't care about which meshes are to be deleted first
+	// FindObject also takes time
 	for (auto& pair : objects)
 	{
 		auto& obj = pair.second;
 		graphics->RemoveMesh(obj.GetMeshID());
 	}
+
 	objects.clear();
 	InitializeScene();
 }
