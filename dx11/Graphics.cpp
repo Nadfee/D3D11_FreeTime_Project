@@ -17,6 +17,7 @@ void Graphics::Frame()
 	renderer->SetBackBufferRTV();
 
 	DrawObjects();
+	Present();
 
 	// If we would like to have multiple passes (e.g deferred) then this is the place we would call various pass setups!
 	// For example:

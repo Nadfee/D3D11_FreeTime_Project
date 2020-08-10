@@ -156,37 +156,24 @@ void Application::Run()
 			DispatchMessage(&msg);
 		}
 
-
-
-		// Maybe this kind of setup?
+		// Scenes.. Maybe this kind of setup?
 		// SceneManager.SetActiveScene(ID);	--> Should hold Scenes 
 		// SceneManager.Run();
 			// Objects.Render()	 --> Requires a shared ptr to a device context
 				// Mesh.Render() --> Interfaces with a device context 
-
-		// Rendering - Clear screen for now - Temporary
-		//graphics->GetRenderer()->Render();
-		//devCon->ClearRenderTargetView(devMan->GetRTV().Get(), DirectX::Colors::BurlyWood);
-		//devCon->OMSetRenderTargets(1, devMan->GetRTV().GetAddressOf(), NULL);
-
-		//devCon->RSSetViewports(1, &devMan->GetVP());
-
-		//devMan->GetSwapChain()->Present(0, 0);
-
-		//for (auto& obj : objects)
-		//{
-		//	obj.SetRender(true);
-		//}
 
 		UpdateObjects();
 		UpdateInput();
 		UpdateCamera();
 
 		graphics->Frame();
-		graphics->Present();
 
 		endTime = GetSeconds();
 		SetWindowTextW(hwnd, std::to_wstring(1.f / deltaTime).c_str());
+		OutputDebugStringW(std::to_wstring(1.f / deltaTime).c_str());
+		OutputDebugStringW(L"\n");
+
+
 
 	}
 
@@ -320,7 +307,7 @@ void Application::UpdateObjects()
 
 }
 
-// Used to test dynamic object deletion (Check Input Key G)
+// Used to test dynamic object deletion
 static int deleteInt = 1;
 static int addInt = 1;
 
