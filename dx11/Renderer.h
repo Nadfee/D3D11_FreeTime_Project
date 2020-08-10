@@ -1,5 +1,6 @@
 #pragma once
 #include "DXDeviceManager.h"
+#include "Mesh.h"
 
 #include <DirectXColors.h>
 
@@ -12,6 +13,7 @@
 using namespace DirectX::SimpleMath;
 
 using DevManPtr = std::shared_ptr<DXDeviceManager>;
+using MeshPtr = std::shared_ptr<Mesh>;
 
 struct Matrices
 {
@@ -44,6 +46,7 @@ public:
 	void UpdateViewMatrix(const Matrix& mat);
 	void UpdateProjectionMatrix(const Matrix& mat);
 
+	void DrawMeshes(const MeshPtr& mesh);
 
 	ComPtr<ID3D11Buffer> CreateVertexBuffer(const std::vector<Vertex>& initVertexData);
 	ComPtr<ID3D11Buffer> CreateConstantBuffer(void* initBufferData, unsigned int bufferSize, bool cpuWrite, bool dynamic);

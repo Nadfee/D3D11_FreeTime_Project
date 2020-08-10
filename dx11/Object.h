@@ -17,11 +17,12 @@ public:
 	Object(MeshPtr initMesh);
 	~Object();
 
-	void Render() { mesh->Draw(); };
+	void SetRenderOn() { mesh->Draw(); };
 
 	Vector3 GetPosition() { return position; }
 	void SetPosition(const Vector3& newPos);
 	void SetRotation(float xRad, float yRad, float zRad);
+
 
 private:
 	MeshPtr mesh;

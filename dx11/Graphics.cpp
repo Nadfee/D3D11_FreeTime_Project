@@ -51,7 +51,7 @@ void Graphics::UpdateProjectionMatrix(const Matrix& mat)
 	renderer->UpdateProjectionMatrix(mat);
 }
 
-MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData, std::wstring textureFilePath)
+MeshPtr Graphics::CreateMesh(std::string identifier, const std::vector<Vertex>& initVertexData, std::wstring textureFilePath)
 {
 	// Not done
 	MeshPtr mesh = std::make_shared<Mesh>(
@@ -66,6 +66,36 @@ MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData, std::wst
 			
 		);
 
+	meshManager.UpdateMeshes(identifier, mesh);
+
 	return mesh;
 }
+
+
+void Graphics::DrawObjects()
+{
+	for (const auto& mesh : meshManager.GetMeshes())
+	{
+		if (mesh.second.mesh->ShouldRender())
+		{
+			renderer->DrawMeshes(mesh.second.mesh);
+		}
+	}
+}
+
+/**
+void Renderer::DrawMeshes(Mesh mesh)
+{
+	---mesh.GetWorldMatrixBuffer()...---
+
+	devCon->VSSetConstantBuffers(0, 1, worldMatrixBuffer.GetAddressOf());
+	devCon->PSSetShaderResources(0, 1, diffuseTextureSRV.GetAddressOf());
+	devCon->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	devCon->Draw(vertexElementCount, 0);
+
+
+}
+
+
+*/
 

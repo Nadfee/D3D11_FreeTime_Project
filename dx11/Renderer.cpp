@@ -53,6 +53,15 @@ void Renderer::UpdateProjectionMatrix(const Matrix& mat)
 	UpdateMatrix(projectionMatrixBuffer, mat);
 }
 
+void Renderer::DrawMeshes(const MeshPtr& mesh)
+{
+	GetDeviceContext()->VSSetConstantBuffers(0, 1, mesh->GetWorldMatrixBuffer().GetAddressOf());
+	GetDeviceContext()->PSSetShaderResources(0, 1, mesh->GetDiffusedTextureSRV().GetAddressOf());
+	GetDeviceContext()->IASetVertexBuffers(0, 1, mesh->GetVertexBuffer().GetAddressOf(), &mesh->GetStride(), &mesh->GetOffset());
+	GetDeviceContext()->Draw(mesh->GetVertexCount(), 0);
+
+}
+
 
 
 ComPtr<ID3D11Buffer> Renderer::CreateVertexBuffer(const std::vector<Vertex>& initVertexData)
@@ -235,7 +244,7 @@ void Renderer::ForwardRenderSetup()
 
 	// Create sampler state
 	D3D11_SAMPLER_DESC samplerDesc = { };
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; //  D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT -- If you use this an go away diagonally to a texture, you will see clearly when LOD changes! (Quality change)
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;

@@ -18,7 +18,7 @@ public:
 	Matrix GetProjectionMatrix() { return projectionMatrix; };
 	Vector4 GetPosition() { return position; };
 
-	void Update(int deltaX, int deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, double frameTime);
+	void Update(int deltaX, int deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, float speed, double frameTime);
 
 private:
 	Matrix viewMatrix, projectionMatrix;
@@ -28,7 +28,6 @@ private:
 
 	float fovAngle, aspectRatio, nearZ, farZ;
 	float camPitch, camYaw;
-	float speed;
 
 
 

@@ -11,8 +11,7 @@ Camera::Camera() :
 	camRight(Vector4(1.f, 0.f, 0.f, 0.f)),
 	upDir(Vector4(0.f, 1.f, 0.f, 0.f)),
 	camYaw(0),
-	camPitch(0),
-	speed(7.f)
+	camPitch(0)
 {
 
 }
@@ -28,8 +27,7 @@ Camera::Camera(float fovAngleDeg, float aspectRatio, float nearZ, float farZ) :
 	camRight(Vector4(1.f, 0.f, 0.f, 0.f)),
 	upDir(Vector4(0.f, 1.f, 0.f, 0.f)),
 	camYaw(0),
-	camPitch(0),
-	speed(3.f)
+	camPitch(0)
 {
 	float fovAngleRad = (M_PI / 180.f) * (fovAngleDeg);
 
@@ -41,7 +39,7 @@ Camera::~Camera()
 {
 }
 
-void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, double frameTime)
+void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwardBack, float moveUpDown, float speed, double frameTime)
 {
 	// Default world
 	camForward = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
@@ -65,9 +63,8 @@ void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwa
 		camPitch = -89.f * (M_PI / 180.f);
 	}
 
+	// Just look infront
 	Matrix camRotationMatrix = Matrix::CreateFromYawPitchRoll(camYaw, camPitch, 0.f);
-	Vector4 camTarget = Vector4::Transform(camForward, camRotationMatrix);
-	camTarget.Normalize();
 
 	// New orientation
 	camRight = Vector4::Transform(camRight, camRotationMatrix);
@@ -81,8 +78,8 @@ void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwa
 	position += moveDirection * speed * (float)frameTime;
 
 	// Position the target 'infront' of the camera.
-	camTarget = position + camTarget;
+	Vector4 camTarget = position + camForward;
 
-	viewMatrix = DirectX::XMMatrixLookAtLH(position, position + camForward, camUp);
+	viewMatrix = DirectX::XMMatrixLookAtLH(position, camTarget, camUp);
 
 }

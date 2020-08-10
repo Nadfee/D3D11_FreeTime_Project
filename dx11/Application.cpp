@@ -181,8 +181,9 @@ void Application::Run()
 
 		for (auto& obj : objects)
 		{
-			obj.Render();
+			obj.SetRenderOn();
 		}
+		graphics->DrawObjects();
 
 		graphics->Present();
 
@@ -204,6 +205,8 @@ void Application::InitializeScene()
 	// DONE  : Modify input layout to also support Normals (Prepare for lights)
 	
 	// DONE  : Implement Set Rotation for Objects
+
+	// To-do : Implement Mesh Manager
 
 	// To-do : Implement Light (Point light with radius)
 	// To-do : Implement Phong Shading
@@ -292,39 +295,37 @@ void Application::InitializeScene()
 
 	// Vertex Buffer done, Matrix Buffer done (no init data and updated every frame via SetPosition()), texture: to-do
 	objects.push_back(
-		Object(graphics->CreateMesh(triVerts, L"Textures/moss.jpg")	
+		Object(graphics->CreateMesh("Triangle1", triVerts, L"Textures/moss.jpg")	
 		));		
 
-	//for (int i = -2; i < 2; ++i)
-	//{
-	//	Object obj(graphics->CreateMesh(quadVerts, L"Textures/minecraftstonebrick.jpg"));
-	//	obj.SetPosition(Vector3(i, i, i));
 
-	//	objects.push_back(obj);
-	//}
-
-	Object obj1(graphics->CreateMesh(quadVerts, L"Textures/moss.jpg"));
+	Object obj1(graphics->CreateMesh("RotatingCube1", quadVerts, L"Textures/moss.jpg"));
 	obj1.SetPosition(Vector3(0.f, 0.f, 0.f));
 
 	objects.push_back(obj1);
 
-	Object obj2(graphics->CreateMesh(cubeVerts, L"Textures/minecraftstonebrick.jpg"));
-	obj2.SetPosition(Vector3(-7.f, 0.f, 4.f));
+	for (int i = 0; i < 10; ++i)
+	{
+		Object obj2(graphics->CreateMesh(std::string("Cube" + std::to_string(i)), cubeVerts, L"Textures/minecraftstonebrick.jpg"));
+		obj2.SetPosition(Vector3(4.f * i, 0.f, 4.f));
 
-	objects.push_back(obj2);
+		objects.push_back(obj2);
+	}
+
+
+	graphics->UpdateProjectionMatrix(fpc.GetProjectionMatrix());
 }
 
 void Application::UpdateCamera()
 {
 	auto& msSt = input.mouseCurrState;
 
+	// Update only if mouse in relative mode
 	if (msSt.positionMode == DirectX::Mouse::MODE_RELATIVE)
-		fpc.Update(msSt.x, msSt.y, ply.moveLeftRight, ply.moveForwardBack, ply.moveUpDown, deltaTime);
-
-	graphics->UpdateViewMatrix(fpc.GetViewMatrix());
-	graphics->UpdateProjectionMatrix(fpc.GetProjectionMatrix());
+		fpc.Update(msSt.x, msSt.y, ply.moveLeftRight, ply.moveForwardBack, ply.moveUpDown, ply.speed, deltaTime);
 	
 	ply.Reset();
+	graphics->UpdateViewMatrix(fpc.GetViewMatrix());
 }
 
 void Application::UpdateObjects()
@@ -410,18 +411,18 @@ void Application::HandleMouseInput()
 	auto& msSt = input.mouseCurrState;
 
 	// Print delta mouse position
-	//if (msSt.positionMode == DirectX::Mouse::MODE_RELATIVE)
-	//{
-	//	OutputDebugStringW(L"X: ");
-	//	OutputDebugStringW(std::to_wstring(msSt.x).c_str());
-	//	OutputDebugStringW(L"\n");
+	if (msSt.positionMode == DirectX::Mouse::MODE_ABSOLUTE)
+	{
+		//OutputDebugStringW(L"X: ");
+		//OutputDebugStringW(std::to_wstring(msSt.x).c_str());
+		//OutputDebugStringW(L"\n");
 
-	//	OutputDebugStringW(L"Y: ");
-	//	OutputDebugStringW(std::to_wstring(msSt.y).c_str());
-	//	OutputDebugStringW(L"\n");
+		//OutputDebugStringW(L"Y: ");
+		//OutputDebugStringW(std::to_wstring(msSt.y).c_str());
+		//OutputDebugStringW(L"\n");
 
-	//	OutputDebugStringW(L"\n");
-	//}
+		//OutputDebugStringW(L"\n");
+	}
 
 }
 

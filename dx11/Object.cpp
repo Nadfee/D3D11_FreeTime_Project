@@ -28,7 +28,8 @@ Object::~Object()
 void Object::SetPosition(const Vector3& newPos)
 {
 	position = newPos;
-	translationMatrix.Translation(Vector3(newPos.x, newPos.y, newPos.z));
+	translationMatrix.Translation(Vector3(newPos.x, newPos.y, newPos.z));		// XMFLOAT provides matrices ready for Pre Mul: Vec x Matrix
+
 
 	FinalizeMatrixResults();
 }

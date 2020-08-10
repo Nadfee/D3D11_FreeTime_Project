@@ -42,12 +42,13 @@ struct MenuBar
 	std::vector<HMENU> subMenus;
 };
 
-struct PlayerPosition
+struct PlayerInfo
 {
 	// [-1, 1]
 	float moveForwardBack = 0.f;
 	float moveLeftRight = 0.f;
 	float moveUpDown = 0.f;
+	float speed = 7.f;
 
 	void Reset()
 	{
@@ -77,7 +78,7 @@ private:
 	GraphicsPtr graphics;	// DX11
 	MenuBar menuBar;		// Win32 GUI
 	InputTK input;			// Input (DXTK)
-	PlayerPosition ply;
+	PlayerInfo ply;
 
 	std::vector<Object> objects;
 	Camera fpc;

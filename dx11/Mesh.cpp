@@ -6,7 +6,9 @@ Mesh::Mesh() :
 	vertexBuffer(nullptr),
 	worldMatrixBuffer(nullptr),
 	devCon(nullptr),
-	vertexElementCount(0) {
+	vertexElementCount(0),
+	renderOn(false)
+{
 }
 
 Mesh::Mesh(ComPtr<ID3D11Buffer> vBuf, unsigned int elementStride, unsigned int elementCount,
@@ -19,7 +21,8 @@ Mesh::Mesh(ComPtr<ID3D11Buffer> vBuf, unsigned int elementStride, unsigned int e
 	vertexBuffer(vBuf),
 	worldMatrixBuffer(matBuf),
 	devCon(devCon),
-	vertexElementCount(elementCount)
+	vertexElementCount(elementCount),
+	renderOn(false)
 {
 
 }
@@ -30,10 +33,12 @@ Mesh::~Mesh()
 
 void Mesh::Draw()
 {
-	devCon->VSSetConstantBuffers(0, 1, worldMatrixBuffer.GetAddressOf());
-	devCon->PSSetShaderResources(0, 1, diffuseTextureSRV.GetAddressOf());
-	devCon->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	devCon->Draw(vertexElementCount, 0);
+	//devCon->VSSetConstantBuffers(0, 1, worldMatrixBuffer.GetAddressOf());
+	//devCon->PSSetShaderResources(0, 1, diffuseTextureSRV.GetAddressOf());
+	//devCon->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	//devCon->Draw(vertexElementCount, 0);
+
+	renderOn = true;
 }
 
 void Mesh::UpdateWorldMatrix(const Matrix& newMat)
