@@ -15,3 +15,5 @@ E : Ascend
 
 Project should build (DirectXTK Desktop Win10 NuGet package is installed so make sure it is restored)
 Make sure that SubSystem is set to Windows and the dependencies "d3d11.lib", "dxgi.lib", "d3dcompiler.lib" are added
+
+![Alt text](/dx11/ss1.png?raw=true "Basic Screenshot")
