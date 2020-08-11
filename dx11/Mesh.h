@@ -37,7 +37,7 @@ private:
 	bool renderOn;
 	std::size_t managerKey;
 	ComPtr<ID3D11Buffer> vertexBuffer;
-	ComPtr<ID3D11Buffer> worldMatrixBuffer;			// Maybe change to templated ConstantBuffer
+	ComPtr<ID3D11Buffer> worldMatrixBuffer;					// Maybe change to templated ConstantBuffer
 	ComPtr<ID3D11ShaderResourceView> diffuseTextureSRV;
 	UINT stride;
 	UINT offset;

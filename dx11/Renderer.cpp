@@ -57,7 +57,6 @@ void Renderer::UpdateProjectionMatrix(const Matrix& mat)
 
 void Renderer::DrawMesh(const MeshPtr& mesh)
 {
-	// To-do Update buffers too here instead of inside the mesh to remove DeviceContext dependency for Mesh
 	MapUpdate(mesh->GetWorldMatrixBuffer(), (void*)&mesh->GetWorldMatrix(), sizeof(Matrix));
 
 	GetDeviceContext()->VSSetConstantBuffers(0, 1, mesh->GetWorldMatrixBuffer().GetAddressOf());

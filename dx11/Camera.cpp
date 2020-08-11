@@ -63,7 +63,6 @@ void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwa
 		camPitch = -89.f * (M_PI / 180.f);
 	}
 
-	// Just look infront
 	Matrix camRotationMatrix = Matrix::CreateFromYawPitchRoll(camYaw, camPitch, 0.f);
 
 	// New orientation

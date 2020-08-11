@@ -57,7 +57,7 @@ void Graphics::UpdateProjectionMatrix(const Matrix& mat)
 MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData, std::wstring textureFilePath)
 {
 	MeshPtr mesh = std::make_shared<Mesh>(
-		renderer->CreateVertexBuffer(initVertexData ),	
+		renderer->CreateVertexBuffer(initVertexData),	
 		sizeof(Vertex),
 		initVertexData.size(),
 		renderer->CreateConstantBuffer(nullptr, sizeof(Matrix), true, true),
