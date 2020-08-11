@@ -30,7 +30,7 @@ public:
 	void SetRotation(float xRad, float yRad, float zRad);
 	void SetScaling(float scale); // uniform scaling
 
-	bool operator==(Object const& other) const { return id == other.id; };		// For unordered map. Return false if same name ID! (Not allowed)
+	bool operator==(Object const& other) const { return id == other.id; };		// For unordered map. Return true if same name ID! (Will replace old object)
 
 private:
 	std::string id;
