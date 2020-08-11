@@ -23,14 +23,14 @@ public:
 
 	void SetManagerKey(const std::size_t& key) { managerKey = key; }
 
-	const ComPtr<ID3D11Buffer>& GetVertexBuffer() { return vertexBuffer; };
-	const ComPtr<ID3D11Buffer>& GetWorldMatrixBuffer() { return worldMatrixBuffer; };
-	const Matrix& GetWorldMatrix() { return objectMatrix; };
+	const ComPtr<ID3D11Buffer>& GetVertexBuffer() { return vertexBuffer; }
+	const ComPtr<ID3D11Buffer>& GetWorldMatrixBuffer() { return worldMatrixBuffer; }
+	const Matrix& GetWorldMatrix() { return objectMatrix; }
 	const std::size_t& GetID() { return managerKey; }
-	const ComPtr<ID3D11ShaderResourceView>& GetDiffusedTextureSRV() { return diffuseTextureSRV; };
-	const UINT& GetStride() { return stride; };
-	const UINT& GetOffset() { return offset; };
-	const unsigned int& GetVertexCount() { return vertexElementCount; };
+	const ComPtr<ID3D11ShaderResourceView>& GetDiffusedTextureSRV() { return diffuseTextureSRV; }
+	const UINT& GetStride() { return stride; }
+	const UINT& GetOffset() { return offset; }
+	const unsigned int& GetVertexCount() { return vertexElementCount; }
 
 
 private:

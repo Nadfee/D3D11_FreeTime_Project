@@ -48,11 +48,15 @@ public:
 	void UpdateProjectionMatrix(const Matrix& mat);
 
 	void DrawMesh(const MeshPtr& mesh);
+	void BindLight(unsigned int slot, ComPtr<ID3D11ShaderResourceView> srv);
 
-	void MapUpdate(const ComPtr<ID3D11Buffer> buffer, void* data, unsigned int dataSize);
+	void MapUpdate(const ComPtr<ID3D11Buffer> buffer, void* data, unsigned int dataSize, D3D11_MAP mapType);
 	ComPtr<ID3D11Buffer> CreateVertexBuffer(const std::vector<Vertex>& initVertexData);
 	ComPtr<ID3D11Buffer> CreateConstantBuffer(void* initBufferData, unsigned int bufferSize, bool cpuWrite, bool dynamic);
+	ComPtr<ID3D11Buffer> CreateStructuredBuffer(void* initBufferData, unsigned int elementSize, unsigned int elementCount, bool cpuWrite, bool dynamic);
 	ComPtr<ID3D11ShaderResourceView> CreateSRVFromFileWIC(std::wstring fileName, bool mipMapOn = true);
+	ComPtr<ID3D11ShaderResourceView> CreateBufferShaderResourceView(ID3D11Buffer* buffer, unsigned int elementCount);
+	
 
 	// Let's start
 	void ForwardRenderSetup();
@@ -77,6 +81,8 @@ private:
 
 	ComPtr<ID3D11Buffer> viewMatrixBuffer;
 	ComPtr<ID3D11Buffer> projectionMatrixBuffer;
+
+	ComPtr<ID3D11Buffer> pointLightsBuffer;
 
 	ComPtr<ID3D11DepthStencilView> dsv;
 	ComPtr<ID3D11SamplerState> sampler;		// D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT

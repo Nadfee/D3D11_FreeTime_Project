@@ -81,6 +81,9 @@ private:
 	PlayerInfo ply;
 
 	std::unordered_map<std::string, Object> objects;
+	std::shared_ptr<PointLight> light1;
+	std::shared_ptr<PointLight> light2;
+
 	Camera fpc;
 
 	// Timer

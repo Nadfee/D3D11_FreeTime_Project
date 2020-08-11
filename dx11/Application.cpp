@@ -34,8 +34,8 @@ Application::Application(const HINSTANCE& hInstance,
 	// Setup camera
 	fpc = Camera(70.f, (float)clientWidth / (float)clientHeight);
 
-	
-
+	light1 = graphics->CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), 0.2f);
+	light2 = graphics->CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 0.f), 10.f);
 }
 
 Application::~Application()
@@ -170,8 +170,8 @@ void Application::Run()
 
 		endTime = GetSeconds();
 		SetWindowTextW(hwnd, std::to_wstring(1.f / deltaTime).c_str());
-		OutputDebugStringW(std::to_wstring(1.f / deltaTime).c_str());
-		OutputDebugStringW(L"\n");
+		//OutputDebugStringW(std::to_wstring(1.f / deltaTime).c_str());
+		//OutputDebugStringW(L"\n");
 
 
 
@@ -293,7 +293,11 @@ void Application::InitializeScene()
 		obj.SetPosition(4.f * i, 0.f, 4.f);
 	}
 
-	FindObject("Triangle1").SetRender(true);
+	FindObject("Triangle1").SetRender(false);
+
+	// Light
+	//light1 = graphics->CreateLight(Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 1.f), 10.f);
+
 }
 
 
@@ -316,19 +320,15 @@ void Application::RestoreDefaultScene()
 	deleteInt = 1;
 	addInt = 1;
 
-	// Deleting meshes via iterator instead of RemoveObject
-	// We don't care about which meshes are to be deleted first
-	// FindObject also takes time
-	for (auto& pair : objects)
+	// Can't simultaneously delete object in Objects in range-for!
+	for (auto pair : objects)
 	{
-		auto& obj = pair.second;
-		graphics->RemoveMesh(obj.GetMeshID());
+		graphics->RemoveMesh(pair.second.GetMeshID());
 	}
-
 	objects.clear();
+
 	InitializeScene();
 }
-
 
 void Application::UpdateInput()
 {

@@ -1,9 +1,11 @@
 #include "Graphics.h"
 
 Graphics::Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHeight) :
-	renderer(std::make_shared<Renderer>(hwnd, clientWidth, clientHeight))
+	renderer(std::make_shared<Renderer>(hwnd, clientWidth, clientHeight)),
+	lightManager(renderer->CreateStructuredBuffer(nullptr, sizeof(PointLightData), 500, true, true), 500)		// Set space for 500 lights in Structured Buffer
 {
 	renderer->ForwardRenderSetup();
+	lightManager.SetBufferView(renderer->CreateBufferShaderResourceView(lightManager.GetLightsBuffer().Get(), lightManager.GetMaxLightsCount()));
 }
 
 Graphics::~Graphics()
@@ -16,6 +18,7 @@ void Graphics::Frame()
 	renderer->ClearMainRenderTarget(DirectX::Colors::Bisque);
 	renderer->SetBackBufferRTV();
 
+	UpdateLights();
 	DrawObjects();
 	Present();
 
@@ -52,6 +55,33 @@ void Graphics::UpdateViewMatrix(const Matrix& mat)
 void Graphics::UpdateProjectionMatrix(const Matrix& mat)
 {
 	renderer->UpdateProjectionMatrix(mat);
+}
+
+PointLightPtr Graphics::CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, float initRadius)
+{
+	std::shared_ptr<PointLight> light(std::make_shared<PointLight>(initPos, initColor, initRadius));
+	lightManager.AddLight(light);
+	return light;
+}
+
+bool Graphics::RemovePointLight(const std::string& identifier)
+{
+	return lightManager.RemoveLight(identifier);
+}
+
+
+void Graphics::TempCall()
+{
+
+}
+
+void Graphics::UpdateLights()
+{
+	lightManager.UpdateLightData();
+	unsigned int dataSize = lightManager.GetPointLightData().size() * sizeof(PointLightData);
+
+	renderer->MapUpdate(lightManager.GetLightsBuffer(), (void*)lightManager.GetPointLightData().data(), dataSize, D3D11_MAP_WRITE_DISCARD);
+	renderer->BindLight(1, lightManager.GetBufferView());
 }
 
 MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData, std::wstring textureFilePath)

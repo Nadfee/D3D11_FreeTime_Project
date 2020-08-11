@@ -5,6 +5,7 @@ Renderer::Renderer(const HWND& hwnd, const int& clientWidth, const int& clientHe
 	clientWidth(clientWidth),
 	clientHeight(clientHeight)
 {
+	// Make room for Lights (Structured Buffer)
 
 
 }
@@ -57,7 +58,7 @@ void Renderer::UpdateProjectionMatrix(const Matrix& mat)
 
 void Renderer::DrawMesh(const MeshPtr& mesh)
 {
-	MapUpdate(mesh->GetWorldMatrixBuffer(), (void*)&mesh->GetWorldMatrix(), sizeof(Matrix));
+	MapUpdate(mesh->GetWorldMatrixBuffer(), (void*)&mesh->GetWorldMatrix(), sizeof(Matrix), D3D11_MAP_WRITE_DISCARD);
 
 	GetDeviceContext()->VSSetConstantBuffers(0, 1, mesh->GetWorldMatrixBuffer().GetAddressOf());
 	GetDeviceContext()->PSSetShaderResources(0, 1, mesh->GetDiffusedTextureSRV().GetAddressOf());
@@ -66,15 +67,20 @@ void Renderer::DrawMesh(const MeshPtr& mesh)
 
 }
 
+void Renderer::BindLight(unsigned int slot, ComPtr<ID3D11ShaderResourceView> srv)
+{
+	GetDeviceContext()->PSSetShaderResources(slot, 1, srv.GetAddressOf());
+}
 
 
-void Renderer::MapUpdate(const ComPtr<ID3D11Buffer> buffer, void* data, unsigned int dataSize)
+
+void Renderer::MapUpdate(const ComPtr<ID3D11Buffer> buffer, void* data, unsigned int dataSize, D3D11_MAP mapType)
 {
 
 	D3D11_MAPPED_SUBRESOURCE subres;
-	HRESULT hr = GetDeviceContext()->Map(buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subres);
+	HRESULT hr = GetDeviceContext()->Map(buffer.Get(), 0, mapType, 0, &subres);
 
-	std::memcpy(subres.pData, data, dataSize);
+	std::memcpy(subres.pData, data, dataSize);	
 
 	GetDeviceContext()->Unmap(buffer.Get(), 0);
 }
@@ -154,6 +160,56 @@ ComPtr<ID3D11Buffer> Renderer::CreateConstantBuffer(void* initBufferData, unsign
 	return buffer;
 }
 
+ComPtr<ID3D11Buffer> Renderer::CreateStructuredBuffer(void* initBufferData, unsigned int elementSize, unsigned int elementCount, bool cpuWrite, bool dynamic)
+{
+	unsigned int bufferSize = elementSize * elementCount;
+
+	ComPtr<ID3D11Buffer> buffer;
+
+	D3D11_BUFFER_DESC desc = { 0 };
+	desc.ByteWidth = bufferSize + (elementSize - (bufferSize % elementSize));
+	//desc.Usage = D3D11_USAGE_DYNAMIC;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	desc.StructureByteStride = elementSize;
+
+	if (cpuWrite && dynamic) // gpu read, cpu write
+	{
+		desc.Usage = D3D11_USAGE_DYNAMIC;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	}
+	else if (!cpuWrite && dynamic)
+	{
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.CPUAccessFlags = 0;
+	}
+	else
+	{
+		desc.Usage = D3D11_USAGE_IMMUTABLE;
+		desc.CPUAccessFlags = 0;
+	}
+
+	HRESULT hr;
+	auto dev = deviceManager->GetDevice();
+
+	if (initBufferData != nullptr)
+	{
+		D3D11_SUBRESOURCE_DATA initData = { 0 };
+		initData.pSysMem = initBufferData;
+		hr = dev->CreateBuffer(&desc, &initData, buffer.GetAddressOf());
+	}
+	else
+	{
+		hr = dev->CreateBuffer(&desc, NULL, buffer.GetAddressOf());
+	}
+
+	if (FAILED(hr))
+		assert(false);
+
+	return buffer;
+}
+
 ComPtr<ID3D11ShaderResourceView> Renderer::CreateSRVFromFileWIC(std::wstring fileName, bool mipMapOn)
 {
 	ComPtr<ID3D11ShaderResourceView> srv;
@@ -179,6 +235,22 @@ ComPtr<ID3D11ShaderResourceView> Renderer::CreateSRVFromFileWIC(std::wstring fil
 		);
 	}
 
+	assert(SUCCEEDED(hr));
+	return srv;
+}
+
+ComPtr<ID3D11ShaderResourceView> Renderer::CreateBufferShaderResourceView(ID3D11Buffer* buffer, unsigned int elementCount)
+{
+	ComPtr<ID3D11ShaderResourceView> srv;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC desc = { };
+	desc.Format = DXGI_FORMAT_UNKNOWN;
+	desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	desc.Buffer.FirstElement = 0;
+	desc.Buffer.NumElements = elementCount;
+	//desc.Buffer.ElementWidth = structSize;
+	
+	HRESULT hr = GetDevice()->CreateShaderResourceView(buffer, &desc, srv.GetAddressOf());
 	assert(SUCCEEDED(hr));
 	return srv;
 }

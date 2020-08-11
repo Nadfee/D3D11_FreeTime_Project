@@ -37,6 +37,5 @@ VS_OUT VSMAIN( VS_IN input )
     output.uv = input.uv;
     output.nor = normalize(mul(worldMatrix, float4(normalize(input.nor), 0.f)));
     
-	
 	return output;
 }
