@@ -296,17 +296,11 @@ void Application::InitializeScene()
 	FindObject("Triangle1").SetRender(false);
 
 	// Light WORKS NOW!!!!
-	light1 = graphics->CreatePointLight("Light0", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), 0.f);
-	light2 = graphics->CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 0.f, 0.f), 2.f);
-	light2 = graphics->CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 0.f), 2.f);
-	light2 = graphics->CreatePointLight("Light3", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 0.f), 2.f);
-	light2 = graphics->CreatePointLight("Light4", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 0.f), 2.f);
-	light2 = graphics->CreatePointLight("Light5", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f), 2.f);
+	CreatePointLight("Light0", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 0.f, 0.f), 0.f);
+	CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f), 0.f);
+	CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), 0.f);
 
-	graphics->RemovePointLight("Light1");
-
-	light2 = graphics->CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 0.f, 1.f), 2.f);
-
+	RemovePointLight("Light1");
 
 }
 
@@ -318,6 +312,8 @@ void Application::UpdateObjects()
 	cube0.SetRotation(0.f, counter * 100.f, 0.f);
 
 	FindObject("Triangle1").SetPosition(4.f, cosf(counter), cos(counter));
+
+	FindLight("Light0")->SetColor(0.5f + sinf(counter) * 0.5f, 0.f, 0.f);
 
 }
 
@@ -508,6 +504,34 @@ Object& Application::CreateObject(const std::string& id, std::vector<Vertex> ver
 	Object obj(id, graphics->CreateMesh(verts, textureFilePath));
 	objects.insert({ obj.GetID(), obj });
 	return FindObject(obj.GetID());
+}
+
+PointLightPtr Application::FindLight(const std::string& id)
+{
+	// not found
+	if (lights.find(id) == lights.end())
+	{
+		OutputDebugStringA("Light with name: ");
+		OutputDebugStringA(id.c_str());
+		OutputDebugStringA(" not found!\n");
+		assert(false);
+	}
+
+	return lights.find(id)->second.light;
+}
+
+PointLightPtr Application::CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, float initRadius)
+{
+	auto light = graphics->CreatePointLight(identifier, initPos, initColor, initRadius);
+	PointLightHash hash = { light };
+
+	lights.insert({ identifier, hash });
+	return light;
+}
+
+bool Application::RemovePointLight(const std::string& identifier)
+{
+	return graphics->RemovePointLight(identifier);
 }
 
 void Application::InitializeMenu()

@@ -4,11 +4,11 @@ LightManager::LightManager()
 {
 }
 
-LightManager::LightManager(ComPtr<ID3D11Buffer> structuredBuffer, unsigned int numLights) :
+LightManager::LightManager(ComPtr<ID3D11Buffer> structuredBuffer, unsigned int maxLights) :
 	lightsBuffer(structuredBuffer),
-	numLights(numLights)
+	maxLights(maxLights)
 {
-	pointLightData.reserve(numLights);
+	pointLightData.reserve(maxLights);
 }
 
 LightManager::~LightManager()

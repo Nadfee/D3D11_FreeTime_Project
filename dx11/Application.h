@@ -81,8 +81,7 @@ private:
 	PlayerInfo ply;
 
 	std::unordered_map<std::string, Object> objects;
-	std::shared_ptr<PointLight> light1;
-	std::shared_ptr<PointLight> light2;
+	std::unordered_map<std::string, PointLightHash> lights;
 
 	Camera fpc;
 
@@ -104,9 +103,15 @@ private:
 	void UpdateObjects();
 	void RestoreDefaultScene();
 
+	// Object
 	Object& FindObject(const std::string& id);
 	bool RemoveObject(const std::string& id);
 	Object& CreateObject(const std::string& id, std::vector<Vertex> verts, const std::wstring textureFilePath);
+
+	// Light
+	PointLightPtr FindLight(const std::string& id);
+	PointLightPtr CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, float initRadius);
+	bool RemovePointLight(const std::string& identifier);
 
 	// Input
 	void UpdateInput();

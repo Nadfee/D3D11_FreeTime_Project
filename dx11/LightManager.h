@@ -25,7 +25,7 @@ public:
 	void AddLight(std::shared_ptr<PointLight> newLight);
 	bool RemoveLight(const std::string& identifier);
 
-	unsigned int GetMaxLightsCount() { return numLights; }
+	unsigned int GetMaxLightsCount() { return maxLights; }
 	ComPtr<ID3D11Buffer> GetLightsBuffer() { return lightsBuffer; }
 	const std::vector<PointLightData>& GetPointLightData() { return pointLightData; };
 	
@@ -46,7 +46,8 @@ private:
 	ComPtr<ID3D11Buffer> lightsBuffer;
 	ComPtr<ID3D11ShaderResourceView> lightsBufferView;
 
-	unsigned int numLights;
+	unsigned int maxLights;
+
 
 
 };
