@@ -305,6 +305,8 @@ void Application::InitializeScene()
 
 	graphics->RemovePointLight("Light1");
 
+	light2 = graphics->CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 0.f, 1.f), 2.f);
+
 
 }
 
