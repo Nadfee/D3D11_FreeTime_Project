@@ -37,7 +37,10 @@ public:
 
 private:
 
+	// Data storage in Vector and Unordered Map used to re-arrange the data accordingly
 	std::vector<PointLightData> pointLightData;
+	std::unordered_map<std::string, unsigned int> pointLightsDataOffsets;
+
 	std::unordered_map<std::string, PointLightHash> pointLights;
 
 	ComPtr<ID3D11Buffer> lightsBuffer;

@@ -16,7 +16,7 @@ class PointLight
 {
 public:
 	PointLight();
-	PointLight(const Vector3& initPos, const Vector3& initColor, float initRadius);
+	PointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, float initRadius);
 	~PointLight();
 
 	const PointLightData& GetPointLightData() { return data; }

@@ -34,8 +34,6 @@ Application::Application(const HINSTANCE& hInstance,
 	// Setup camera
 	fpc = Camera(70.f, (float)clientWidth / (float)clientHeight);
 
-	light1 = graphics->CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), 0.2f);
-	light2 = graphics->CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 0.f), 10.f);
 }
 
 Application::~Application()
@@ -191,7 +189,9 @@ void Application::InitializeScene()
 
 	// DONE  : Implement Mesh Manager (Dynamic insertion and removal of meshes implemented)
 
-	// To-do : Implement Light Class (Point light with radius)
+	// DONE  : Implement Light Class (Point light with radius)
+	// DONE  : Implement Light Manager (For Point Lights for now)
+
 	// To-do : Implement Phong Shading (Point light with radius)
 
 	// To-do : Add tinyobjloader functionality and hook to CreateMesh 
@@ -295,8 +295,16 @@ void Application::InitializeScene()
 
 	FindObject("Triangle1").SetRender(false);
 
-	// Light
-	//light1 = graphics->CreateLight(Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 1.f), 10.f);
+	// Light WORKS NOW!!!!
+	light1 = graphics->CreatePointLight("Light0", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), 0.f);
+	light2 = graphics->CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 0.f, 0.f), 2.f);
+	light2 = graphics->CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 0.f), 2.f);
+	light2 = graphics->CreatePointLight("Light3", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 0.f), 2.f);
+	light2 = graphics->CreatePointLight("Light4", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 1.f, 0.f), 2.f);
+	light2 = graphics->CreatePointLight("Light5", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f), 2.f);
+
+	graphics->RemovePointLight("Light1");
+
 
 }
 
