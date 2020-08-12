@@ -10,12 +10,12 @@ PointLight::PointLight() :
 {
 }
 
-PointLight::PointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, float initRadius) :
+PointLight::PointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, const Vector3& initAttenuation) :
 	id(identifier),
 	data{
 	initPos,
 	initColor,
-	Vector3(0.f, initRadius, 0.f)
+	initAttenuation
 	},
 	shouldUpdate(true)
 {

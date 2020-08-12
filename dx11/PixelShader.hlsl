@@ -33,15 +33,15 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
     lightBuffer.GetDimensions(lightCount, size);
     for (uint i = 0; i < lightCount; ++i)
     {
-        if (lightBuffer[i].attenuation.y == 0.f)
+        if (length(lightBuffer[i].lightColor) == 0.f)
         {
             break;
         }
         
         // temporary, we set radius to -1 to indicate a light that shouldn't be calculated but exists
-        if (lightBuffer[i].attenuation.y >= 0.f)
+        if (lightBuffer[i].attenuation.x >= 0.f)
         {
-            float attenuationFactor[3] = { 0.f, lightBuffer[i].attenuation.y, 0.02f };
+            float attenuationFactor[3] = { lightBuffer[i].attenuation.x, lightBuffer[i].attenuation.y, lightBuffer[i].attenuation.z };
         
             float3 posToLight = lightBuffer[i].lightPosition - input.worldPos;
             float distanceToLight = length(posToLight);
@@ -51,15 +51,15 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
         
             float diffuseFactor = saturate(dot(posToLightDir, normal));
         
-        //finalColor += diffuseFactor * distFactor * textureSample;
+            //finalColor += diffuseFactor * distFactor * textureSample;
         
             float4 diffuseColor = diffuseFactor * (textureSample + float4(lightBuffer[i].lightColor, 0.f));
             diffuseColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
         
             finalColor += diffuseColor;
         
-        //finalColor += diffuseFactor * (textureSample);
-        //finalColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
+            //finalColor += diffuseFactor * (textureSample);
+            //finalColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
 
         }
         

@@ -193,6 +193,8 @@ void Application::InitializeScene()
 	// DONE  : Implement Light Manager (For Point Lights for now)
 
 	// To-do : Implement Phong Shading (Point light with radius)
+		// To-do : Hook-up attenuation correctly
+		// To-do : Decide on how to identify a light that shouldn't be calculated (e.g constant attenuation factor as something below 0)
 
 	// To-do : Add tinyobjloader functionality and hook to CreateMesh 
 	//		   (either by creating a finalized vertex vector or overriding the CreateMesh and passing a wrapper-implementation around tinyobjloader)
@@ -293,15 +295,13 @@ void Application::InitializeScene()
 		obj.SetPosition(4.f * i, 0.f, 4.f);
 	}
 
-	FindObject("Triangle1").SetRender(false);
+	FindObject("Triangle1").SetRender(true);
 
 	// Light WORKS NOW!!!!
-	CreatePointLight("Light0", Vector3(0.f, 10.f, 0.f), Vector3(1.f, 0.f, 0.f), 0.4f);
-	CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.f), 1.f);
-	CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), 0.7f);
-	CreatePointLight("Light3", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), 0.4f);
-
-
+	CreatePointLight("Light0", Vector3(0.f, 10.f, 0.f), Vector3(1.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.1f));
+	CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.f), Vector3(0.f, 1.f, 0.1f));
+	CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
+	CreatePointLight("Light3", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.4f, 0.1f));
 
 }
 
@@ -315,7 +315,7 @@ void Application::UpdateObjects()
 	FindObject("Triangle1").SetPosition(4.f, cosf(counter), cos(counter));
 
 	FindLight("Light0")->SetPosition( /*17.f + 15.f * cosf(counter * 3.f)*/ 4.f, 1.f, 0.f);
-	//FindLight("Light0")->SetRadius(0.6f + cosf(counter * 2.5f) * 0.5f);
+	//FindLight("Light0")->SetAttenuation(0.f, 0.5f + cosf(counter) * 0.5f, 0.f);
 
 	FindLight("Light1")->SetPosition( 23.f, 5.f, 12.f + 15.f * cosf(counter * 3.f));
 	FindLight("Light2")->SetPosition(-12.f + 5.f * cosf(counter * 3.f), 2, 5.f * sinf(counter * 3.f));
@@ -338,6 +338,13 @@ void Application::RestoreDefaultScene()
 		graphics->RemoveMesh(pair.second.GetMeshID());
 	}
 	objects.clear();
+
+	for (auto pair : lights)
+	{
+		graphics->RemovePointLight(pair.second.light->GetID());
+	}
+	lights.clear();
+
 
 	InitializeScene();
 }
@@ -542,9 +549,9 @@ PointLightPtr Application::FindLight(const std::string& id)
 	return lights.find(id)->second.light;
 }
 
-PointLightPtr Application::CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, float initRadius)
+PointLightPtr Application::CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, const Vector3& initAttenuation)
 {
-	auto light = graphics->CreatePointLight(identifier, initPos, initColor, initRadius);
+	auto light = graphics->CreatePointLight(identifier, initPos, initColor, initAttenuation);
 	PointLightHash hash = { light };
 
 	lights.insert({ identifier, hash });

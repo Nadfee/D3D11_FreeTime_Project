@@ -59,9 +59,9 @@ void Graphics::UpdateProjectionMatrix(const Matrix& mat)
 	renderer->UpdateProjectionMatrix(mat);
 }
 
-PointLightPtr Graphics::CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, float initRadius)
+PointLightPtr Graphics::CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, const Vector3& initAttenuation)
 {
-	std::shared_ptr<PointLight> light(std::make_shared<PointLight>(identifier, initPos, initColor, initRadius));
+	std::shared_ptr<PointLight> light(std::make_shared<PointLight>(identifier, initPos, initColor, initAttenuation));
 	lightManager.AddLight(light);
 	return light;
 }

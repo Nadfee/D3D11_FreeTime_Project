@@ -110,7 +110,7 @@ private:
 
 	// Light
 	PointLightPtr FindLight(const std::string& id);
-	PointLightPtr CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, float initRadius);
+	PointLightPtr CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, const Vector3& initRadius);
 	bool RemovePointLight(const std::string& identifier);
 
 	// Input
