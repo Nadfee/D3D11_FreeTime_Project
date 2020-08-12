@@ -10,7 +10,7 @@ struct PointLight
 {
     float3 lightPosition;
     float3 lightColor;
-    float radius;
+    float3 attenuation;
 };
 
 Texture2D diffuseTexture : register(t0);
@@ -33,21 +33,21 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
     lightBuffer.GetDimensions(lightCount, size);
     for (uint i = 0; i < lightCount; ++i)
     {
-        if (lightBuffer[i].radius == 0.f)
+        if (lightBuffer[i].attenuation.y == 0.f)
         {
             break;
         }
         
         // temporary, we set radius to -1 to indicate a light that shouldn't be calculated but exists
-        if (lightBuffer[i].radius >= 0.f)
+        if (lightBuffer[i].attenuation.y >= 0.f)
         {
-            float attenuationFactor[3] = { 0.f, lightBuffer[i].radius, 0.02f };
+            float attenuationFactor[3] = { 0.f, lightBuffer[i].attenuation.y, 0.02f };
         
             float3 posToLight = lightBuffer[i].lightPosition - input.worldPos;
             float distanceToLight = length(posToLight);
             float3 posToLightDir = normalize(posToLight);
        
-            float distFactor = saturate(-distanceToLight / lightBuffer[i].radius + 1.f);
+            float distFactor = saturate(-distanceToLight / lightBuffer[i].attenuation.y + 1.f);
         
             float diffuseFactor = saturate(dot(posToLightDir, normal));
         

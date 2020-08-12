@@ -4,7 +4,7 @@ PointLight::PointLight() :
 	data{
 	Vector3(0.f, 0.f, 0.f),
 	Vector3(0.f, 0.f, 0.f),
-	0
+	Vector3(0.f, 0.f, 0.f)
 	},
 	shouldUpdate(true)
 {
@@ -15,7 +15,7 @@ PointLight::PointLight(const std::string& identifier, const Vector3& initPos, co
 	data{
 	initPos,
 	initColor,
-	initRadius
+	Vector3(0.f, initRadius, 0.f)
 	},
 	shouldUpdate(true)
 {

@@ -74,7 +74,7 @@ void LightManager::UpdateLightData()
 		}
 		else
 		{
-			pointLightData[i++] = { Vector3(0.f), Vector3(0.f), -1.f};		// Radius still sent, temp so that we can still loop in HLSL
+			pointLightData[i++] = { Vector3(0.f), Vector3(0.f), Vector3(0.f, -1.f, 0.f)};		// Radius still sent, temp so that we can still loop in HLSL
 		}
 	}
 

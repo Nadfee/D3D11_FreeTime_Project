@@ -9,7 +9,7 @@ struct PointLightData
 {
 	Vector3 position;
 	Vector3 color;
-	float radius;
+	Vector3 attenuation;
 };
 
 class PointLight
@@ -20,13 +20,13 @@ public:
 	~PointLight();
 
 	const Vector3 GetPosition() { return data.position; }
-	const float GetRadius() { return data.radius; }
+	const float GetRadius() { return data.attenuation.y; }		// CHange this!!
 	const Vector3 GetColor() { return data.color; }
 	const std::string& GetID() const { return id; }
 	bool ShouldUpdate() { return shouldUpdate; }
 
 	void SetPosition(float x, float y, float z) { data.position = Vector3(x, y, z); }
-	void SetRadius(float newRadius) { data.radius = newRadius; }
+	void SetRadius(float newRadius) { data.attenuation.y = newRadius; }		// Change this!!
 	void SetColor(float r, float g, float b) { data.color = Vector3(r, g, b); }
 	void SetUpdateState(bool state) { shouldUpdate = state; }
 
