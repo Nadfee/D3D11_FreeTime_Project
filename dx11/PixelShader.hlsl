@@ -33,6 +33,8 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
     lightBuffer.GetDimensions(lightCount, size);
     for (uint i = 0; i < lightCount; ++i)
     {
+        // Do not set any lights to full black! (It will stop this loop)
+        // This is intended for detecting the end of the valid data sent in
         if (length(lightBuffer[i].lightColor) == 0.f)
         {
             break;
