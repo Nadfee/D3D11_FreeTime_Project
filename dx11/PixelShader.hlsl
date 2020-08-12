@@ -20,6 +20,7 @@ SamplerState defaultSampler : register(s0);
 float4 PSMAIN(PS_IN input) : SV_TARGET
 {
     //return float4(input.worldPos, 1.f);
+
     
     float4 textureSample = diffuseTexture.Sample(defaultSampler, input.uv);
     float4 finalColor = float4(0.f, 0.f, 0.f, 0.f);
@@ -36,6 +37,8 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
             break;
         }
         
+        float attenuationFactor[3] = { 0.f, lightBuffer[i].radius, 0.02f };
+        
         float3 posToLight = lightBuffer[i].lightPosition - input.worldPos;
         float distanceToLight = length(posToLight);
         float3 posToLightDir = normalize(posToLight);
@@ -44,10 +47,13 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
         
         float diffuseFactor = saturate(dot(posToLightDir, normal));
         
-        finalColor += diffuseFactor * distFactor * (textureSample);
-        //finalColor = textureSample;
+        //finalColor += diffuseFactor * distFactor * textureSample;
+        
+        finalColor += diffuseFactor * (textureSample);
+        finalColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
 
     }
+    
     
     //return float4(normalize(input.nor.xyz), 1.f);
 	//return float4(input.uv.xy, 0.f, 1.f);
