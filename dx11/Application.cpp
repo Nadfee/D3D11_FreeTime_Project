@@ -326,6 +326,7 @@ void Application::UpdateObjects()
 // Used to test dynamic object deletion
 static int deleteInt = 1;
 static int addInt = 1;
+static bool lPressed = false;
 
 void Application::RestoreDefaultScene()
 {
@@ -479,6 +480,25 @@ void Application::HandleKeyboardInput()
 		else
 		{
 			light->SetUpdateState(true);
+		}
+	}
+
+	if (kbTr.IsKeyPressed(key::L))
+	{
+		lPressed = !lPressed;
+		if (lPressed == true)
+		{
+			for (auto& pair : lights)
+			{
+				pair.second.light->SetUpdateState(false);
+			}
+		}
+		else
+		{
+			for (auto& pair : lights)
+			{
+				pair.second.light->SetUpdateState(true);
+			}
 		}
 
 	}
