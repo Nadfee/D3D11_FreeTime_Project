@@ -23,6 +23,7 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
 
     
     float4 textureSample = diffuseTexture.Sample(defaultSampler, input.uv);
+    //textureSample = float4(1.f, 1.f, 1.f, 1.f);
     float4 finalColor = float4(0.f, 0.f, 0.f, 0.f);
     float3 normal = normalize(input.nor);
     

@@ -18,6 +18,8 @@ void Graphics::Frame()
 	renderer->ClearMainRenderTarget(DirectX::Colors::Bisque);
 	renderer->SetBackBufferRTV();
 
+	// Here we can also add experimental D3D11 render passes (interface with Renderer (e.g get pass abstractions) without having to have anything on App-side)
+
 	UpdateLights();
 	DrawObjects();
 	Present();
@@ -77,6 +79,8 @@ void Graphics::TempCall()
 
 void Graphics::UpdateLights()
 {
+	// Here we may want to implement Render Pass for Omnidirectional Shadow Map for each point light!
+
 	lightManager.UpdateLightData();
 	unsigned int dataSize = lightManager.GetPointLightData().size() * sizeof(PointLightData);
 
