@@ -296,11 +296,7 @@ void Application::InitializeScene()
 	FindObject("Triangle1").SetRender(false);
 
 	// Light WORKS NOW!!!!
-	CreatePointLight("Light0", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 0.f, 0.f), 0.f);
-	CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 1.f, 0.f), 0.f);
-	CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), 0.f);
-
-	RemovePointLight("Light1");
+	CreatePointLight("Light0", Vector3(0.f, 10.f, 0.f), Vector3(0.2f, 0.f, 0.f), 10.f);
 
 }
 
@@ -308,12 +304,12 @@ void Application::InitializeScene()
 void Application::UpdateObjects()
 {
 	auto cube0 = FindObject("Cube0");
-	cube0.SetPosition(cube0.GetPosition().x, sin(counter), cube0.GetPosition().z);
+	cube0.SetPosition(-2.f, sin(counter), cube0.GetPosition().z);
 	cube0.SetRotation(0.f, counter * 100.f, 0.f);
 
 	FindObject("Triangle1").SetPosition(4.f, cosf(counter), cos(counter));
 
-	FindLight("Light0")->SetColor(0.5f + sinf(counter) * 0.5f, 0.f, 0.f);
+	FindLight("Light0")->SetPosition( 17.f + 15.f * cosf(counter * 3.f), 2.f, 0.f);
 
 }
 
@@ -531,7 +527,10 @@ PointLightPtr Application::CreatePointLight(const std::string& identifier, const
 
 bool Application::RemovePointLight(const std::string& identifier)
 {
-	return graphics->RemovePointLight(identifier);
+	bool graphicsRemoved = graphics->RemovePointLight(identifier);
+	bool appLightRemoved = lights.erase(identifier);
+
+	return graphicsRemoved && appLightRemoved;
 }
 
 void Application::InitializeMenu()
