@@ -310,6 +310,7 @@ void Application::UpdateObjects()
 	FindObject("Triangle1").SetPosition(4.f, cosf(counter), cos(counter));
 
 	FindLight("Light0")->SetPosition( 17.f + 15.f * cosf(counter * 3.f), 2.f, 0.f);
+	FindLight("Light0")->SetRadius(15.f + sinf(counter) * 10.f);
 
 }
 
