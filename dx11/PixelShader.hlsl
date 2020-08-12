@@ -52,7 +52,7 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
         
         //finalColor += diffuseFactor * distFactor * textureSample;
         
-            float4 diffuseColor = diffuseFactor * (textureSample);
+            float4 diffuseColor = diffuseFactor * (textureSample + float4(lightBuffer[i].lightColor, 0.f));
             diffuseColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
         
             finalColor += diffuseColor;

@@ -48,7 +48,7 @@ struct PlayerInfo
 	float moveForwardBack = 0.f;
 	float moveLeftRight = 0.f;
 	float moveUpDown = 0.f;
-	float speed = 7.f;
+	float speed = 12.f;
 
 	void Reset()
 	{

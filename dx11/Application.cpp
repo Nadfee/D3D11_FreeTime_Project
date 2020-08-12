@@ -296,8 +296,10 @@ void Application::InitializeScene()
 	//FindObject("Triangle1").SetRender(false);
 
 	// Light WORKS NOW!!!!
-	CreatePointLight("Light0", Vector3(0.f, 10.f, 0.f), Vector3(0.2f, 0.f, 0.f), 10.f);
-	CreatePointLight("Light1", Vector3(0.f, 10.f, -3.f), Vector3(0.2f, 0.f, 0.f), 1.f);
+	CreatePointLight("Light0", Vector3(0.f, 10.f, 0.f), Vector3(0.4f, 0.f, 0.f), 1.f);
+	CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.f), 1.f);
+	CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), 1.f);
+
 
 }
 
@@ -314,6 +316,7 @@ void Application::UpdateObjects()
 	FindLight("Light0")->SetRadius(0.6f + cosf(counter * 2.5f) * 0.5f);
 
 	FindLight("Light1")->SetPosition( 23.f, 5.f, 12.f + 15.f * cosf(counter * 3.f));
+	FindLight("Light2")->SetPosition(-12.f + 5.f * cosf(counter * 3.f), 2, 5.f * sinf(counter * 3.f));
 }
 
 // Used to test dynamic object deletion
@@ -457,7 +460,7 @@ void Application::HandleKeyboardInput()
 	{
 		auto light = FindLight("Light0");
 
-		// Create a triangle infront of the player
+		// Toggle light on/off
 		if (light->ShouldUpdate() == true)
 		{
 			light->SetUpdateState(false);
