@@ -65,10 +65,17 @@ void LightManager::UpdateLightData()
 	// Assumes that pointLightData size == pointLights size
 	// Add and Remove (especially) ensures that only data that should be sent are sent!
 	unsigned int i = 0;
-	for (const auto& light : pointLights)
+	for (const auto& pair : pointLights)
 	{
 		OutputDebugStringW(L"Updating\n");
-		pointLightData[i++] = light.second.light->GetPointLightData();
+		if (pair.second.light->ShouldUpdate())
+		{
+			pointLightData[i++] = pair.second.light->GetPointLightData();
+		}
+		else
+		{
+			pointLightData[i++] = { Vector3(0.f), Vector3(0.f), -1.f };		// Radius still sent, temp so that we can still loop in HLSL
+		}
 	}
 
 }

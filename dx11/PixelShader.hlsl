@@ -37,21 +37,31 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
             break;
         }
         
-        float attenuationFactor[3] = { 0.f, lightBuffer[i].radius, 0.02f };
+        // temporary, we set radius to -1 to indicate a light that shouldn't be calculated but exists
+        if (lightBuffer[i].radius >= 0.f)
+        {
+            float attenuationFactor[3] = { 0.f, lightBuffer[i].radius, 0.02f };
         
-        float3 posToLight = lightBuffer[i].lightPosition - input.worldPos;
-        float distanceToLight = length(posToLight);
-        float3 posToLightDir = normalize(posToLight);
+            float3 posToLight = lightBuffer[i].lightPosition - input.worldPos;
+            float distanceToLight = length(posToLight);
+            float3 posToLightDir = normalize(posToLight);
        
-        float distFactor = saturate(-distanceToLight / lightBuffer[i].radius + 1.f);
+            float distFactor = saturate(-distanceToLight / lightBuffer[i].radius + 1.f);
         
-        float diffuseFactor = saturate(dot(posToLightDir, normal));
+            float diffuseFactor = saturate(dot(posToLightDir, normal));
         
         //finalColor += diffuseFactor * distFactor * textureSample;
         
-        finalColor += diffuseFactor * (textureSample);
-        finalColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
+            float4 diffuseColor = diffuseFactor * (textureSample);
+            diffuseColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
+        
+            finalColor += diffuseColor;
+        
+        //finalColor += diffuseFactor * (textureSample);
+        //finalColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
 
+        }
+        
     }
     
     
