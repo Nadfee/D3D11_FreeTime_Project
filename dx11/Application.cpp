@@ -304,11 +304,8 @@ void Application::InitializeScene()
 	CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
 	CreatePointLight("Light3", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.4f, 0.1f));
 
-	obj = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
-	obj.SetScaling(0.03f);
-	obj.SetPosition(2.f, 0.f, 0.f);
-
-	//CreateObject("Moon", "Objs/Moon/Moon2K.obj");
+	auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
+	sponza.SetScaling(0.03f);
 
 	CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
 
@@ -516,6 +513,14 @@ void Application::HandleKeyboardInput()
 
 	}
 
+	if (kbTr.IsKeyPressed(key::U))
+	{
+		auto& obj = FindObject("Sponza");
+		obj.SetPosition(obj.GetPosition().x + 1.f, 0.f, 0.f);
+		//obj.SetScaling(0.03f);
+
+	}
+
 }
 
 void Application::HandleMouseInput()
@@ -601,10 +606,11 @@ Object& Application::CreateObject(const std::string& id, const std::string& dire
 	{
 		std::string texturePath = directory + meshesTexturePath[i];
 
-		std::wstring ws;
-		ws.assign(texturePath.begin(), texturePath.end());
+		// string to wstring conversion
+		std::wstring texturePathWs;
+		texturePathWs.assign(texturePath.begin(), texturePath.end());
 
-		meshes.push_back(graphics->CreateMesh(meshesVertsData[i], ws));
+		meshes.push_back(graphics->CreateMesh(meshesVertsData[i], texturePathWs));
 	}
 
 	Object obj(id, meshes);
