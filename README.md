@@ -27,8 +27,8 @@ Progress preview as of August 13th 2020.
 - Toggle Render State for existing Objects (Graphics will skip drawing that objects mesh)
 - Toggle Update State for existing Point Lights (Ensures an identifier is set for the light (Constant attenuation set to -1) so that HLSL can skip the calculation for that specific light)
  
-![Alt text](/progresspreview.gif?raw=true "Gif")  
+![Alt text](/sponza.gif?raw=true "Gif")  
   
 Example of "interface" to create an object, a point light, and how to modify them during Update! 
 (Uses std::unordered_map)  
-![Alt text](/ss3New.png?raw=true "Example code")
+![Alt text](/codeSnippet.png?raw=true "Example code")
