@@ -192,9 +192,11 @@ void Application::InitializeScene()
 	// DONE  : Implement Light Class (Point light with radius)
 	// DONE  : Implement Light Manager (For Point Lights for now)
 
-	// To-do : Implement Phong Shading (Point light with radius)
-		// To-do : Hook-up attenuation correctly
-		// To-do : Decide on how to identify a light that shouldn't be calculated (e.g constant attenuation factor as something below 0)
+	// DONE : Implement Phong Shading (Point light with radius)
+		// DONE : Hook-up attenuation correctly
+		// DONE : Decide on how to identify a light that shouldn't be calculated - Black light (Color(0, 0, 0) indicates end-of-data by shader!)
+
+	// To-do : Update how Objects hold Meshes (It can hold multiple meshes!) - Preparation for .obj hook
 
 	// To-do : Add tinyobjloader functionality and hook to CreateMesh 
 	//		   (either by creating a finalized vertex vector or overriding the CreateMesh and passing a wrapper-implementation around tinyobjloader)

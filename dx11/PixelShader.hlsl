@@ -40,7 +40,7 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
             break;
         }
         
-        // temporary, we set radius to -1 to indicate a light that shouldn't be calculated but exists
+        // Constant attenuation factor set to negative number to indicate a light that should not be calculated
         if (lightBuffer[i].attenuation.x >= 0.f)
         {
             float attenuationFactor[3] = { lightBuffer[i].attenuation.x, lightBuffer[i].attenuation.y, lightBuffer[i].attenuation.z };
@@ -53,16 +53,10 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
         
             float diffuseFactor = saturate(dot(posToLightDir, normal));
         
-            //finalColor += diffuseFactor * distFactor * textureSample;
-        
             float4 diffuseColor = diffuseFactor * (textureSample + float4(lightBuffer[i].lightColor, 0.f));
             diffuseColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
         
             finalColor += diffuseColor;
-        
-            //finalColor += diffuseFactor * (textureSample);
-            //finalColor /= attenuationFactor[0] + (attenuationFactor[1] * distanceToLight) + (attenuationFactor[2] * distanceToLight * distanceToLight);
-
         }
         
     }
