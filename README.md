@@ -24,6 +24,8 @@ Progress preview as of August 13th 2020.
 - Dynamically insert and remove objects (with meshes)  
 - Dynamically insert and remove point lights (Space for 500 (can be user-specified) lights is reserved for the Structured Buffer during initialization)  
   - No code for handling exceeding amount of maximum point lights right now.  
+- Toggle Render State for existing Objects (Graphics will skip drawing that objects mesh)
+- Toggle Update State for existing Point Lights (Ensures an identifier is set for the light (Constant attenuation set to -1) so that HLSL can skip the calculation for that specific light)
  
 ![Alt text](/progresspreview.gif?raw=true "Gif")  
   
