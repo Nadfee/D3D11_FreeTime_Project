@@ -19,7 +19,7 @@ GUI -> Options -> Restore Scene : Restores initial scene from startup
 Project should build (DirectXTK Desktop Win10 NuGet package is installed so make sure it is restored)  
 Make sure that SubSystem is set to Windows and the dependencies "d3d11.lib", "dxgi.lib", "d3dcompiler.lib" are added  
   
-Artifacting in the background is caused by the Gif recorder, pay no mind to it :)
+Artifacting in the background is caused by the Gif recorder, pay no mind to it :)  
 Progress preview as of August 13th 2020.
 - Dynamically insert and remove objects (with meshes)  
 - Dynamically insert and remove point lights (Space for 500 (can be user-specified) lights is reserved for the Structured Buffer during initialization)  
