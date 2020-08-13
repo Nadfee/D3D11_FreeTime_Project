@@ -29,4 +29,4 @@ Progress preview as of August 13th 2020.
   
 Example of "interface" to create an object, a point light, and how to modify them during Update! 
 (Uses std::unordered_map)  
-![Alt text](/ss3.png?raw=true "Example code")
+![Alt text](/ss3New.png?raw=true "Example code")
