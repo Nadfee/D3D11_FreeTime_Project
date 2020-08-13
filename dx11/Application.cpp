@@ -299,7 +299,6 @@ void Application::InitializeScene()
 
 	FindObject("Triangle1").SetRender(false);
 
-	// Light WORKS NOW!!!!
 	CreatePointLight("Light0", Vector3(0.f, 10.f, 0.f), Vector3(1.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.1f));
 	CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.f), Vector3(0.f, 1.f, 0.1f));
 	CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
