@@ -9,8 +9,8 @@ Object::Object() :
 }
 
 
-Object::Object(const std::string& identifier, MeshPtr initMesh) :
-	mesh(initMesh),
+Object::Object(const std::string& identifier, std::vector<MeshPtr> initMeshes) :
+	meshes(initMeshes),
 	translationMatrix(Matrix::Identity),
 	rotationMatrix(Matrix::Identity),
 	scalingMatrix(Matrix::Identity),
@@ -24,6 +24,26 @@ Object::Object(const std::string& identifier, MeshPtr initMesh) :
 
 Object::~Object()
 {
+}
+
+void Object::SetRender(bool shouldRender)
+{
+	for (auto& mesh : meshes)
+	{
+		mesh->Draw(shouldRender);
+	}
+}
+
+const std::vector<std::size_t> Object::GetMeshIDs() const
+{
+	std::vector<std::size_t> meshIDs;
+
+	for (auto& mesh : meshes)
+	{
+		meshIDs.push_back(mesh->GetID());
+	}
+
+	return meshIDs;
 }
 
 void Object::SetPosition(float x, float y, float z)
@@ -80,5 +100,9 @@ void Object::SetScaling(float scale)
 
 void Object::FinalizeMatrixResults()
 {
-	mesh->UpdateWorldMatrix(scalingMatrix * rotationMatrix * translationMatrix); // Rotation first in local space
+	for (auto& mesh : meshes)
+	{
+		mesh->UpdateWorldMatrix(scalingMatrix * rotationMatrix * translationMatrix); // Rotation first in local space
+	}
+	
 }

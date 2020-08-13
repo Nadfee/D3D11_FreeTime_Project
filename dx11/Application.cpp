@@ -196,10 +196,9 @@ void Application::InitializeScene()
 		// DONE : Hook-up attenuation correctly
 		// DONE : Decide on how to identify a light that shouldn't be calculated - Black light (Color(0, 0, 0) indicates end-of-data by shader!)
 
-	// To-do : Update how Objects hold Meshes (It can hold multiple meshes!) - Preparation for .obj hook
+	// DONE  : Update how Objects hold Meshes (It can hold multiple meshes!) - Preparation for .obj hook. An object can now have X amount of Meshes that invokes X amount of Draw calls (not super efficient!)
 
-	// To-do : Add tinyobjloader functionality and hook to CreateMesh 
-	//		   (either by creating a finalized vertex vector or overriding the CreateMesh and passing a wrapper-implementation around tinyobjloader)
+	// DONE : Add Assimp Position, UV, Normal + Texture support (Sponza loadable!)
 	// To-do : Implement a material constant buffer for meshes
 
 	// To-do further down the line : Abstractions for DX11 resources (e.g Vertex Shader, Pixel Shader, Bindable system, etc.)
@@ -212,6 +211,7 @@ void Application::InitializeScene()
 		{ Vector3(-1.f, -0.5f, 0.f), Vector2(0.f, 1.f), Vector3(0.f, 0.f, -1.f) },
 		{ Vector3(0.f, 1.f, 0.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, -1.f) }
 	};
+
 
 	std::vector<Vertex> quadVerts =
 	{
@@ -304,6 +304,15 @@ void Application::InitializeScene()
 	CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
 	CreatePointLight("Light3", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.4f, 0.1f));
 
+	obj = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
+	obj.SetScaling(0.03f);
+	obj.SetPosition(2.f, 0.f, 0.f);
+
+	//CreateObject("Moon", "Objs/Moon/Moon2K.obj");
+
+	CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
+
+
 }
 
 
@@ -337,7 +346,10 @@ void Application::RestoreDefaultScene()
 	// Can't simultaneously delete object in Objects in range-for!
 	for (auto pair : objects)
 	{
-		graphics->RemoveMesh(pair.second.GetMeshID());
+		for (auto meshID : pair.second.GetMeshIDs())
+		{
+			graphics->RemoveMesh(meshID);
+		}
 	}
 	objects.clear();
 
@@ -543,15 +555,59 @@ Object& Application::FindObject(const std::string& id)
 
 bool Application::RemoveObject(const std::string& id)
 {
-	bool meshRemoved = graphics->RemoveMesh(FindObject(id).GetMeshID());
+	bool meshExists = false;
+	for (auto& meshID : FindObject(id).GetMeshIDs())
+	{
+		meshExists = true;
+		graphics->RemoveMesh(meshID);
+	}
+
 	bool objectRemoved = objects.erase(id);
 
-	return meshRemoved && objectRemoved;
+	return meshExists && objectRemoved;
 }
 
 Object& Application::CreateObject(const std::string& id, std::vector<Vertex> verts, const std::wstring textureFilePath)
 {
-	Object obj(id, graphics->CreateMesh(verts, textureFilePath));
+	std::vector<MeshPtr> meshes;
+	meshes.push_back(graphics->CreateMesh(verts, textureFilePath));		// One mesh
+
+
+	// Secondary temp mesh
+	std::vector<Vertex> triVerts2 =
+	{
+		{ Vector3(1.f, 5.f, 0.f), Vector2(1.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(-1.f, 5.f, 0.f), Vector2(0.f, 1.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(0.f, 7.f, 0.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, -1.f) }
+	};
+
+
+
+	Object obj(id, meshes);
+	objects.insert({ obj.GetID(), obj });
+	return FindObject(obj.GetID());
+}
+
+Object& Application::CreateObject(const std::string& id, const std::string& directory, const std::string& file)
+{
+	assimpLoader.LoadModel(directory + file);
+
+	std::vector<MeshPtr> meshes;
+
+	const auto& meshesVertsData = assimpLoader.GetMeshesVertexData();
+	const auto& meshesTexturePath = assimpLoader.GetMeshesTextures();
+
+	for (int i = 0; i < meshesVertsData.size(); ++i)
+	{
+		std::string texturePath = directory + meshesTexturePath[i];
+
+		std::wstring ws;
+		ws.assign(texturePath.begin(), texturePath.end());
+
+		meshes.push_back(graphics->CreateMesh(meshesVertsData[i], ws));
+	}
+
+	Object obj(id, meshes);
 	objects.insert({ obj.GetID(), obj });
 	return FindObject(obj.GetID());
 }

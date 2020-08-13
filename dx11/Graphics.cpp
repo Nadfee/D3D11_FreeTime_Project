@@ -97,7 +97,6 @@ MeshPtr Graphics::CreateMesh(const std::vector<Vertex>& initVertexData, std::wst
 		renderer->CreateConstantBuffer(nullptr, sizeof(Matrix), true, true),
 		renderer->CreateSRVFromFileWIC(textureFilePath)	
 														
-			
 		);
 
 	meshManager.AddMesh(mesh);
