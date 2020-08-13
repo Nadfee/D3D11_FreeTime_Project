@@ -3,6 +3,7 @@ Personal project where I tinker with D3D11
   
 My main purpose with this project is to play around with DX11, DirectX Tool Kit and the organization of a larger project  
   
+- No prior experience in creating a Game loop with e.g States and possible other abstractions, etc.  
 - Current focus is to create a game with minimal graphical techniques to get experience in organizing possible abstractions (e.g model, where to draw, etc.)  
   
 Controls:  
