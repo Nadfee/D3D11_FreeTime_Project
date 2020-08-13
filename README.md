@@ -25,4 +25,8 @@ Progress preview as of August 13th 2020.
 - Dynamically insert and remove point lights (Space for 500 (can be user-specified) lights is reserved for the Structured Buffer during initialization)  
   - No code for handling exceeding amount of maximum point lights right now.  
  
-![Alt text](/progresspreview.gif?raw=true "Gif")
+![Alt text](/progresspreview.gif?raw=true "Gif")  
+  
+Example of "interface" to create an object, a point light, and how to modify them during Update! 
+(Uses std::unordered_map)  
+![Alt text](/ss3.png?raw=true "Example code")
