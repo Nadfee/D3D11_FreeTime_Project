@@ -41,7 +41,7 @@ void Window::CreateWin()
 
 	// create window
 	hwnd = CreateWindowEx(
-		0,					// Default behaviour (optionals)
+		0,						// Default behaviour (optionals)
 		winName,				// Class name (identifier)
 		winName,				// Window title 
 		style,					// Window style 

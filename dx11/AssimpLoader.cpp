@@ -12,7 +12,7 @@ void AssimpLoader::LoadModel(const std::string& filePath)
 {
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
+	const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);		// convertolefthanded deprecated? find alt.
 
 	if (scene == nullptr)
 	{
@@ -92,6 +92,7 @@ void AssimpLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
 	auto mtl = scene->mMaterials[mesh->mMaterialIndex];
 	aiString path;
+	aiString path2;
 	mtl->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 
 	std::string textPath(path.C_Str());

@@ -515,9 +515,7 @@ void Application::HandleKeyboardInput()
 
 	if (kbTr.IsKeyPressed(key::U))
 	{
-		auto& obj = FindObject("Sponza");
-		obj.SetPosition(obj.GetPosition().x + 1.f, 0.f, 0.f);
-		//obj.SetScaling(0.03f);
+		RemoveObject("Sponza");
 
 	}
 

@@ -32,6 +32,7 @@ struct VS_OUT
 VS_OUT VSMAIN( VS_IN input )
 {
 	VS_OUT output = (VS_OUT)0;
+    
     output.pos = mul(worldMatrix, float4(input.pos, 1.f));
     output.worldPos = output.pos.xyz;
     output.pos = mul(viewMatrix, output.pos);

@@ -298,7 +298,7 @@ void Renderer::ForwardRenderSetup()
 		assert(false);
 
 	// Create Buffer for View and Projection Matrix
-	viewMatrixBuffer = CreateConstantBuffer(nullptr, sizeof(Matrix), true, true);
+	viewMatrixBuffer = CreateConstantBuffer(nullptr, 2 * sizeof(Matrix), true, true);		// view mat and inv view mat for cam pos
 	projectionMatrixBuffer = CreateConstantBuffer(nullptr, sizeof(Matrix), true, true);
 
 	// ***** We may perhaps want to abstract these into functions later *****

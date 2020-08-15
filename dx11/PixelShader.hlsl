@@ -19,8 +19,6 @@ SamplerState defaultSampler : register(s0);
 
 float4 PSMAIN(PS_IN input) : SV_TARGET
 {
-    //return float4(input.worldPos, 1.f);
-
     
     float4 textureSample = diffuseTexture.Sample(defaultSampler, input.uv);
     //textureSample = float4(1.f, 1.f, 1.f, 1.f);
