@@ -6,9 +6,6 @@ Application::Application(const HINSTANCE& hInstance,
 	const INT& clientHeight,
 	const DWORD& style,
 	const DWORD& exStyle) :
-	frequency(10000000),		// get in second
-	offset(0),
-	deltaTime(0),
 	counter(0)
 {
 	// Window creation
@@ -136,17 +133,15 @@ void Application::Run()
 {
 	InitializeScene();
 
-	double endTime = 0;
-	double startTime = 0;
-
+	// Loop
 	MSG msg = { };
 	while (!isClosed)
 	{
-		deltaTime = endTime - startTime;
-		counter += deltaTime;
+		timer.Start();
+
+		counter += timer.GetTime(GTimer::Duration::SECONDS);
 		if (counter > 100.f)
 			counter = 0.f;
-		startTime = GetSeconds();
 
 		while (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
 		{
@@ -166,13 +161,10 @@ void Application::Run()
 
 		graphics->Frame();
 
-		endTime = GetSeconds();
-		SetWindowTextW(hwnd, std::to_wstring(1.f / deltaTime).c_str());
-		//OutputDebugStringW(std::to_wstring(1.f / deltaTime).c_str());
-		//OutputDebugStringW(L"\n");
+		timer.Stop();
 
-
-
+		std::wstring fps(L"FPS: " + std::to_wstring(static_cast<long long>(1.L / timer.GetTime(GTimer::Duration::SECONDS))));
+		SetWindowTextW(hwnd, fps.c_str());
 	}
 
 }
@@ -384,7 +376,7 @@ void Application::UpdateCamera()
 
 	// Update only if mouse in relative mode
 	if (msSt.positionMode == DirectX::Mouse::MODE_RELATIVE)
-		fpc.Update(msSt.x, msSt.y, ply.moveLeftRight, ply.moveForwardBack, ply.moveUpDown, ply.speed, deltaTime);
+		fpc.Update(msSt.x, msSt.y, ply.moveLeftRight, ply.moveForwardBack, ply.moveUpDown, ply.speed, timer.GetTime(GTimer::Duration::SECONDS));
 
 	ply.Reset();
 	graphics->UpdateViewMatrix(fpc.GetViewMatrix());
@@ -696,16 +688,4 @@ void Application::Quit()
 	{
 		DestroyWindow(hwnd);
 	}
-}
-
-void Application::InitTimer() {
-	//frequency = 1000; // QueryPerformanceCounter default
-	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
-	QueryPerformanceCounter((LARGE_INTEGER*)&offset);
-}
-
-double Application::GetSeconds() {
-	uint64_t counter = 0;
-	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
-	return (double)(counter - offset) / frequency;
 }

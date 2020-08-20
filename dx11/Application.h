@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "Camera.h"
 #include "AssimpLoader.h"
+#include "Timer.h"
 
 #include <Mouse.h>
 #include <Keyboard.h>
@@ -88,16 +89,8 @@ private:
 	Camera fpc;
 
 	// Timer
-	uint64_t frequency;
-	uint64_t offset;
-	double deltaTime;
+	GTimer::Timer timer;
 	double counter;
-
-	// Taken from unknown source (old project)
-	// Initialise timer variables for build’s platform
-	void InitTimer();
-	// Get the current time in seconds with up to nanosecond precision
-	double GetSeconds();
 
 	// Helper functions
 	void InitializeScene();

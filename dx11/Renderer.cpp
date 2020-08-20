@@ -5,14 +5,14 @@ Renderer::Renderer(const HWND& hwnd, const int& clientWidth, const int& clientHe
 	clientWidth(clientWidth),
 	clientHeight(clientHeight)
 {
-	// Make room for Lights (Structured Buffer)
+	
 
 
 }
 
 Renderer::~Renderer()
 {
-	OutputDebugStringW(L"Hello\n");
+	
 
 }
 
