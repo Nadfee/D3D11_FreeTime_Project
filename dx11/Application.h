@@ -78,9 +78,9 @@ public:
 private:
 
 	AssimpLoader assimpLoader;
-	GraphicsPtr graphics;	// DX11
-	MenuBar menuBar;		// Win32 GUI
-	InputTK input;			// Input (DXTK)
+	GraphicsPtr graphics;		// DX11
+	MenuBar menuBar;			// Win32 GUI
+	InputTK input;				// Input (DXTK)
 	PlayerInfo ply;
 
 	std::unordered_map<std::string, Object> objects;
@@ -92,7 +92,6 @@ private:
 	GTimer::Timer timer;
 	double counter;
 
-	// Helper functions
 	void InitializeScene();
 	void UpdateCamera();
 	void UpdateObjects();
@@ -103,7 +102,6 @@ private:
 	bool RemoveObject(const std::string& id);
 	Object& CreateObject(const std::string& id, std::vector<Vertex> verts, const std::wstring textureFilePath);
 	Object& CreateObject(const std::string& id, const std::string& directory, const std::string& file);
-
 
 	// Light
 	PointLightPtr FindLight(const std::string& id);
