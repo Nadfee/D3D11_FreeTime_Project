@@ -63,6 +63,7 @@ void Application::Run()
 
 
 		std::wstring fps(L"FPS: " + std::to_wstring(static_cast<long long>(1.L / updateTimer.GetTime(GTimer::Duration::SECONDS))));
+		// Arbitrarily slow down the FPS update so we can see FPS properly
 		if (cnt % 30 == 0)
 			SetWindowTextW(win->GetHWND(), fps.c_str());
 	
