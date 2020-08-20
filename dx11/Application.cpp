@@ -31,8 +31,10 @@ void Application::Run()
 
 	// Loop
 	MSG msg = { };
+	int cnt = 0;
 	while (!win->IsClosed())
 	{
+		++cnt;
 		updateTimer.Start();
 
 		counter += updateTimer.GetTime(GTimer::Duration::SECONDS);
@@ -61,7 +63,8 @@ void Application::Run()
 
 
 		std::wstring fps(L"FPS: " + std::to_wstring(static_cast<long long>(1.L / updateTimer.GetTime(GTimer::Duration::SECONDS))));
-		SetWindowTextW(win->GetHWND(), fps.c_str());
+		if (cnt % 30 == 0)
+			SetWindowTextW(win->GetHWND(), fps.c_str());
 	
 			
 	}

@@ -42,7 +42,7 @@ void Player::InputCheck()
 	{
 		m_moveForwardBack = -1.f;
 	}
-	if (input->IsKeyDown(Key::E))
+	if (input->IsKeyDown(Key::Space))
 	{
 		m_moveUpDown = 1.f;
 	}

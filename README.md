@@ -5,16 +5,17 @@ My main purpose with this project is to play around with DX11, DirectX Tool Kit 
   
 - Goal of this project is to create an Application which interfaces with the Graphics/D3D11 in order to better understand what is needed from the Graphics side and how it can be exposed to an Application.  
   
+- Project will be extended with graphics techniques
+
 Controls:  
   
 WASD : Move  
 T : Toggle between Absolute and Relative mouse mode (visible/invisible)  
 Q : Descend  
-E : Ascend  
+Space : Ascend  
 O : Remove the static cube objects in order (WARNING: Intentionally asserting false once you try to remove when there are none of the static cubes left)  
 P : Inserts a triangle infront of the camera  
 G : Toggle render state for the floating and rotating cube object (Object and mesh still lives but user can choose whether to render it or not)  
-GUI -> Options -> Restore Scene : Restores initial scene from startup  
   
 Project should build (DirectXTK Desktop Win10 NuGet package is installed so make sure it is restored)  
 Make sure that SubSystem is set to Windows and the dependencies "d3d11.lib", "dxgi.lib", "d3dcompiler.lib" are added  
