@@ -1,131 +1,27 @@
 #include "Application.h"
 
-Application::Application(const HINSTANCE& hInstance,
-	const wchar_t* winName,
-	const INT& clientWidth,
-	const INT& clientHeight,
-	const DWORD& style,
-	const DWORD& exStyle) :
+Application::Application(const HINSTANCE& hInstance) :
 	counter(0)
 {
-	// Window creation
-	this->hInstance = hInstance;
-	this->winName = winName;
-	this->clientWidth = clientWidth;
-	this->clientHeight = clientHeight;
-	this->exStyle = exStyle;
-	this->style = style;
-
-	Window::InitializeWindow();
-
-	// Win32 - Re-size again but with menu considered for AdjustWindowRect
-	Window::SetClientSize(true);
-	SetMenu(hwnd, menuBar.mainMenu);
+	// Window
+	win = std::make_unique<Window>(hInstance, L"Nad's Application", 1280, 720);
 
 	// Graphics (D3D inside)
-	graphics = std::make_unique<Graphics>(hwnd, clientWidth, clientHeight);
+	graphics = std::make_unique<Graphics>(win->GetHWND(), 1920, 1080);
 
-	// XTK Mouse & Keyboard
-	input.Initialize(hwnd);
+	// XTK Mouse & Keyboard (Input is a singleton! - Experiment)
+	input = Input::GetInstance();
+
+	// Player
+	player = std::make_unique<Player>();
 
 	// Setup camera
-	fpc = Camera(70.f, (float)clientWidth / (float)clientHeight);
-
+	fpc = Camera(70.f, win->GetAspectRatio());
 }
 
 Application::~Application()
 {
 
-
-}
-
-LRESULT Application::HandleProc(const UINT& uMsg, const WPARAM& wParam, const LPARAM& lParam)
-{
-	switch (uMsg)
-	{
-	case WM_CLOSE:
-	{
-		DestroyWindow(hwnd);	// Immediately destroy window if X is pressed
-		break;
-	}
-
-	case WM_DESTROY:
-	{
-		PostQuitMessage(0);		// Puts WM_QUIT in queue and WM_QUIT causes GetMessage to return 0
-		isClosed = true;
-		break;
-	}
-
-	case WM_PAINT:
-	{
-		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hwnd, &ps);
-
-		// All painting occurs here, between BeginPaint and EndPaint.
-
-		FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
-
-		EndPaint(hwnd, &ps);
-		break;
-	}
-
-	// Win32 GUI
-	case WM_CREATE:
-	{
-		InitializeMenu();
-		break;
-	}
-	
-	case WM_COMMAND:
-	{
-		HandleWinGUI(wParam);
-		break;
-	}
-
-	// XTK Mouse & Keyboard
-	case WM_ACTIVATEAPP:
-	{
-		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
-		DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
-		break;
-	}
-
-	case WM_INPUT:
-	case WM_MOUSEMOVE:
-	case WM_LBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONDOWN:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONDOWN:
-	case WM_MBUTTONUP:
-	case WM_MOUSEWHEEL:
-	case WM_XBUTTONDOWN:
-	case WM_XBUTTONUP:
-	case WM_MOUSEHOVER:
-		DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
-		break;
-
-	case WM_KEYDOWN:
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
-		break;
-
-	case WM_SYSKEYDOWN:
-		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
-		//if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
-		//{
-		//	
-		//}
-		break;
-
-
-	default:
-		return DefWindowProc(hwnd, uMsg, wParam, lParam);
-
-	}
-
-	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
 }
 
@@ -135,15 +31,15 @@ void Application::Run()
 
 	// Loop
 	MSG msg = { };
-	while (!isClosed)
+	while (!win->IsClosed())
 	{
-		timer.Start();
+		updateTimer.Start();
 
-		counter += timer.GetTime(GTimer::Duration::SECONDS);
+		counter += updateTimer.GetTime(GTimer::Duration::SECONDS);
 		if (counter > 100.f)
 			counter = 0.f;
 
-		while (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
+		while (PeekMessageW(&msg, win->GetHWND(), 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -159,12 +55,15 @@ void Application::Run()
 		UpdateInput();
 		UpdateCamera();
 
-		graphics->Frame();
+		graphics->Render();
 
-		timer.Stop();
+		updateTimer.Stop();
 
-		std::wstring fps(L"FPS: " + std::to_wstring(static_cast<long long>(1.L / timer.GetTime(GTimer::Duration::SECONDS))));
-		SetWindowTextW(hwnd, fps.c_str());
+
+		std::wstring fps(L"FPS: " + std::to_wstring(static_cast<long long>(1.L / updateTimer.GetTime(GTimer::Duration::SECONDS))));
+		SetWindowTextW(win->GetHWND(), fps.c_str());
+	
+			
 	}
 
 }
@@ -184,22 +83,21 @@ void Application::InitializeScene()
 	// DONE  : Implement Light Class (Point light with radius)
 	// DONE  : Implement Light Manager (For Point Lights for now)
 
-	// DONE : Implement Phong Shading (Point light with radius)
-		// DONE : Hook-up attenuation correctly
-		// DONE : Decide on how to identify a light that shouldn't be calculated - Black light (Color(0, 0, 0) indicates end-of-data by shader!)
+	// DONE  : Implement Phong Shading (Point light with radius)
+	// DONE  : Hook-up attenuation correctly
+	// DONE  : Decide on how to identify a light that shouldn't be calculated - Black light (Color(0, 0, 0) indicates end-of-data by shader!)
 
 	// DONE  : Update how Objects hold Meshes (It can hold multiple meshes!) - Preparation for .obj hook. An object can now have X amount of Meshes that invokes X amount of Draw calls (not super efficient!)
 
-	// DONE : Add Assimp Position, UV, Normal + Texture support (Sponza loadable!)
+	// DONE  : Add Assimp Position, UV, Normal + Texture support (Sponza loadable!)
 
-	// To-do : Implement Skybox
-	// To-do : Create an Input class
+	// DONE  : Refactor Application so that Application OWNS a Window (not inherit!)
+	// DONE  : Create an Input class
 
-	// To-do : Refactor Application so that Application OWNS a Window (not inherit!)
+	// To-do : Implement Skybox (Learn Texture Cubes!)
 
-
-	// To-do : Implement a material constant buffer for meshes
-
+	// Back burner:
+	// To-do : Implement a material constant buffer for meshes (to enable impl. for blinn-phong spec. and no-texture default color)
 	// To-do further down the line : Abstractions for DX11 resources (e.g Vertex Shader, Pixel Shader, Bindable system, etc.)
 
 	graphics->UpdateProjectionMatrix(fpc.GetProjectionMatrix());
@@ -298,19 +196,18 @@ void Application::InitializeScene()
 
 	FindObject("Triangle1").SetRender(false);
 
-	CreatePointLight("Light0", Vector3(0.f, 10.f, 0.f), Vector3(1.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.1f));
-	CreatePointLight("Light1", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.f), Vector3(0.f, 1.f, 0.1f));
-	CreatePointLight("Light2", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
-	CreatePointLight("Light3", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.4f, 0.1f));
+	CreatePointLight("RedLight", Vector3(0.f, 10.f, 0.f), Vector3(1.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.1f));
+	CreatePointLight("GreenLight", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.f), Vector3(0.f, 1.f, 0.1f));
+	CreatePointLight("PurpleLight", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
+	CreatePointLight("BlueLight", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.4f, 0.1f));
 
-	//auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
-	//sponza.SetScaling(0.03f);
+	auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
+	sponza.SetScaling(0.03f);
 
-	CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
+	//CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
 
 
 }
-
 
 void Application::UpdateObjects()
 {
@@ -320,13 +217,13 @@ void Application::UpdateObjects()
 
 	FindObject("Triangle1").SetPosition(4.f, cosf(counter), cos(counter));
 
-	FindLight("Light0")->SetPosition( /*17.f + 15.f * cosf(counter * 3.f)*/ 4.f, 1.f, 0.f);
-	FindLight("Light0")->SetAttenuation(0.f, 0.6f + cosf(counter * 2.f) * 0.2f, 0.f);
+	FindLight("RedLight")->SetPosition( /*17.f + 15.f * cosf(counter * 3.f)*/ 4.f, 1.f, 0.f);
+	FindLight("RedLight")->SetAttenuation(0.f, 0.6f + cosf(counter * 2.f) * 0.2f, 0.f);
 
-	FindLight("Light1")->SetPosition( 23.f, 5.f, 12.f + 15.f * cosf(counter * 3.f));
-	FindLight("Light2")->SetPosition(-12.f + 5.f * cosf(counter * 3.f), 2, 5.f * sinf(counter * 3.f));
+	FindLight("GreenLight")->SetPosition( 23.f, 5.f, 12.f + 15.f * cosf(counter * 3.f));
+	FindLight("PurpleLight")->SetPosition(-12.f + 5.f * cosf(counter * 3.f), 2, 5.f * sinf(counter * 3.f));
 
-	FindLight("Light3")->SetPosition( /*17.f + 15.f * cosf(counter * 3.f)*/ 4.f, 1.f, -7.f);
+	FindLight("BlueLight")->SetPosition( /*17.f + 15.f * cosf(counter * 3.f)*/ 4.f, 1.f, -4.f);
 }
 
 // Used to test dynamic object deletion
@@ -361,78 +258,41 @@ void Application::RestoreDefaultScene()
 
 void Application::UpdateInput()
 {
-	input.keyboardCurrState = input.keyboard->GetState();
-	input.mouseCurrState = input.mouse->GetState();
-	input.keyboardTracker.Update(input.keyboardCurrState);
-	input.mouseTracker.Update(input.mouseCurrState);
-
+	input->UpdateState();
 	HandleKeyboardInput();
 	HandleMouseInput();
 }
 
 void Application::UpdateCamera()
 {
-	auto& msSt = input.mouseCurrState;
-
+	auto dt = updateTimer.GetTime(GTimer::Duration::SECONDS);
 	// Update only if mouse in relative mode
-	if (msSt.positionMode == DirectX::Mouse::MODE_RELATIVE)
-		fpc.Update(msSt.x, msSt.y, ply.moveLeftRight, ply.moveForwardBack, ply.moveUpDown, ply.speed, timer.GetTime(GTimer::Duration::SECONDS));
+	if (input->MouseIsRelative())
+	{
+		fpc.Update(input->GetMouseDeltaX(), input->GetMouseDeltaY(), player->GetLeftRight(),
+			player->GetForwardBack(), player->GetUpDown(), player->GetSpeed(),
+			dt);
+	}
 
-	ply.Reset();
+
+	player->ResetState();
 	graphics->UpdateViewMatrix(fpc.GetViewMatrix());
 }
 
 void Application::HandleKeyboardInput()
 {
-	auto& kbTr = input.keyboardTracker;
-	auto& kbSt = input.keyboardCurrState;
-	auto& msTr = input.mouseTracker;
-	auto& msSt = input.mouseCurrState;
+	using Key = DirectX::Keyboard::Keys;
 
-	using key = DirectX::Keyboard;
+	player->InputCheck();	// Update movement
 
 	// Toggle between absolute and relative mouse mode
-	if (kbTr.IsKeyPressed(key::T))
+	if (input->IsKeyPressed(Key::T))
 	{
 		OutputDebugStringW(L"Toggle absolute/relative mouse\n");
-
-		if (msSt.positionMode == DirectX::Mouse::MODE_ABSOLUTE)
-		{
-			input.mouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
-		}
-		else
-		{
-			input.mouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-		}
+		input->ToggleMouseMode();
 	}
 
-	// Movement controls: WASD + QE
-	if (kbSt.IsKeyDown(key::A))
-	{
-		ply.moveLeftRight = -1.f;
-	}
-	if (kbSt.IsKeyDown(key::D))
-	{
-		ply.moveLeftRight = 1.f;
-	}
-	if (kbSt.IsKeyDown(key::W))
-	{
-		ply.moveForwardBack = 1.f;
-	}
-	if (kbSt.IsKeyDown(key::S))
-	{
-		ply.moveForwardBack = -1.f;
-	}
-	if (kbSt.IsKeyDown(key::E))
-	{
-		ply.moveUpDown = 1.f;
-	}
-	if (kbSt.IsKeyDown(key::Q))
-	{
-		ply.moveUpDown = -1.f;
-	}
-
-	if (kbTr.IsKeyPressed(key::G))
+	if (input->IsKeyPressed(Key::G))
 	{
 		// Hide/Unhide an object's render state
 		auto obj = FindObject("Cube0");
@@ -443,11 +303,10 @@ void Application::HandleKeyboardInput()
 		else
 		{
 			obj.SetRender(true);
-
 		}
 	}
 
-	if (kbTr.IsKeyPressed(key::O))
+	if (input->IsKeyPressed(Key::O))
 	{
 		// If we try to delete an Object and it is deleted, it should crash the program.
 		// Testing dynamic deletion while app is running
@@ -460,7 +319,7 @@ void Application::HandleKeyboardInput()
 
 		}
 	}
-	if (kbTr.IsKeyPressed(key::P))
+	if (input->IsKeyPressed(Key::P))
 	{
 		// Create a triangle infront of the player
 		std::vector<Vertex> triVerts =
@@ -477,9 +336,9 @@ void Application::HandleKeyboardInput()
 
 	}
 
-	if (kbTr.IsKeyPressed(key::H))
+	if (input->IsKeyPressed(Key::H))
 	{
-		auto light = FindLight("Light0");
+		auto light = FindLight("RedLight");
 
 		// Toggle light on/off
 		if (light->ShouldUpdate() == true)
@@ -492,7 +351,7 @@ void Application::HandleKeyboardInput()
 		}
 	}
 
-	if (kbTr.IsKeyPressed(key::L))
+	if (input->IsKeyPressed(Key::L))
 	{
 		lPressed = !lPressed;
 		if (lPressed == true)
@@ -512,32 +371,16 @@ void Application::HandleKeyboardInput()
 
 	}
 
-	if (kbTr.IsKeyPressed(key::U))
+	if (input->IsKeyPressed(Key::R))
 	{
-		RemoveObject("Sponza");
-
+		RestoreDefaultScene();
 	}
 
 }
 
 void Application::HandleMouseInput()
 {
-	auto& msTr = input.mouseTracker;
-	auto& msSt = input.mouseCurrState;
 
-	// Print delta mouse position
-	if (msSt.positionMode == DirectX::Mouse::MODE_ABSOLUTE)
-	{
-		//OutputDebugStringW(L"X: ");
-		//OutputDebugStringW(std::to_wstring(msSt.x).c_str());
-		//OutputDebugStringW(L"\n");
-
-		//OutputDebugStringW(L"Y: ");
-		//OutputDebugStringW(std::to_wstring(msSt.y).c_str());
-		//OutputDebugStringW(L"\n");
-
-		//OutputDebugStringW(L"\n");
-	}
 
 }
 
@@ -646,46 +489,3 @@ bool Application::RemovePointLight(const std::string& identifier)
 	return graphicsRemoved && appLightRemoved;
 }
 
-void Application::InitializeMenu()
-{
-	// Win32 menu
-	auto& mainMenu = menuBar.mainMenu;
-	auto& subMenus = menuBar.subMenus;
-
-	mainMenu = CreateMenu();
-
-	subMenus.push_back(CreateMenu());
-	AppendMenuW(subMenus[0], MF_STRING, 0, L"Restore Scene");	// ID 0 (wParam)
-	AppendMenuW(subMenus[0], MF_STRING, 1, L"Close");	// ID 1
-	AppendMenuW(mainMenu, MF_POPUP, (UINT_PTR)subMenus[0], L"Options");		// Drop down options
-
-}
-
-void Application::HandleWinGUI(const WPARAM& wParam)
-{
-	switch (wParam)
-	{
-	case 0:
-	{
-		RestoreDefaultScene();
-		OutputDebugStringW(L"Scene Restored\n");
-		MessageBeep(MB_OK);
-		break;
-	}
-	case 1:
-	{
-		OutputDebugStringW(L"Close\n");
-		Quit();
-		break;
-	}
-
-	}
-}
-
-void Application::Quit()
-{
-	if (MessageBox(hwnd, L"Really quit?", L"Application", MB_OKCANCEL) == IDOK)
-	{
-		DestroyWindow(hwnd);
-	}
-}

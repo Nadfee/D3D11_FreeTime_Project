@@ -5,15 +5,21 @@
 
 #include <windows.h>
 #include <assert.h>
+#include "Input.h"
 
 class Window
 {
 public:
 
-	Window();
-	virtual ~Window();
+	Window(const HINSTANCE& hInstance,
+		const wchar_t* winName = L"Default Window Name",
+		const INT& clientWidth = 1280,
+		const INT& clientHeight = 720,
+		const DWORD& style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+		const DWORD& exStyle = 0);
+	~Window();
 
-	virtual LRESULT HandleProc(const UINT& uMsg, const WPARAM& wParam, const LPARAM& lParam) = 0;
+	LRESULT HandleProc(const UINT& uMsg, const WPARAM& wParam, const LPARAM& lParam);
 
 	void SetTitle(const LPCWSTR& title) const;
 	void SetClientSize(bool bMenu) const;

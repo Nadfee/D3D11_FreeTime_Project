@@ -5,9 +5,9 @@
 #include "Camera.h"
 #include "AssimpLoader.h"
 #include "Timer.h"
+#include "Input.h"
+#include "Player.h"
 
-#include <Mouse.h>
-#include <Keyboard.h>
 #include <DirectXColors.h>
 #include <SimpleMath.h>
 
@@ -19,77 +19,32 @@
 
 using namespace DirectX::SimpleMath;
 using GraphicsPtr = std::unique_ptr<Graphics>;
+using WindowPtr = std::unique_ptr<Window>;
+using InputPtr = std::shared_ptr<Input>;
+using PlayerPtr = std::unique_ptr<Player>;
 
-struct InputTK
-{
-	std::unique_ptr<DirectX::Keyboard> keyboard;
-	std::unique_ptr<DirectX::Mouse> mouse;
-	DirectX::Keyboard::State keyboardCurrState = { };
-	DirectX::Mouse::State mouseCurrState = { };
-	DirectX::Keyboard::KeyboardStateTracker keyboardTracker;
-	DirectX::Mouse::ButtonStateTracker mouseTracker;
-
-	void Initialize(const HWND& hwnd)
-	{
-		keyboard = std::make_unique<DirectX::Keyboard>();
-		mouse = std::make_unique<DirectX::Mouse>();
-		mouse->SetWindow(hwnd);
-		mouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
-	}
-};
-
-struct MenuBar
-{
-	HMENU mainMenu = 0;
-	std::vector<HMENU> subMenus;
-};
-
-struct PlayerInfo
-{
-	// [-1, 1]
-	float moveForwardBack = 0.f;
-	float moveLeftRight = 0.f;
-	float moveUpDown = 0.f;
-	float speed = 12.f;
-
-	void Reset()
-	{
-		moveForwardBack = 0.f;
-		moveLeftRight = 0.f;
-		moveUpDown = 0.f;
-	}
-
-};
-
-class Application : public Window
-{
+class Application
+{	
 public:
-	Application(const HINSTANCE& hInstance,
-		const wchar_t* winName = L"Default Window Name",
-		const INT& clientWidth = 1280,
-		const INT& clientHeight = 720,
-		const DWORD& style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
-		const DWORD& exStyle = 0);
+	Application(const HINSTANCE& hInstance);
 	~Application();	
 
-	virtual LRESULT HandleProc(const UINT& uMsg, const WPARAM& wParam, const LPARAM& lParam) override;
 	void Run();
 
 private:
-
+	WindowPtr win;
 	AssimpLoader assimpLoader;
-	GraphicsPtr graphics;		// DX11
-	MenuBar menuBar;			// Win32 GUI
-	InputTK input;				// Input (DXTK)
-	PlayerInfo ply;
+	GraphicsPtr graphics;	
+	PlayerPtr player;
+	InputPtr input;
+
+	Camera fpc;
 
 	std::unordered_map<std::string, Object> objects;
 	std::unordered_map<std::string, PointLightHash> lights;
 
-	Camera fpc;
-
 	// Timer
-	GTimer::Timer timer;
+	GTimer::Timer updateTimer;
 	double counter;
 
 	void InitializeScene();
@@ -112,11 +67,6 @@ private:
 	void UpdateInput();
 	void HandleKeyboardInput();
 	void HandleMouseInput();
-
-	// Application specific menu bars
-	void InitializeMenu();
-	void HandleWinGUI(const WPARAM& wParam);
-	void Quit();
 
 
 };

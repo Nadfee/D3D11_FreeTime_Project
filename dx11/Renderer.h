@@ -50,10 +50,8 @@ public:
 	ComPtr<ID3D11ShaderResourceView> CreateSRVFromFileWIC(std::wstring fileName, bool mipMapOn = true);
 	ComPtr<ID3D11ShaderResourceView> CreateBufferShaderResourceView(ID3D11Buffer* buffer, unsigned int elementCount);
 	
-
-	// Let's start
 	void ForwardRenderSetup();
-	void Render();
+	//void Render();
 
 private:
 

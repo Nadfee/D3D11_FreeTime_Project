@@ -1,17 +1,25 @@
 #include "Window.h"
 
 
-Window::Window() :
+Window::Window(const HINSTANCE& hInstance,
+	const wchar_t* winName,
+	const INT& clientWidth,
+	const INT& clientHeight,
+	const DWORD& style,
+	const DWORD& exStyle) :
 	isClosed(false),
 	hwnd(NULL),
-	hInstance(NULL),
-	winName(L""),
-	clientWidth(0),
-	clientHeight(0),
-	style(0),
-	exStyle(0)
+	hInstance(hInstance),
+	winName(winName),
+	clientWidth(clientWidth),
+	clientHeight(clientHeight),
+	style(style),
+	exStyle(exStyle)
 {
+	InitializeWindow();
 
+	// Win32 - Re-size again but with menu considered for AdjustWindowRect
+	SetClientSize(false);
 }
 
 Window::~Window()
@@ -64,44 +72,84 @@ void Window::CreateWin()
 
 
 // Default WndProc
-//LRESULT Window::HandleProc(const UINT& uMsg, const WPARAM& wParam, const LPARAM& lParam)
-//{
-//	switch (uMsg)
-//	{
-//	case WM_CLOSE:
-//	{
-//		if (MessageBox(hwnd, L"Really quit?", L"My application", MB_OKCANCEL) == IDOK)
-//		{
-//			DestroyWindow(hwnd);
-//		}
-//
-//		break;
-//	}
-//
-//	case WM_DESTROY:
-//	{
-//		PostQuitMessage(0);		// Puts WM_QUIT in queue and WM_QUIT causes GetMessage to return 0
-//		isClosed = true;
-//		break;
-//	}
-//
-//	case WM_PAINT:
-//	{
-//		PAINTSTRUCT ps;
-//		HDC hdc = BeginPaint(hwnd, &ps);
-//
-//		// All painting occurs here, between BeginPaint and EndPaint.
-//
-//		FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
-//
-//		EndPaint(hwnd, &ps);
-//		break;
-//	}
-//	default:
-//		return DefWindowProc(hwnd, uMsg, wParam, lParam);	// default action for msg if not handled
-//
-//	}
-//}
+LRESULT Window::HandleProc(const UINT& uMsg, const WPARAM& wParam, const LPARAM& lParam)
+{
+	switch (uMsg)
+	{
+	case WM_CLOSE:
+	{
+		if (MessageBox(hwnd, L"Really quit?", L"My application", MB_OKCANCEL) == IDOK)
+		{
+			DestroyWindow(hwnd);
+		}
+
+		break;
+	}
+
+	case WM_DESTROY:
+	{
+		PostQuitMessage(0);		// Puts WM_QUIT in queue and WM_QUIT causes GetMessage to return 0
+		isClosed = true;
+		break;
+	}
+
+	case WM_PAINT:
+	{
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(hwnd, &ps);
+
+		// All painting occurs here, between BeginPaint and EndPaint.
+
+		FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
+
+		EndPaint(hwnd, &ps);
+		break;
+	}
+
+	// XTK Mouse & Keyboard
+	case WM_ACTIVATEAPP:
+	{
+		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
+		DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+		break;
+	}
+	case WM_INPUT:
+	case WM_MOUSEMOVE:
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_MOUSEWHEEL:
+	case WM_XBUTTONDOWN:
+	case WM_XBUTTONUP:
+	case WM_MOUSEHOVER:
+		DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+		break;
+
+	case WM_KEYDOWN:
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
+		break;
+
+	case WM_SYSKEYDOWN:
+		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
+		//if (wParam == VK_RETURN && (lParam & 0x60000000) == 0x20000000)
+		//{
+		//	
+		//}
+		break;
+
+
+	default:
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);	// default action for msg if not handled
+
+	}
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);	// default action for msg if not handled
+
+}
 
 void Window::SetTitle(const LPCWSTR& title) const
 {

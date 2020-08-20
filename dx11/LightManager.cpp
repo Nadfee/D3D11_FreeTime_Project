@@ -67,7 +67,7 @@ void LightManager::UpdateLightData()
 	unsigned int i = 0;
 	for (const auto& pair : pointLights)
 	{
-		OutputDebugStringW(L"Updating\n");
+		//OutputDebugStringW(L"Updating\n");
 		if (pair.second.light->ShouldUpdate())
 		{
 			pointLightData[i++] = pair.second.light->GetPointLightData();

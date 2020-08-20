@@ -20,33 +20,31 @@ public:
 	// Mesh interface functions
 	MeshPtr CreateMesh(const std::vector<Vertex>& initVertexData, std::wstring textureFilePath);
 	bool RemoveMesh(std::size_t identifier);
-	
-	// Functions that interface with the Renderer
-	void Frame();
-	void Present();
-
-	void DrawObjects();
-
-	// Camera specific interface functions
-	void UpdateViewMatrix(const Matrix& mat);
-	void UpdateProjectionMatrix(const Matrix& mat);
 
 	// Experimental: Light creation interface
 	PointLightPtr CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, const Vector3& initAttenuation);
 	bool RemovePointLight(const std::string& identifier);
+	
+	// Functions that interface with the Renderer
+	void Render();
+	void Present();
+
+	// Camera specific interface functions
+	void UpdateViewMatrix(const Matrix& mat);
+	void UpdateProjectionMatrix(const Matrix& mat);
 
 	// Temporary function to directly try D3D11 functionality
 	void TempCall();
 
 
 private:
-	void UpdateLights();
+	void UpdateLightsData();
+	void DrawObjects();
 
 	RendererPtr renderer;
 
 	// MeshManager (Abstract one more layer to follow single-responsibility principle?)
-	// TextureManager
-	// 
+	// TextureManager..
 
 	MeshManager meshManager;
 	LightManager lightManager;

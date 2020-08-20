@@ -392,12 +392,12 @@ void Renderer::LoadShaderBlob(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shader
 
 }
 
-void Renderer::Render()
-{
-	//auto devCon = deviceManager->GetDeviceContext();
-	//ClearMainRenderTarget(DirectX::Colors::Bisque);
-
-	//devCon->Draw(3, 0);
-
-
-}
+//void Renderer::Render()
+//{
+//	//auto devCon = deviceManager->GetDeviceContext();
+//	//ClearMainRenderTarget(DirectX::Colors::Bisque);
+//
+//	//devCon->Draw(3, 0);
+//
+//
+//}
