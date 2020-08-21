@@ -29,12 +29,14 @@ public:
 	void Render();
 	void Present();
 
+
 	// Camera specific interface functions
 	void UpdateViewMatrix(const Matrix& mat);
 	void UpdateProjectionMatrix(const Matrix& mat);
 
 
 private:
+	void DrawSkybox();
 	void UpdateLightsData();
 	void DrawObjects();
 

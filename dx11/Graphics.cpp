@@ -6,15 +6,6 @@ Graphics::Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHe
 {
 	lightManager.SetBufferView(renderer->CreateBufferShaderResourceView(lightManager.GetLightsBuffer().Get(), lightManager.GetMaxLightsCount()));
 
-	std::vector<std::wstring> filePaths;
-	filePaths.push_back(L"Textures/skybox/right.jpg");
-	filePaths.push_back(L"Textures/skybox/left.jpg");
-	filePaths.push_back(L"Textures/skybox/top.jpg");
-	filePaths.push_back(L"Textures/skybox/bottom.jpg");
-	filePaths.push_back(L"Textures/skybox/front.jpg");
-	filePaths.push_back(L"Textures/skybox/back.jpg");
-
-	renderer->CreateTextureCubeSRVFromFiles(filePaths);
 
 }
 
@@ -29,6 +20,8 @@ void Graphics::Render()
 	renderer->SetBackBufferRTV();
 
 	// Here we can also add experimental D3D11 render passes (interface with Renderer (e.g get pass abstractions) without having to have anything on App-side)
+
+	DrawSkybox();
 
 	UpdateLightsData();
 	DrawObjects();
@@ -57,6 +50,11 @@ void Graphics::Render()
 void Graphics::Present()
 {
 	renderer->Present();
+}
+
+void Graphics::DrawSkybox()
+{
+	renderer->SkyboxPass();
 }
 
 void Graphics::UpdateViewMatrix(const Matrix& mat)

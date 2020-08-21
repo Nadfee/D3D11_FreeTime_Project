@@ -117,5 +117,7 @@
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl" />
     <FxCompile Include="VertexShader.hlsl" />
+    <FxCompile Include="SkyboxVS.hlsl" />
+    <FxCompile Include="SkyboxPS.hlsl" />
   </ItemGroup>
 </Project>

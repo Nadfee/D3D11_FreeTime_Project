@@ -56,8 +56,56 @@ void Renderer::UpdateProjectionMatrix(const Matrix& mat)
 	UpdateMatrix(projectionMatrixBuffer, mat);
 }
 
+void Renderer::SkyboxPass()
+{
+	auto devCon = GetDeviceContext();
+
+	// Setup resources
+	devCon->VSSetShader(skyboxVs.Get(), nullptr, 0);
+	devCon->PSSetShader(skyboxPs.Get(), nullptr, 0);
+	devCon->VSSetConstantBuffers(0, 1, viewMatrixBuffer.GetAddressOf());
+	devCon->VSSetConstantBuffers(1, 1, projectionMatrixBuffer.GetAddressOf());
+	devCon->PSSetShaderResources(0, 1, skyboxText.GetAddressOf());
+	devCon->PSSetSamplers(0, 1, sampler.GetAddressOf());
+
+	devCon->OMSetDepthStencilState(skyboxDss.Get(), 0);
+
+	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	devCon->RSSetViewports(1, &deviceManager->GetVP());
+	devCon->IASetInputLayout(nullptr);
+	devCon->RSSetState(skyboxRss.Get());
+
+	// Trigger immediate buffer
+	devCon->Draw(36, 0);
+
+}
+
 void Renderer::DrawMesh(const MeshPtr& mesh)
 {
+	auto devCon = GetDeviceContext();
+	// Setting environment
+
+	devCon->RSSetState(nullptr);
+	devCon->OMSetDepthStencilState(nullptr, 0);
+
+	devCon->VSSetShader(vs.Get(), NULL, NULL);
+	devCon->IASetInputLayout(il.Get());
+
+	devCon->PSSetShader(ps.Get(), NULL, NULL);
+	devCon->PSSetSamplers(0, 1, sampler.GetAddressOf());	// default wrap minmaglinear, mippoint sampler for texture
+
+	// Misc.
+	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	devCon->RSSetViewports(1, &deviceManager->GetVP());
+
+	// View and Projection Matrix
+	devCon->VSSetConstantBuffers(1, 1, viewMatrixBuffer.GetAddressOf());
+	devCon->VSSetConstantBuffers(2, 1, projectionMatrixBuffer.GetAddressOf());
+
+
+	// Mesh draw
+
 	MapUpdate(mesh->GetWorldMatrixBuffer(), (void*)&mesh->GetWorldMatrix(), sizeof(Matrix), D3D11_MAP_WRITE_DISCARD);
 
 	GetDeviceContext()->VSSetConstantBuffers(0, 1, mesh->GetWorldMatrixBuffer().GetAddressOf());
@@ -404,23 +452,51 @@ void Renderer::ForwardRenderSetup()
 	hr = dev->CreateSamplerState(&samplerDesc, this->sampler.GetAddressOf());
 	assert(SUCCEEDED(hr));
 
-	// Setting environment
+	// Skybox setup
+	std::vector<std::wstring> filePaths;
+	filePaths.push_back(L"Textures/skybox/right.jpg");
+	filePaths.push_back(L"Textures/skybox/left.jpg");
+	filePaths.push_back(L"Textures/skybox/top.jpg");
+	filePaths.push_back(L"Textures/skybox/bottom.jpg");
+	filePaths.push_back(L"Textures/skybox/front.jpg");
+	filePaths.push_back(L"Textures/skybox/back.jpg");
 
-	// VS
-	devCon->VSSetShader(vs.Get(), NULL, NULL);
-	devCon->IASetInputLayout(il.Get());
+	skyboxText = CreateTextureCubeSRVFromFiles(filePaths);
 
-	devCon->PSSetShader(ps.Get(), NULL, NULL);
-	devCon->PSSetSamplers(0, 1, sampler.GetAddressOf());	// default wrap minmaglinear, mippoint sampler for texture
+	// Setup Skybox Shaders
+	LoadShaderBlob(L"SkyboxVS.hlsl", "VSMAIN", "vs_5_0", skyboxVsBlob.GetAddressOf());
+	LoadShaderBlob(L"SkyboxPS.hlsl", "PSMAIN", "ps_5_0", skyboxPsBlob.GetAddressOf());
 
-	// Misc.
-	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	hr = dev->CreateVertexShader(skyboxVsBlob->GetBufferPointer(), skyboxVsBlob->GetBufferSize(), NULL, skyboxVs.GetAddressOf());
+	if (FAILED(hr))
+		assert(false);
 
-	devCon->RSSetViewports(1, &deviceManager->GetVP());
+	hr = dev->CreatePixelShader(skyboxPsBlob->GetBufferPointer(), skyboxPsBlob->GetBufferSize(), NULL, skyboxPs.GetAddressOf());
+	if (FAILED(hr))
+		assert(false);
 
-	// View and Projection Matrix
-	devCon->VSSetConstantBuffers(1, 1, viewMatrixBuffer.GetAddressOf());
-	devCon->VSSetConstantBuffers(2, 1, projectionMatrixBuffer.GetAddressOf());
+	D3D11_RASTERIZER_DESC rssDesc = { };
+	rssDesc.FillMode = D3D11_FILL_SOLID;
+	rssDesc.CullMode = D3D11_CULL_BACK;
+	rssDesc.FrontCounterClockwise = FALSE;	// we are inside box for skybox
+	rssDesc.DepthBias = 0;
+	rssDesc.DepthBiasClamp = 0;
+	rssDesc.SlopeScaledDepthBias = 0;
+	rssDesc.DepthClipEnable = TRUE;
+	rssDesc.ScissorEnable = FALSE;
+	rssDesc.MultisampleEnable = FALSE;
+	rssDesc.AntialiasedLineEnable = FALSE;
+
+	hr = dev->CreateRasterizerState(&rssDesc, skyboxRss.GetAddressOf());
+	assert(SUCCEEDED(hr));
+
+	// Setup DSS
+	D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+
+	hr = dev->CreateDepthStencilState(&dsDesc, skyboxDss.GetAddressOf());
+	assert(SUCCEEDED(hr));
 }
 
 // Shader Types: vs_5_0, ps_5_0, hs_5_0, gs_5_0, ds_5_0, cs_5_0

@@ -102,7 +102,7 @@ void Application::InitializeScene()
 
 	std::vector<Vertex> triVerts =
 	{
-		{ Vector3(1.f, -0.5f, 0.f), Vector2(1.f, 0.f), Vector3(0.f, 0.f, -1.f) },
+		{ Vector3(1.f, -0.5f, 0.f), Vector2(1.f, 0.f), Vector3(0.f, 0.f, -1.f) },	// Clockwise
 		{ Vector3(-1.f, -0.5f, 0.f), Vector2(0.f, 1.f), Vector3(0.f, 0.f, -1.f) },
 		{ Vector3(0.f, 1.f, 0.f), Vector2(1.f, 1.f), Vector3(0.f, 0.f, -1.f) }
 	};

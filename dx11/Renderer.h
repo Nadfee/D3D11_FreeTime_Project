@@ -42,6 +42,8 @@ public:
 	void UpdateViewMatrix(const Matrix& mat);
 	void UpdateProjectionMatrix(const Matrix& mat);
 
+	void SkyboxPass();
+
 	void DrawMesh(const MeshPtr& mesh);
 	void BindLight(unsigned int slot, ComPtr<ID3D11ShaderResourceView> srv);
 
@@ -83,6 +85,13 @@ private:
 	ComPtr<ID3D11DepthStencilView> dsv;
 	ComPtr<ID3D11SamplerState> sampler;		// D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT
 
+	ComPtr<ID3D11ShaderResourceView> skyboxText;
+	ComPtr<ID3DBlob> skyboxVsBlob;
+	ComPtr<ID3DBlob> skyboxPsBlob;
+	ComPtr<ID3D11VertexShader> skyboxVs;
+	ComPtr<ID3D11PixelShader> skyboxPs;
+	ComPtr<ID3D11RasterizerState> skyboxRss;
+	ComPtr<ID3D11DepthStencilState> skyboxDss;
 
 	// Shaders (Should be abstracted away in their respective classes)
 	// Note Input Layout and VS go together very well
