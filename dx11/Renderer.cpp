@@ -5,7 +5,7 @@ Renderer::Renderer(const HWND& hwnd, const int& clientWidth, const int& clientHe
 	clientWidth(clientWidth),
 	clientHeight(clientHeight)
 {
-	
+	ForwardRenderSetup();
 
 
 }
@@ -255,6 +255,62 @@ ComPtr<ID3D11ShaderResourceView> Renderer::CreateBufferShaderResourceView(ID3D11
 	return srv;
 }
 
+ComPtr<ID3D11ShaderResourceView> Renderer::CreateTextureCubeSRVFromFiles(std::vector<std::wstring> filePaths)
+{
+	ComPtr<ID3D11ShaderResourceView> srv;
+
+	DirectX::ScratchImage images[6];
+	for (int i = 0; i < 6; ++i)
+	{
+		DirectX::ScratchImage image;
+		HRESULT hr = DirectX::LoadFromWICFile(filePaths[i].c_str(),
+			DirectX::WIC_FLAGS_IGNORE_SRGB, nullptr, images[i]
+		);
+		assert(SUCCEEDED(hr));
+	}
+
+	// For Skybox
+	D3D11_TEXTURE2D_DESC desc = { };
+	desc.Width = images[0].GetImage(0, 0, 0)->width;
+	desc.Height = images[0].GetImage(0, 0, 0)->height;;
+	desc.MipLevels = 1;
+	desc.ArraySize = 6;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	
+	D3D11_SUBRESOURCE_DATA subresData[6] = { };
+	for (int i = 0; i < 6; ++i)
+	{
+		subresData[i].pSysMem = images[i].GetPixels();
+		subresData[i].SysMemPitch = images[i].GetImage(0, 0, 0)->width * 4;
+		subresData[i].SysMemSlicePitch = 0;
+	}
+
+	ComPtr<ID3D11Texture2D> texture;
+
+	HRESULT hr = GetDevice()->CreateTexture2D(&desc, subresData, texture.GetAddressOf());
+	assert(SUCCEEDED(hr));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = { };
+	srvDesc.Format = desc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	srvDesc.TextureCube.MostDetailedMip = 0;
+	srvDesc.TextureCube.MipLevels = 1;
+
+	hr = GetDevice()->CreateShaderResourceView(texture.Get(), &srvDesc, srv.GetAddressOf());
+	assert(SUCCEEDED(hr));
+
+	return srv;
+
+
+	
+}
+
 void Renderer::ForwardRenderSetup()
 {
 	// We will go with normal Draw function for now
@@ -391,13 +447,3 @@ void Renderer::LoadShaderBlob(LPCWSTR fileName, LPCSTR entryPoint, LPCSTR shader
 	}
 
 }
-
-//void Renderer::Render()
-//{
-//	//auto devCon = deviceManager->GetDeviceContext();
-//	//ClearMainRenderTarget(DirectX::Colors::Bisque);
-//
-//	//devCon->Draw(3, 0);
-//
-//
-//}

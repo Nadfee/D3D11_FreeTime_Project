@@ -4,8 +4,18 @@ Graphics::Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHe
 	renderer(std::make_shared<Renderer>(hwnd, clientWidth, clientHeight)),
 	lightManager(renderer->CreateStructuredBuffer(nullptr, sizeof(PointLightData), 500, true, true), 500)		// Set space for 500 lights in Structured Buffer
 {
-	renderer->ForwardRenderSetup();
 	lightManager.SetBufferView(renderer->CreateBufferShaderResourceView(lightManager.GetLightsBuffer().Get(), lightManager.GetMaxLightsCount()));
+
+	std::vector<std::wstring> filePaths;
+	filePaths.push_back(L"Textures/skybox/right.jpg");
+	filePaths.push_back(L"Textures/skybox/left.jpg");
+	filePaths.push_back(L"Textures/skybox/top.jpg");
+	filePaths.push_back(L"Textures/skybox/bottom.jpg");
+	filePaths.push_back(L"Textures/skybox/front.jpg");
+	filePaths.push_back(L"Textures/skybox/back.jpg");
+
+	renderer->CreateTextureCubeSRVFromFiles(filePaths);
+
 }
 
 Graphics::~Graphics()
@@ -69,12 +79,6 @@ PointLightPtr Graphics::CreatePointLight(const std::string& identifier, const Ve
 bool Graphics::RemovePointLight(const std::string& identifier)
 {
 	return lightManager.RemoveLight(identifier);
-}
-
-
-void Graphics::TempCall()
-{
-
 }
 
 void Graphics::UpdateLightsData()

@@ -16,7 +16,7 @@ Application::Application(const HINSTANCE& hInstance) :
 	player = std::make_unique<Player>();
 
 	// Setup camera
-	fpc = Camera(70.f, win->GetAspectRatio());
+	fpc = Camera(77.f, win->GetAspectRatio());
 }
 
 Application::~Application()
@@ -46,12 +46,6 @@ void Application::Run()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
-		// Scenes.. Maybe this kind of setup?
-		// SceneManager.SetActiveScene(ID);	--> Should hold Scenes 
-		// SceneManager.Run();
-			// Objects.Render()	 --> Requires a shared ptr to a device context
-				// Mesh.Render() --> Interfaces with a device context 
 
 		UpdateObjects();
 		UpdateInput();
@@ -205,10 +199,10 @@ void Application::InitializeScene()
 	CreatePointLight("PurpleLight", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
 	CreatePointLight("BlueLight", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.4f, 0.1f));
 
-	auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
-	sponza.SetScaling(0.03f);
+	//auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
+	//sponza.SetScaling(0.03f);
 
-	//CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
+	CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
 
 
 }

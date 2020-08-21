@@ -33,9 +33,6 @@ public:
 	void UpdateViewMatrix(const Matrix& mat);
 	void UpdateProjectionMatrix(const Matrix& mat);
 
-	// Temporary function to directly try D3D11 functionality
-	void TempCall();
-
 
 private:
 	void UpdateLightsData();

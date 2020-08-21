@@ -21,7 +21,7 @@ public:
 	void LoadModel(const std::string& filePath);
 
 private:
-	std::vector<std::vector<Vertex>> vertexData;
+	std::vector<std::vector<Vertex>> vertexData;	// HOLY SHIT We are storing ALL THE VERTICES!! MEMORY!!!
 	std::vector<std::string> textures;
 
 	void ProcessNode(aiNode* node, const aiScene* scene);

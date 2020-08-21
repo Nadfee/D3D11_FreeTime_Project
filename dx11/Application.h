@@ -37,7 +37,6 @@ private:
 	GraphicsPtr graphics;	
 	PlayerPtr player;
 	InputPtr input;
-
 	Camera fpc;
 
 	std::unordered_map<std::string, Object> objects;

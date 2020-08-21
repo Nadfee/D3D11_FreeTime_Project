@@ -4,6 +4,8 @@
 
 #include <DirectXColors.h>
 
+#include <DirectXTex.h>
+
 #include <string>
 #include <assert.h>
 #include <memory>
@@ -49,11 +51,14 @@ public:
 	ComPtr<ID3D11Buffer> CreateStructuredBuffer(void* initBufferData, unsigned int elementSize, unsigned int elementCount, bool cpuWrite, bool dynamic);
 	ComPtr<ID3D11ShaderResourceView> CreateSRVFromFileWIC(std::wstring fileName, bool mipMapOn = true);
 	ComPtr<ID3D11ShaderResourceView> CreateBufferShaderResourceView(ID3D11Buffer* buffer, unsigned int elementCount);
+	ComPtr<ID3D11ShaderResourceView> CreateTextureCubeSRVFromFiles(std::vector<std::wstring> filePaths);
 	
-	void ForwardRenderSetup();
+
 	//void Render();
 
 private:
+
+	void ForwardRenderSetup();
 
 	int clientWidth;
 	int clientHeight;
