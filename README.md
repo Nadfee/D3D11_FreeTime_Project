@@ -3,9 +3,7 @@ Personal project where I tinker with D3D11
   
 My main purpose with this project is to play around with DX11, DirectX Tool Kit and the organization of a larger project  
   
-- Goal of this project is to create an Application which interfaces with the Graphics/D3D11 in order to better understand what is needed from the Graphics side and how it can be exposed to an Application.  
-  
-- Project will be extended with graphics techniques
+- Goal of this project is to just make something. Implement some techniques and play around with some OOP principles 
 
 Controls:  
   
