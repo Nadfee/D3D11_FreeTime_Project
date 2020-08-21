@@ -21,10 +21,10 @@ void Graphics::Render()
 
 	// Here we can also add experimental D3D11 render passes (interface with Renderer (e.g get pass abstractions) without having to have anything on App-side)
 
-	DrawSkybox();
 
 	UpdateLightsData();
 	DrawObjects();
+	DrawSkybox();		// Draw Skybox last so we don't need to invoke all PS (since we have scene objects rendering first)
 	Present();
 
 	// If we would like to have multiple passes (e.g deferred) then this is the place we would call various pass setups!
