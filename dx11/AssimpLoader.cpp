@@ -106,3 +106,13 @@ void AssimpLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
 
 }
+
+void AssimpLoader::Clear()
+{
+	for (auto& data : vertexData)
+	{
+		data.clear();
+	}
+	vertexData.clear();
+	textures.clear();
+}

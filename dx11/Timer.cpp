@@ -38,7 +38,7 @@ void GTimer::Timer::Print(std::string headerMsg)
 		 << "(" << durationInS * 1E-03 << "s)." << endl;
 }
 
-long double GTimer::Timer::GetTime(Duration duration)
+long double GTimer::Timer::GetDeltaTime(Duration duration)
 {
 	switch (duration)
 	{

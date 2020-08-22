@@ -47,8 +47,11 @@ void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwa
 	Vector4 defaultUp = Vector4(0.f, 1.f, 0.f, 0.f);
 
 	// Update the pitch and yaw values for camera
-	float deltaPitch = deltaY * 0.002f;
-	float deltaYaw = deltaX * 0.002f;
+	// Mouse still depends on FPS!
+	// If we use deltaTime then Raw Input will be very noticable! (Jagged movement)
+	float deltaPitch = deltaY * 0.003f;
+	float deltaYaw = deltaX * 0.003f;
+
 
 	camPitch += deltaPitch;
 	camYaw += deltaYaw;

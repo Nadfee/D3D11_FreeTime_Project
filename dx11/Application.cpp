@@ -37,7 +37,7 @@ void Application::Run()
 		++cnt;
 		updateTimer.Start();
 
-		counter += updateTimer.GetTime(GTimer::Duration::SECONDS);
+		counter += updateTimer.GetDeltaTime(GTimer::Duration::SECONDS);
 		if (counter > 100.f)
 			counter = 0.f;
 
@@ -56,10 +56,16 @@ void Application::Run()
 		updateTimer.Stop();
 
 
-		std::wstring fps(L"FPS: " + std::to_wstring(static_cast<long long>(1.L / updateTimer.GetTime(GTimer::Duration::SECONDS))));
+		std::wstring fps(L"FPS: " + std::to_wstring(static_cast<long long>(1.L / updateTimer.GetDeltaTime(GTimer::Duration::SECONDS))));
 		// Arbitrarily slow down the FPS update so we can see FPS properly
+		OutputDebugStringW(std::to_wstring(updateTimer.GetDeltaTime(GTimer::Duration::SECONDS)).c_str());
+		OutputDebugStringW(L"\n");
+
 		if (cnt % 30 == 0)
+		{
 			SetWindowTextW(win->GetHWND(), fps.c_str());
+
+		}
 	
 			
 	}
@@ -199,8 +205,8 @@ void Application::InitializeScene()
 	CreatePointLight("PurpleLight", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
 	CreatePointLight("BlueLight", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.4f, 0.1f));
 
-	//auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
-	//sponza.SetScaling(0.03f);
+	/*auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
+	sponza.SetScaling(0.03f);*/
 
 	CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
 
@@ -263,7 +269,7 @@ void Application::UpdateInput()
 
 void Application::UpdateCamera()
 {
-	auto dt = updateTimer.GetTime(GTimer::Duration::SECONDS);
+	auto dt = updateTimer.GetDeltaTime(GTimer::Duration::SECONDS);
 	// Update only if mouse in relative mode
 	if (input->MouseIsRelative())
 	{
@@ -450,6 +456,8 @@ Object& Application::CreateObject(const std::string& id, const std::string& dire
 
 		meshes.push_back(graphics->CreateMesh(meshesVertsData[i], texturePathWs));
 	}
+
+	assimpLoader.Clear();
 
 	Object obj(id, meshes);
 	objects.insert({ obj.GetID(), obj });

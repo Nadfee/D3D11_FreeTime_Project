@@ -28,8 +28,8 @@ namespace GTimer
 		// Print duration in milliseconds and seconds
 		void Print(std::string headerMsg);
 
-		// Get duration: MILLISECONDS, SECONDS
-		long double GetTime(Duration duration);
+		// Get delta time: MILLISECONDS, SECONDS
+		long double GetDeltaTime(Duration duration);
 
 
 	private:

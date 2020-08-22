@@ -18,6 +18,7 @@ public:
 	std::vector<std::vector<Vertex>> GetMeshesVertexData() { return vertexData; }
 	std::vector<std::string> GetMeshesTextures() { return textures; }
 
+	void Clear();
 	void LoadModel(const std::string& filePath);
 
 private:
@@ -26,7 +27,6 @@ private:
 
 	void ProcessNode(aiNode* node, const aiScene* scene);
 	void ProcessMesh(aiMesh* mesh, const aiScene* scene);
-
 
 
 

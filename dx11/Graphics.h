@@ -3,6 +3,8 @@
 #include "MeshManager.h"
 #include "LightManager.h"
 
+#include "SkyboxPass.h"
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -27,8 +29,6 @@ public:
 	
 	// Functions that interface with the Renderer
 	void Render();
-	void Present();
-
 
 	// Camera specific interface functions
 	void UpdateViewMatrix(const Matrix& mat);
@@ -36,18 +36,15 @@ public:
 
 
 private:
-	void DrawSkybox();
 	void UpdateLightsData();
 	void DrawObjects();
 
 	RendererPtr renderer;
 
-	// MeshManager (Abstract one more layer to follow single-responsibility principle?)
-	// TextureManager..
-
 	MeshManager meshManager;
 	LightManager lightManager;
 
+	std::unique_ptr<SkyboxPass> skyboxPass;
 
 
 };

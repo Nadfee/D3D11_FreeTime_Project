@@ -5,7 +5,7 @@ Graphics::Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHe
 	lightManager(renderer->CreateStructuredBuffer(nullptr, sizeof(PointLightData), 500, true, true), 500)		// Set space for 500 lights in Structured Buffer
 {
 	lightManager.SetBufferView(renderer->CreateBufferShaderResourceView(lightManager.GetLightsBuffer().Get(), lightManager.GetMaxLightsCount()));
-
+	skyboxPass = std::make_unique<SkyboxPass>(renderer);
 
 }
 
@@ -21,40 +21,12 @@ void Graphics::Render()
 
 	// Here we can also add experimental D3D11 render passes (interface with Renderer (e.g get pass abstractions) without having to have anything on App-side)
 
-
 	UpdateLightsData();
-	DrawObjects();
-	DrawSkybox();		// Draw Skybox last so we don't need to invoke all PS (since we have scene objects rendering first)
-	Present();
-
-	// If we would like to have multiple passes (e.g deferred) then this is the place we would call various pass setups!
-	// For example:
-	/*
-	renderer->ShadowMapDepthPass();
-	DrawFromLight();
-	renderer->GeometryPass();
-	Draw();
-	renderer->SSAOPass();
-	renderer->LightPass();
-
-	-- Post-processing between Light Pass and Final Quad Pass --
-
-	renderer->FinalQuadPass();
-
-	*/
-
-
-
-}
-
-void Graphics::Present()
-{
+	DrawObjects();	
+	skyboxPass->Render();		// Draw Skybox last so we don't need to invoke all PS (since we have scene objects rendering first)
 	renderer->Present();
-}
 
-void Graphics::DrawSkybox()
-{
-	renderer->SkyboxPass();
+
 }
 
 void Graphics::UpdateViewMatrix(const Matrix& mat)
