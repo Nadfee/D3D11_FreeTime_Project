@@ -66,6 +66,9 @@
     <ClCompile Include="SkyboxPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -116,6 +119,9 @@
     <ClInclude Include="SkyboxPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -125,5 +131,9 @@
     <FxCompile Include="VertexShader.hlsl" />
     <FxCompile Include="SkyboxVS.hlsl" />
     <FxCompile Include="SkyboxPS.hlsl" />
+    <FxCompile Include="ParticleVS.hlsl" />
+    <FxCompile Include="ParticleGS.hlsl" />
+    <FxCompile Include="ParticlePS.hlsl" />
+    <FxCompile Include="ParticleCS.hlsl" />
   </ItemGroup>
 </Project>

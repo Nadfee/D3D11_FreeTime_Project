@@ -4,6 +4,7 @@
 #include "LightManager.h"
 
 #include "SkyboxPass.h"
+#include "ParticleSystem.h"
 
 #include <memory>
 #include <string>
@@ -45,6 +46,7 @@ private:
 	LightManager lightManager;
 
 	std::unique_ptr<SkyboxPass> skyboxPass;
+	std::unique_ptr<ParticleSystem> particleSystem;	// Single particle system for now
 
 
 };

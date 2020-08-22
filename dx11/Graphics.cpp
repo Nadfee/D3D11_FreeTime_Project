@@ -6,6 +6,7 @@ Graphics::Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHe
 {
 	lightManager.SetBufferView(renderer->CreateBufferShaderResourceView(lightManager.GetLightsBuffer().Get(), lightManager.GetMaxLightsCount()));
 	skyboxPass = std::make_unique<SkyboxPass>(renderer);
+	particleSystem = std::make_unique<ParticleSystem>(renderer);
 
 }
 
@@ -23,10 +24,11 @@ void Graphics::Render()
 
 	UpdateLightsData();
 	DrawObjects();	
-	skyboxPass->Render();		
+	
+	particleSystem->Render();
+	skyboxPass->Render();	
+
 	renderer->Present();
-
-
 }
 
 void Graphics::UpdateViewMatrix(const Matrix& mat)

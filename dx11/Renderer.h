@@ -49,6 +49,7 @@ public:
 	ComPtr<ID3D11Buffer> CreateVertexBuffer(const std::vector<Vertex>& initVertexData);
 	ComPtr<ID3D11Buffer> CreateConstantBuffer(void* initBufferData, unsigned int bufferSize, bool cpuWrite, bool dynamic);
 	ComPtr<ID3D11Buffer> CreateStructuredBuffer(void* initBufferData, unsigned int elementSize, unsigned int elementCount, bool cpuWrite, bool dynamic);
+	ComPtr<ID3D11Buffer> CreateAppendConsumeStructuredBuffer(void* initBufferData, unsigned int elementSize, unsigned int elementCount, bool cpuWrite, bool dynamic);
 	ComPtr<ID3D11ShaderResourceView> CreateSRVFromFileWIC(std::wstring fileName, bool mipMapOn = true);
 	ComPtr<ID3D11ShaderResourceView> CreateBufferShaderResourceView(ID3D11Buffer* buffer, unsigned int elementCount);
 	ComPtr<ID3D11ShaderResourceView> CreateTextureCubeSRVFromFiles(std::vector<std::wstring> filePaths);
@@ -56,6 +57,7 @@ public:
 
 private:
 	friend class SkyboxPass;
+	friend class ParticleSystem;
 
 	void ForwardRenderSetup();
 
