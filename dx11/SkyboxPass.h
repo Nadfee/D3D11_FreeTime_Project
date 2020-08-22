@@ -9,6 +9,7 @@ public:
 	SkyboxPass(RendererPtr renderer);
 	~SkyboxPass();
 
+	// Draw Skybox last so we don't need to invoke all PS (since we have scene objects rendering first)
 	void Render();
 
 private:

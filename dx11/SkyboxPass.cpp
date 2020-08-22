@@ -20,6 +20,7 @@ SkyboxPass::~SkyboxPass()
 {
 }
 
+
 void SkyboxPass::Render()
 {
 	auto devCon = renderer->GetDeviceContext();

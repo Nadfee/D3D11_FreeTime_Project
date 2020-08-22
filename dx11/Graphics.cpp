@@ -23,7 +23,7 @@ void Graphics::Render()
 
 	UpdateLightsData();
 	DrawObjects();	
-	skyboxPass->Render();		// Draw Skybox last so we don't need to invoke all PS (since we have scene objects rendering first)
+	skyboxPass->Render();		
 	renderer->Present();
 
 
@@ -53,8 +53,6 @@ bool Graphics::RemovePointLight(const std::string& identifier)
 
 void Graphics::UpdateLightsData()
 {
-	// Here we may want to implement Render Pass for Omnidirectional Shadow Map for each point light!
-
 	lightManager.UpdateLightData();
 	unsigned int dataSize = lightManager.GetPointLightData().size() * sizeof(PointLightData);
 
