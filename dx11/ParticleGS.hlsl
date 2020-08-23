@@ -44,7 +44,7 @@ void GSMAIN( point GS_IN input[1],  inout TriangleStream< GS_OUT > output  )
         
         //float4 viewPos = mul(worldMat, float4(input[0].pos, 1.f)); 
         float4 viewPos = mul(viewMat, float4(input[0].pos, 1.f)); // Temporary, not using world matrix because its not set up
-        float4 quadCorner = viewPos + 0.15f * quad[i];
+        float4 quadCorner = viewPos + 0.03f * quad[i];
         
   
         quadCorner = mul(projMat, quadCorner);

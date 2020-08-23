@@ -29,7 +29,7 @@ public:
 	bool RemovePointLight(const std::string& identifier);
 	
 	// Functions that interface with the Renderer
-	void Render();
+	void Render(double deltaTime);
 
 	// Camera specific interface functions
 	void UpdateViewMatrix(const Matrix& mat);

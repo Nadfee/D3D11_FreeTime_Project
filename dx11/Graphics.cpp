@@ -15,7 +15,7 @@ Graphics::~Graphics()
 
 }
 
-void Graphics::Render()
+void Graphics::Render(double deltaTime)
 {
 	renderer->ClearMainRenderTarget(DirectX::Colors::Bisque);
 	renderer->SetBackBufferRTV();
@@ -25,7 +25,7 @@ void Graphics::Render()
 	UpdateLightsData();
 	DrawObjects();	
 	
-	particleSystem->Render();
+	particleSystem->Render(deltaTime);
 	skyboxPass->Render();	
 
 	renderer->Present();

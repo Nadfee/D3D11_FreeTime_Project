@@ -51,7 +51,7 @@ void Application::Run()
 		UpdateInput();
 		UpdateCamera();
 
-		graphics->Render();
+		graphics->Render(updateTimer.GetDeltaTime(GTimer::Duration::SECONDS));
 
 		updateTimer.Stop();
 

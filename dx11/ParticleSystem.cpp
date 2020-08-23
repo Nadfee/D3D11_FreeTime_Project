@@ -24,12 +24,10 @@ ID3D11UnorderedAccessView* const uavReset[2] = { NULL, NULL };
 ID3D11ShaderResourceView* const srvReset[1] = { nullptr };
 ID3D11Buffer* const bufferReset[3] = { nullptr, nullptr, nullptr };
 
-void ParticleSystem::Render()
+void ParticleSystem::Render(double deltaTime)
 {
-	counter += 0.001f;
-	wave = sinf(counter);
-	renderer->MapUpdate(simulationStatBuffer, &wave, sizeof(float), D3D11_MAP_WRITE_DISCARD);
-
+	counter += deltaTime;
+	renderer->MapUpdate(simulationStatBuffer, &counter, sizeof(float), D3D11_MAP_WRITE_DISCARD);
 
 
 	auto devCon = renderer->GetDeviceContext();
@@ -63,9 +61,8 @@ void ParticleSystem::Render()
 	devCon->CopyStructureCount(particleCountBuffer.Get(), 0, activeConsumeUAV);
 	devCon->CSSetConstantBuffers(0, 1, particleCountBuffer.GetAddressOf());
 
-	// Temp
-	devCon->CSSetConstantBuffers(1, 1, simulationStatBuffer.GetAddressOf());
 
+	devCon->CSSetConstantBuffers(1, 1, simulationStatBuffer.GetAddressOf());
 
 	devCon->Dispatch(1, 1, 1);
 
@@ -136,12 +133,14 @@ void ParticleSystem::CreateBuffers()
 	// We will just send one particle and create a quad in GS!
 	std::vector<Particle> particles;
 
+	float min = 0.f;
+	float max = 5.f;
 	for (int i = 0; i < numParticleCount; ++i)
 	{
 		Particle particle = {
 			Vector3(i / 2.f, 0.f, 0.f),	// In the Middle
-			0.f,
-			Vector3(0.f, 0.3f, 0.f),	// Green color
+			min + (rand() % static_cast<int>(max - min + 1)), //(float)(rand() % 4) + 1.f ,
+			Vector3(0.f, 1.f, 0.f),	// Green color
 			0.f
 		};
 

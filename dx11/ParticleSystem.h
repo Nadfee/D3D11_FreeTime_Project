@@ -10,7 +10,7 @@ class ParticleSystem
 	struct Particle
 	{
 		Vector3 pos;
-		float lifeTime;
+		float lifetime;
 		Vector3 color;
 		float padding2;
 	};
@@ -24,13 +24,13 @@ public:
 	ParticleSystem(RendererPtr renderer);
 	~ParticleSystem();
 
-	void Render();
+	void Render(double deltaTime);
 
 private:
 	bool firstTime = true;
 	bool simPhaseOne = false;
 
-	unsigned int numParticleCount = 30;
+	unsigned int numParticleCount = 512;
 
 	// Temporary buffer for simulation
 	float counter;
