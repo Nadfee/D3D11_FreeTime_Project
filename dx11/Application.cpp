@@ -17,6 +17,8 @@ Application::Application(const HINSTANCE& hInstance) :
 
 	// Setup camera
 	fpc = Camera(77.f, win->GetAspectRatio());
+
+
 }
 
 Application::~Application()
@@ -98,7 +100,26 @@ void Application::InitializeScene()
 	// DONE  : Refactor Application so that Application OWNS a Window (not inherit!)
 	// DONE  : Create an Input class
 
-	// To-do : Implement Skybox (Learn Texture Cubes!)
+	// DONE  : Particle System (Funneling method + Indirect Draw described in Practical Rendering by Zink)
+	// TO-DO : Add a working world matrix for the particle system
+	// TO-DO : Read about Additive Blending in book and implement for current system
+	// TO-DO : Dynamic Injection.
+				// Inject to activeConsume
+				// Best case, picked up before current sim
+				// Worst case, picked up in the next-next sim
+
+	// TO-DO : Read about picking in Frank Lunas book and the Matrix math to get backwards!
+
+	// TO-DO : Read Dyanmic Cube Maps with the Geometry Shader (17.6) in Frank Lunas book) 
+		// Here lies the Omnidirectional sphere render-method for depths! (Although used for Environment mapping here)
+
+	// TO-DO : Implement Particle System from Frank Lunas book
+	// TO-DO : Implement Terrain Tesselation from Frank Lunas book
+
+	// TO-DO : Look around in DirectXTK for AABBs/OBBs to prepare for CPU-side frustum culling!
+
+
+
 
 	// Back burner:
 	// To-do : Implement a material constant buffer for meshes (to enable impl. for blinn-phong spec. and no-texture default color)

@@ -42,6 +42,12 @@ void SkyboxPass::Render()
 
 	// Trigger immediate buffer
 	devCon->Draw(36, 0);
+
+	// Clear	
+	devCon->RSSetState(NULL);
+	devCon->OMSetDepthStencilState(NULL, 0);
+
+
 }
 
 void SkyboxPass::CreateSampler()

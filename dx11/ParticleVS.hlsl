@@ -3,7 +3,7 @@ struct Particle
     float3 pos;
     float padding1;
     float3 color;
-    float padding2;
+    float3 velocity;
     
 };
 

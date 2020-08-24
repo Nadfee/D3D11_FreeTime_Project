@@ -2,6 +2,10 @@
 #include "Renderer.h"
 #include <math.h>
 
+// for rand in particle system
+#include <cstdlib>
+#include <ctime>
+
 using RendererPtr = std::shared_ptr<Renderer>;
 
 // Lets try to just draw something with Draw Indirect using the funneling method via structured buffer!
@@ -12,7 +16,7 @@ class ParticleSystem
 		Vector3 pos;
 		float lifetime;
 		Vector3 color;
-		float padding2;
+		Vector3 velocity;
 	};
 
 	struct ParticleCount
@@ -30,7 +34,7 @@ private:
 	bool firstTime = true;
 	bool simPhaseOne = false;
 
-	unsigned int numParticleCount = 512;
+	unsigned int numParticleCount = 1024;
 
 	// Temporary buffer for simulation
 	float counter;
@@ -46,6 +50,9 @@ private:
 	ComPtr<ID3D11GeometryShader> gs;
 	ComPtr<ID3D11PixelShader> ps;
 	ComPtr<ID3D11ComputeShader> cs;
+
+	ComPtr<ID3D11BlendState> blendSt;
+	ComPtr<ID3D11DepthStencilState> blendDss;
 
 	ComPtr<ID3D11Buffer> bufferA;					// Initial Consume Buffer (init data here)
 	ComPtr<ID3D11Buffer> bufferB;					// Initial Append Buffer

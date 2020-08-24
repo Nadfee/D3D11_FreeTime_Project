@@ -24,9 +24,10 @@ void Graphics::Render(double deltaTime)
 
 	UpdateLightsData();
 	DrawObjects();	
+	skyboxPass->Render();
+
 	
 	particleSystem->Render(deltaTime);
-	skyboxPass->Render();	
 
 	renderer->Present();
 }

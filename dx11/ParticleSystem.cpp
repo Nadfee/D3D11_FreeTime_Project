@@ -8,7 +8,7 @@ ParticleSystem::ParticleSystem(RendererPtr renderer) :
 	LoadShaders();
 	CreateBuffers();
 
-
+	srand(static_cast <unsigned> (time(0)));
 
 }
 
@@ -82,12 +82,16 @@ void ParticleSystem::Render(double deltaTime)
 	devCon->VSSetShaderResources(5, 1, &activeAppendSRV); // this is what we want
 
 
-	devCon->GSSetConstantBuffers(0, 1, worldMatrixBuffer.GetAddressOf());
+	devCon->GSSetConstantBuffers(0, 1, worldMatrixBuffer.GetAddressOf());		// not used currently
 	devCon->GSSetConstantBuffers(1, 1, viewMatrixBuffer.GetAddressOf());
 	devCon->GSSetConstantBuffers(2, 1, projectionMatrixBuffer.GetAddressOf());
 
 	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	devCon->IASetInputLayout(nullptr);
+
+	// currently not working
+	//devCon->OMSetBlendState(blendSt.Get(), NULL, 0xffffffff);
+	//devCon->OMSetDepthStencilState(blendDss.Get(), 0.f);		// 0.f not using stencil
 
 	devCon->DrawInstancedIndirect(indirectArgsBuffer.Get(), 0);
 
@@ -99,6 +103,10 @@ void ParticleSystem::Render(double deltaTime)
 	devCon->GSSetShader(nullptr, NULL, NULL);
 	devCon->PSSetShader(nullptr, NULL, NULL);
 	devCon->CSSetShader(nullptr, NULL, NULL);
+
+	devCon->OMSetDepthStencilState(NULL, 0.f);
+	devCon->OMSetBlendState(NULL, NULL, 0xffffffff);
+
 
 	SwitchSimulationBuffers();
 
@@ -127,7 +135,7 @@ void ParticleSystem::LoadShaders()
 
 void ParticleSystem::CreateBuffers()
 {
-	// We will use this buffer to update
+	// We will use this buffer to update (not used currently)
 	worldMatrixBuffer = renderer->CreateConstantBuffer(nullptr, sizeof(Matrix), true, true);
 
 	// We will just send one particle and create a quad in GS!
@@ -135,13 +143,31 @@ void ParticleSystem::CreateBuffers()
 
 	float min = 0.f;
 	float max = 5.f;
+
+	float colMin = 0.f;
+	float colMax = 1.f;
+
+
 	for (int i = 0; i < numParticleCount; ++i)
 	{
+
+		float particleVelMin = 5.f;
+		float particleVelMax = 7.f;
+		float randVelX = -(particleVelMin + 1.f) + (((float)rand()) / (float)RAND_MAX) * (particleVelMax - (particleVelMin + 1.f)) * 4.f;
+		float randVelY = rand() / (RAND_MAX + 1.);
+		float randVelZ = (particleVelMin + 1.f) + (((float)randVelY) / (float)RAND_MAX) * (particleVelMax - (particleVelMin + 1.f)) / 2.f;
+		randVelZ = -randVelY / 2.f;
+
+		float randColX = (colMin + 1.f) + (((float)rand()) / (float)RAND_MAX) * (colMax - (colMin + 1.f));
+		float randColY = rand() / (RAND_MAX + 1.);
+		float randColZ = (colMin + 1.f) + (((float)randColY) / (float)RAND_MAX) * (colMax - (colMin + 1.f));
+
+
 		Particle particle = {
-			Vector3(i / 2.f, 0.f, 0.f),	// In the Middle
-			min + (rand() % static_cast<int>(max - min + 1)), //(float)(rand() % 4) + 1.f ,
-			Vector3(0.f, 1.f, 0.f),	// Green color
-			0.f
+			Vector3( (float)i / numParticleCount * 4.f, 5.f, 5.f),
+			(min + 1) + (((float)rand()) / (float)RAND_MAX) * (max - (min + 1)),
+			Vector3(randColX, randColY, randColZ),
+			Vector3(randVelX, randVelY, randVelZ)
 		};
 
 		particles.push_back(particle);
@@ -212,6 +238,42 @@ void ParticleSystem::CreateBuffers()
 	particleCountBuffer = renderer->CreateConstantBuffer(nullptr, sizeof(ParticleCount), false, true);
 
 	simulationStatBuffer = renderer->CreateConstantBuffer(nullptr, sizeof(float), true, true);
+
+
+	// currently not working
+	// Additive blend state
+	D3D11_RENDER_TARGET_BLEND_DESC rtBlendDesc = { };
+	rtBlendDesc.BlendEnable = TRUE;
+	rtBlendDesc.SrcBlend = D3D11_BLEND_ONE;
+	rtBlendDesc.DestBlend = D3D11_BLEND_ONE;
+	rtBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
+	rtBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
+	rtBlendDesc.DestBlendAlpha = D3D11_BLEND_ONE; // mb change?
+	rtBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	rtBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	D3D11_BLEND_DESC blendDesc = { FALSE, FALSE, rtBlendDesc };
+
+	hr = renderer->GetDevice()->CreateBlendState(&blendDesc, blendSt.GetAddressOf());
+	assert(SUCCEEDED(hr));
+
+	// Make DSS to disable depth testing for particles
+	D3D11_DEPTH_STENCIL_DESC  dssDesc = { };
+	dssDesc.DepthEnable = FALSE;
+	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	dssDesc.StencilEnable = FALSE;
+	dssDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+	dssDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+	dssDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	dssDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dssDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+
+	hr = renderer->GetDevice()->CreateDepthStencilState(&dssDesc, blendDss.GetAddressOf());
+	assert(SUCCEEDED(hr));
+
+
 }
 
 void ParticleSystem::SwitchSimulationBuffers()
