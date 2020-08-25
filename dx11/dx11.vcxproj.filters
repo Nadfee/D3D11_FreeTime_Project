@@ -135,5 +135,6 @@
     <FxCompile Include="ParticleGS.hlsl" />
     <FxCompile Include="ParticlePS.hlsl" />
     <FxCompile Include="ParticleCS.hlsl" />
+    <FxCompile Include="ParticleInjectionCS.hlsl" />
   </ItemGroup>
 </Project>

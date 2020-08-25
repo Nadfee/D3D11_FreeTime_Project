@@ -23,10 +23,10 @@ void Graphics::Render(double deltaTime)
 	// Here we can also add experimental D3D11 render passes (interface with Renderer (e.g get pass abstractions) without having to have anything on App-side)
 
 	UpdateLightsData();
-	DrawObjects();	
+	//DrawObjects();	
 	skyboxPass->Render();
 
-	
+	particleSystem->SetPosition(-15.f, 0.f, 0.f);
 	particleSystem->Render(deltaTime);
 
 	renderer->Present();
@@ -52,6 +52,11 @@ PointLightPtr Graphics::CreatePointLight(const std::string& identifier, const Ve
 bool Graphics::RemovePointLight(const std::string& identifier)
 {
 	return lightManager.RemoveLight(identifier);
+}
+
+void Graphics::InjectParticles()
+{
+	particleSystem->InjectParticles();
 }
 
 void Graphics::UpdateLightsData()

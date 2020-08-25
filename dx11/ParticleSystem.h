@@ -30,15 +30,18 @@ public:
 
 	void Render(double deltaTime);
 
+	void SetPosition(float x, float y, float z);
+	void InjectParticles();
+
 private:
 	bool firstTime = true;
 	bool simPhaseOne = false;
 
-	unsigned int numParticleCount = 1024;
+	unsigned int maxParticleCount = 8192;
+	unsigned int numParticleCount = 6000;
 
 	// Temporary buffer for simulation
 	float counter;
-	float wave;
 	ComPtr<ID3D11Buffer> simulationStatBuffer;
 
 	RendererPtr renderer;
@@ -46,10 +49,12 @@ private:
 	ComPtr<ID3DBlob> gsBlob;
 	ComPtr<ID3DBlob> psBlob;
 	ComPtr<ID3DBlob> csBlob;
+	ComPtr<ID3DBlob> csInjectionBlob;
 	ComPtr<ID3D11VertexShader> vs;
 	ComPtr<ID3D11GeometryShader> gs;
 	ComPtr<ID3D11PixelShader> ps;
 	ComPtr<ID3D11ComputeShader> cs;
+	ComPtr<ID3D11ComputeShader> injectionCS;
 
 	ComPtr<ID3D11BlendState> blendSt;
 	ComPtr<ID3D11DepthStencilState> blendDss;

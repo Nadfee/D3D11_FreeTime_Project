@@ -29,23 +29,23 @@ static const float eventHorizon = 0.4f;
 
 [numthreads(MaxParticleCount, 1, 1)]
 void CSMAIN( uint3 DTid : SV_DispatchThreadID )
-{      
-    // Check for if this thread should run or not.
-    //uint myID = DTid.x + DTid.y * MaxParticleCount + DTid.z * MaxParticleCount * MaxParticleCount;
+{
+//    // Check for if this thread should run or not.
+//    uint myID = DTid.x + DTid.y * MaxParticleCount + DTid.z * MaxParticleCount * MaxParticleCount;
 
     
-    //if (myID < numParticles.x)
-    //{
+//    if (myID < numParticles.x)
+//    {
             
-    //    Particle p = bufferA.Consume();
+//        Particle p = bufferA.Consume();
 
-    //    if (p.lifetime > 0.f)
-    //    {
-    //        bufferB.Append(p);
+//        if (p.lifetime > 0.f)
+//        {
+//            bufferB.Append(p);
             
-    //    }
+//        }
    
-    //}
+//    }
     
     
     //// Check for if this thread should run or not.
@@ -59,7 +59,37 @@ void CSMAIN( uint3 DTid : SV_DispatchThreadID )
 
     //    p.pos += p.velocity * 0.0007f;
         
-    //    if (p.pos.y > 4.f)
+    //    //if (p.pos.y > 4.f)
+    //    //{
+    //    //    p.velocity.y = -p.velocity.y;
+    //    //}
+        
+    //    //if (p.pos.y < -4.f)
+    //    //{
+    //    //    p.velocity.y = -p.velocity.y;
+    //    //}
+        
+    //    //if (p.pos.z > 4.f)
+    //    //{
+    //    //    p.velocity.z = -p.velocity.z;
+    //    //}
+        
+    //    //if (p.pos.z < -4.f)
+    //    //{
+    //    //    p.velocity.z = -p.velocity.z;
+    //    //}
+        
+    //    //if (p.pos.x > 4.f)
+    //    //{
+    //    //    p.velocity.x = -p.velocity.x;
+    //    //}
+        
+    //    //if (p.pos.x < -4.f)
+    //    //{
+    //    //    p.velocity.x = -p.velocity.x;
+    //    //}
+        
+    //    if (p.pos.y > 1.f)
     //    {
     //        p.velocity.y = -p.velocity.y;
     //    }
@@ -69,7 +99,7 @@ void CSMAIN( uint3 DTid : SV_DispatchThreadID )
     //        p.velocity.y = -p.velocity.y;
     //    }
         
-    //    if (p.pos.z > 4.f)
+    //    if (p.pos.z > 1.f)
     //    {
     //        p.velocity.z = -p.velocity.z;
     //    }
@@ -79,12 +109,12 @@ void CSMAIN( uint3 DTid : SV_DispatchThreadID )
     //        p.velocity.z = -p.velocity.z;
     //    }
         
-    //    if (p.pos.x > 4.f)
+    //    if (p.pos.x > 1.f)
     //    {
     //        p.velocity.x = -p.velocity.x;
     //    }
         
-    //    if (p.pos.x < -4.f)
+    //    if (p.pos.x < -1.f)
     //    {
     //        p.velocity.x = -p.velocity.x;
     //    }
@@ -159,10 +189,9 @@ void CSMAIN( uint3 DTid : SV_DispatchThreadID )
     static const float m1 = 1.0f;
     static const float m2 = 50.0f;
     static const float m1m2 = m1 * m2;
-    static const float eventHorizon = 0.1f;
+    static const float eventHorizon = 0.15f;
     
     float3 ConsumerLocation = float3(0.f, 0.f, 0.f);
-    
     
 
     // Check for if this thread should run or not.
@@ -181,41 +210,40 @@ void CSMAIN( uint3 DTid : SV_DispatchThreadID )
         float3 Force = (G * m1m2 / (r * r)) * normalize(d);
         // Calculate the new velocity, accounting for the acceleration from
         // the gravitational force over the current time step.
-        p.velocity = p.velocity + (Force / m1) * deltaTime * 0.0001f;
+        p.velocity = p.velocity + (Force / m1) * deltaTime * 0.001f;
         
         // Calculate the new position, accounting for the new velocity value
         // over the current time step.
-        p.pos += p.velocity * deltaTime * 0.0001f;
-        //p.pos = p.pos;
+        p.pos += p.velocity * deltaTime * 0.001f;
         
         // Update the life time left for the particle,
         p.lifetime -= deltaTime * 0.0000001f;
-        // Test to see how close the particle is to the black hole, and
-        // don't pass it to the output list if it is too close,
+        //Test to see how close the particle is to the black hole, and
+        //don't pass it to the output list if it is too close,
         
-        float3 col = p.pos;
-        if (p.pos.x < 0.f)
-        {
-            col.x = -p.pos.x;
-        }
-        if (p.pos.x < 0.f)
-        {
-            col.y = -p.pos.y;
-        }
-        if (p.pos.x < 0.f)
-        {
-            col.z = -p.pos.z;
-        }
-        
-        p.color = col;
-        
-        //if (r > eventHorizon)
+        //float3 col = p.pos;
+        //if (p.pos.x < 0.f)
         //{
-        if (p.lifetime > 0.f)
-        {
-            bufferB.Append(p);
-        }
+        //    col.x = -p.pos.x;
         //}
+        //if (p.pos.x < 0.f)
+        //{
+        //    col.y = -p.pos.y;
+        //}
+        //if (p.pos.x < 0.f)
+        //{
+        //    col.z = -p.pos.z;
+        //}
+        
+        //p.color = col;
+        
+        if (r > eventHorizon)
+        {
+            if (p.lifetime > 0.f)
+            {
+                bufferB.Append(p);
+            }
+        }
     }
     
 }

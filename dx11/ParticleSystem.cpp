@@ -28,7 +28,7 @@ void ParticleSystem::Render(double deltaTime)
 {
 	counter += deltaTime;
 	renderer->MapUpdate(simulationStatBuffer, &counter, sizeof(float), D3D11_MAP_WRITE_DISCARD);
-
+	renderer->MapUpdate(worldMatrixBuffer, &worldMatrix, sizeof(Matrix), D3D11_MAP_WRITE_DISCARD);
 
 	auto devCon = renderer->GetDeviceContext();
 
@@ -64,7 +64,7 @@ void ParticleSystem::Render(double deltaTime)
 
 	devCon->CSSetConstantBuffers(1, 1, simulationStatBuffer.GetAddressOf());
 
-	devCon->Dispatch(1, 1, 1);
+	devCon->Dispatch(maxParticleCount / 1024, 1, 1);
 
 	
 	// Unbind the UAVs
@@ -89,9 +89,8 @@ void ParticleSystem::Render(double deltaTime)
 	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	devCon->IASetInputLayout(nullptr);
 
-	// currently not working
-	//devCon->OMSetBlendState(blendSt.Get(), NULL, 0xffffffff);
-	//devCon->OMSetDepthStencilState(blendDss.Get(), 0.f);		// 0.f not using stencil
+	devCon->OMSetBlendState(blendSt.Get(), NULL, 0xffffffff);
+	devCon->OMSetDepthStencilState(blendDss.Get(), 0.f);		// 0.f not using stencil
 
 	devCon->DrawInstancedIndirect(indirectArgsBuffer.Get(), 0);
 
@@ -105,11 +104,32 @@ void ParticleSystem::Render(double deltaTime)
 	devCon->CSSetShader(nullptr, NULL, NULL);
 
 	devCon->OMSetDepthStencilState(NULL, 0.f);
-	devCon->OMSetBlendState(NULL, NULL, 0xffffffff);
+	devCon->OMSetBlendState(NULL, NULL, 0xFFFFFFFF);
 
 
 	SwitchSimulationBuffers();
 
+
+}
+
+void ParticleSystem::SetPosition(float x, float y, float z)
+{
+	worldMatrix = Matrix::CreateTranslation(Vector3(x, y, z));
+}
+
+void ParticleSystem::InjectParticles()
+{
+	auto devCon = renderer->GetDeviceContext();
+
+	devCon->CSSetShader(injectionCS.Get(), NULL, NULL);
+
+	devCon->CSSetUnorderedAccessViews(0, 1, &activeConsumeUAV, &useInternalCount);
+	devCon->Dispatch(1, 2, 1);
+
+	devCon->CSSetShader(nullptr, NULL, NULL);
+
+	// Unbind the UAVs
+	devCon->CSSetUnorderedAccessViews(0, 2, uavReset, 0);
 
 }
 
@@ -119,6 +139,7 @@ void ParticleSystem::LoadShaders()
 	renderer->LoadShaderBlob(L"ParticleGS.hlsl", "GSMAIN", "gs_5_0", gsBlob.GetAddressOf());
 	renderer->LoadShaderBlob(L"ParticlePS.hlsl", "PSMAIN", "ps_5_0", psBlob.GetAddressOf());
 	renderer->LoadShaderBlob(L"ParticleCS.hlsl", "CSMAIN", "cs_5_0", csBlob.GetAddressOf());
+	renderer->LoadShaderBlob(L"ParticleInjectionCS.hlsl", "CSMAIN", "cs_5_0", csInjectionBlob.GetAddressOf());
 
 	HRESULT hr = renderer->GetDevice()->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), NULL, vs.GetAddressOf());
 	assert(SUCCEEDED(hr));
@@ -131,6 +152,9 @@ void ParticleSystem::LoadShaders()
 
 	hr = renderer->GetDevice()->CreateComputeShader(csBlob->GetBufferPointer(), csBlob->GetBufferSize(), NULL, cs.GetAddressOf());
 	assert(SUCCEEDED(hr));
+
+	hr = renderer->GetDevice()->CreateComputeShader(csInjectionBlob->GetBufferPointer(), csInjectionBlob->GetBufferSize(), NULL, injectionCS.GetAddressOf());
+	assert(SUCCEEDED(hr));
 }
 
 void ParticleSystem::CreateBuffers()
@@ -140,6 +164,7 @@ void ParticleSystem::CreateBuffers()
 
 	// We will just send one particle and create a quad in GS!
 	std::vector<Particle> particles;
+	particles.reserve(numParticleCount);
 
 	float min = 0.f;
 	float max = 5.f;
@@ -165,6 +190,7 @@ void ParticleSystem::CreateBuffers()
 
 		Particle particle = {
 			Vector3( (float)i / numParticleCount * 4.f, 5.f, 5.f),
+			//Vector3( (float)i / numParticleCount * 0.5f, 0.5f, 0.5f),
 			(min + 1) + (((float)rand()) / (float)RAND_MAX) * (max - (min + 1)),
 			Vector3(randColX, randColY, randColZ),
 			Vector3(randVelX, randVelY, randVelZ)
@@ -173,9 +199,9 @@ void ParticleSystem::CreateBuffers()
 		particles.push_back(particle);
 	}
 
-	vertexFunnelBuffer = renderer->CreateStructuredBuffer(particles.data(), sizeof(Particle), particles.size(), true, true);
+	//vertexFunnelBuffer = renderer->CreateStructuredBuffer(particles.data(), sizeof(Particle), particles.size(), true, true);
 
-	vertexFunnelView = renderer->CreateBufferShaderResourceView(vertexFunnelBuffer.Get(), particles.size());
+	//vertexFunnelView = renderer->CreateBufferShaderResourceView(vertexFunnelBuffer.Get(), particles.size());
 
 	D3D11_BUFFER_DESC indirectArgBufferDesc;
 	indirectArgBufferDesc.ByteWidth = 4 * 4;
@@ -204,15 +230,15 @@ void ParticleSystem::CreateBuffers()
 	assert(SUCCEEDED(hr));
 
 	// Create Structured Buffers for Append/Consume
-	bufferA = renderer->CreateAppendConsumeStructuredBuffer(particles.data(), sizeof(Particle), particles.size(), false, true);		// Init data
-	bufferB = renderer->CreateAppendConsumeStructuredBuffer(nullptr, sizeof(Particle), particles.size(), false, true);				// no init data
+	bufferA = renderer->CreateAppendConsumeStructuredBuffer(particles.data(), sizeof(Particle), maxParticleCount, false, true);		// Init data
+	bufferB = renderer->CreateAppendConsumeStructuredBuffer(nullptr, sizeof(Particle), maxParticleCount, false, true);				// no init data
 
 	// Create UAV views to them (to enable Append/Consume functionality)
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = { };
 	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 	uavDesc.Buffer.FirstElement = 0;
-	uavDesc.Buffer.NumElements = particles.size();
+	uavDesc.Buffer.NumElements = maxParticleCount;
 	uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_APPEND;
 
 	hr = renderer->GetDevice()->CreateUnorderedAccessView(bufferA.Get(), &uavDesc, bufferAUAV.GetAddressOf());
@@ -222,8 +248,8 @@ void ParticleSystem::CreateBuffers()
 	assert(SUCCEEDED(hr));
 
 	// Create two shader resource views for bufferA and bufferB so we can peek at the data! (Funnel method)
-	bufferASRV = renderer->CreateBufferShaderResourceView(bufferA.Get(), particles.size());
-	bufferBSRV = renderer->CreateBufferShaderResourceView(bufferB.Get(), particles.size());
+	bufferASRV = renderer->CreateBufferShaderResourceView(bufferA.Get(), maxParticleCount);
+	bufferBSRV = renderer->CreateBufferShaderResourceView(bufferB.Get(), maxParticleCount);
 
 	// Initial condition! First frame, finalized simulation gets into the append buffer.
 	activeConsumeUAV = bufferAUAV.Get();
@@ -244,22 +270,25 @@ void ParticleSystem::CreateBuffers()
 	// Additive blend state
 	D3D11_RENDER_TARGET_BLEND_DESC rtBlendDesc = { };
 	rtBlendDesc.BlendEnable = TRUE;
-	rtBlendDesc.SrcBlend = D3D11_BLEND_ONE;
-	rtBlendDesc.DestBlend = D3D11_BLEND_ONE;
+	rtBlendDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	rtBlendDesc.DestBlend = D3D11_BLEND_SRC_ALPHA;
 	rtBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
+
 	rtBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
-	rtBlendDesc.DestBlendAlpha = D3D11_BLEND_ONE; // mb change?
+	rtBlendDesc.DestBlendAlpha = D3D11_BLEND_ONE; 
 	rtBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+
 	rtBlendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	D3D11_BLEND_DESC blendDesc = { FALSE, FALSE, rtBlendDesc };
+	D3D11_BLEND_DESC blendDesc = { FALSE, FALSE, 0 };
+	blendDesc.RenderTarget[0] = rtBlendDesc;
 
 	hr = renderer->GetDevice()->CreateBlendState(&blendDesc, blendSt.GetAddressOf());
 	assert(SUCCEEDED(hr));
 
 	// Make DSS to disable depth testing for particles
 	D3D11_DEPTH_STENCIL_DESC  dssDesc = { };
-	dssDesc.DepthEnable = FALSE;
+	dssDesc.DepthEnable = TRUE;
 	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dssDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	dssDesc.StencilEnable = FALSE;
@@ -272,6 +301,8 @@ void ParticleSystem::CreateBuffers()
 
 	hr = renderer->GetDevice()->CreateDepthStencilState(&dssDesc, blendDss.GetAddressOf());
 	assert(SUCCEEDED(hr));
+
+
 
 
 }

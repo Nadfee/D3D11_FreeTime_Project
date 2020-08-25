@@ -101,12 +101,14 @@ void Application::InitializeScene()
 	// DONE  : Create an Input class
 
 	// DONE  : Particle System (Funneling method + Indirect Draw described in Practical Rendering by Zink)
-	// TO-DO : Add a working world matrix for the particle system
-	// TO-DO : Read about Additive Blending in book and implement for current system
-	// TO-DO : Dynamic Injection.
+	// DONE  : Add a working world matrix for the particle system
+	// DONE : Dynamic Injection.
 				// Inject to activeConsume
 				// Best case, picked up before current sim
 				// Worst case, picked up in the next-next sim
+
+	// TO-DO : Watch more of Jpres blending videos
+
 
 	// TO-DO : Read about picking in Frank Lunas book and the Matrix math to get backwards!
 
@@ -399,6 +401,11 @@ void Application::HandleKeyboardInput()
 	if (input->IsKeyPressed(Key::R))
 	{
 		RestoreDefaultScene();
+	}
+
+	if (input->IsKeyPressed(Key::I))
+	{
+		graphics->InjectParticles();
 	}
 
 }

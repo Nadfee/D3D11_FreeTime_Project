@@ -27,6 +27,9 @@ public:
 	// Experimental: Light creation interface
 	PointLightPtr CreatePointLight(const std::string& identifier, const Vector3& initPos, const Vector3& initColor, const Vector3& initAttenuation);
 	bool RemovePointLight(const std::string& identifier);
+
+	// Particle temporary
+	void InjectParticles();
 	
 	// Functions that interface with the Renderer
 	void Render(double deltaTime);

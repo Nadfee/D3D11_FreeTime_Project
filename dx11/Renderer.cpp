@@ -234,11 +234,11 @@ ComPtr<ID3D11Buffer> Renderer::CreateStructuredBuffer(void* initBufferData, unsi
 	return buffer;
 }
 
-ComPtr<ID3D11Buffer> Renderer::CreateAppendConsumeStructuredBuffer(void* initBufferData, unsigned int elementSize, unsigned int elementCount, bool cpuWrite, bool dynamic)
+ComPtr<ID3D11Buffer> Renderer::CreateAppendConsumeStructuredBuffer(const void* initBufferData, unsigned int elementSize, unsigned int elementCount, bool cpuWrite, bool dynamic)
 {
 	unsigned int bufferSize = elementSize * elementCount;
 
-	ComPtr<ID3D11Buffer> buffer;
+	ComPtr<ID3D11Buffer> buffer = nullptr;
 
 	D3D11_BUFFER_DESC desc = { 0 };
 	desc.ByteWidth = bufferSize + (elementSize - (bufferSize % elementSize));
@@ -267,9 +267,10 @@ ComPtr<ID3D11Buffer> Renderer::CreateAppendConsumeStructuredBuffer(void* initBuf
 	HRESULT hr;
 	auto dev = deviceManager->GetDevice();
 
+
 	if (initBufferData != nullptr)
 	{
-		D3D11_SUBRESOURCE_DATA initData = { 0 };
+		D3D11_SUBRESOURCE_DATA initData = { 0, 0, 0 };
 		initData.pSysMem = initBufferData;
 		hr = dev->CreateBuffer(&desc, &initData, buffer.GetAddressOf());
 	}
@@ -278,8 +279,7 @@ ComPtr<ID3D11Buffer> Renderer::CreateAppendConsumeStructuredBuffer(void* initBuf
 		hr = dev->CreateBuffer(&desc, NULL, buffer.GetAddressOf());
 	}
 
-	if (FAILED(hr))
-		assert(false);
+	assert(SUCCEEDED(hr));
 
 	return buffer;
 }
