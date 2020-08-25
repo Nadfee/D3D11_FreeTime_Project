@@ -1,9 +1,9 @@
 # dx11_project
 Personal project where I tinker with D3D11  
   
-My main purpose with this project is to play around with DX11, DirectX Tool Kit and the organization of a larger project  
+My main purpose with this project is to play around with DX11, DirectX Tool Kit and get more experience just implementing things with D3D11
   
-- Goal of this project is to just make something. Implement some techniques and play around with some OOP principles 
+- Goal of this project is to just make things work. Implement some techniques and maybe play around with some OOP principles
 
 Controls:  
   
