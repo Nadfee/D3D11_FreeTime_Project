@@ -74,6 +74,9 @@ void Window::CreateWin()
 // Default WndProc
 LRESULT Window::HandleProc(const UINT& uMsg, const WPARAM& wParam, const LPARAM& lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+		return true;
+
 	switch (uMsg)
 	{
 	case WM_CLOSE:

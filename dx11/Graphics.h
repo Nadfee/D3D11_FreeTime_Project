@@ -6,6 +6,10 @@
 #include "SkyboxPass.h"
 #include "ParticleSystem.h"
 
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx11.h>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -50,6 +54,9 @@ private:
 
 	std::unique_ptr<SkyboxPass> skyboxPass;
 	std::unique_ptr<ParticleSystem> particleSystem;	// Single particle system for now
+
+	// imgui
+	bool show_demo_window;
 
 
 };

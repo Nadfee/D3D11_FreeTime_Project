@@ -4,10 +4,10 @@ Application::Application(const HINSTANCE& hInstance) :
 	counter(0)
 {
 	// Window
-	win = std::make_unique<Window>(hInstance, L"Nad's Application", 1280, 720);
+	win = std::make_unique<Window>(hInstance, L"Nad's Application", 1600, 900);
 
 	// Graphics (D3D inside)
-	graphics = std::make_unique<Graphics>(win->GetHWND(), 1920, 1080);
+	graphics = std::make_unique<Graphics>(win->GetHWND(), 1600, 900);
 
 	// XTK Mouse & Keyboard (Input is a singleton! - Experiment)
 	input = Input::GetInstance();

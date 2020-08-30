@@ -30,6 +30,11 @@ static const float eventHorizon = 0.4f;
 [numthreads(MaxParticleCount, 1, 1)]
 void CSMAIN( uint3 DTid : SV_DispatchThreadID )
 {
+    // Note that  DTid starts at 0.
+    // Meaning that if we have numthreads(1, 1, 1) and Dispatch(1,1,1) we will get a thread with DTid (0, 0, 0)
+    // Additionally, if we do numthreads[1024, 1, 1] and Dispatch(1, 1, 1) then we will ge DTids ( [0, 1024], 0, 0 )
+    // Hence the check below via myID
+    
 //    // Check for if this thread should run or not.
 //    uint myID = DTid.x + DTid.y * MaxParticleCount + DTid.z * MaxParticleCount * MaxParticleCount;
 
@@ -184,7 +189,7 @@ void CSMAIN( uint3 DTid : SV_DispatchThreadID )
    
     //}
     
-    // Book
+    // Practical Rendering by Zink's Black Hole particle simulation
     static const float G = 10.0f;
     static const float m1 = 1.0f;
     static const float m2 = 50.0f;

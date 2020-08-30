@@ -160,8 +160,48 @@ VS_OUT VSMAIN(uint vID : SV_VertexID)
     
     output.pos = mul(viewMatrix, float4(CUBE[vID].xyz, 0.f));   // Make sure to take camera rotation into account (look at correct side of cube)
     output.pos = mul(projMatrix, output.pos);                   // Take perspective into account
-    //output.pos = CUBE[vID];
     output.pos.z = output.pos.w;
    
     return output;
+    
+    
+    //// Experiment: Box in center and use LOCAL SPACE vector to sample (works!)
+    //VS_OUT output = (VS_OUT) 0;
+    
+    //// https://docs.microsoft.com/en-us/windows/win32/direct3d11/overviews-direct3d-11-resources-textures-intro#3d-textures
+    ////output.wsPos = mul(projMatrix, CUBE[vID]).xyz; // This does change! (Wrong version) - 
+    //// You can try seeing the different results with "otherskybox" skybox textures
+    
+    //// "Texture cubes are addressed from the shader with a 3D vector pointing out from the center of the texture cube."
+    //// Meaning local space!
+    //output.wsPos = CUBE[vID]; // This works as the "UV" for the cube. We make sure the vertices have 
+    
+    
+    //output.pos = mul(viewMatrix, float4(CUBE[vID].xyz, 1.f)); // Make sure to take camera rotation into account (look at correct side of cube)
+    //output.pos = mul(projMatrix, output.pos); // Take perspective into account
+    ////output.pos = CUBE[vID];
+    ////output.pos.z = output.pos.w;
+   
+    //return output;
+    
+    
+    
+    //// Experiment: Move Box to the right and use WORLD SPACE vector to sample! (Not working!)
+    //VS_OUT output = (VS_OUT) 0;
+    
+    //// https://docs.microsoft.com/en-us/windows/win32/direct3d11/overviews-direct3d-11-resources-textures-intro#3d-textures
+    ////output.wsPos = mul(projMatrix, CUBE[vID]).xyz; // This does change! (Wrong version) - 
+    //// You can try seeing the different results with "otherskybox" skybox textures
+    
+    //// "Texture cubes are addressed from the shader with a 3D vector pointing out from the center of the texture cube."
+    //// Meaning local space!
+    //output.wsPos = CUBE[vID].xyz; // This works as the "UV" for the cube. We make sure the vertices have 
+    
+    
+    //output.pos = mul(viewMatrix, float4(CUBE[vID].xyz + float3(5.f, 0.f, 0.f), 1.f)); // Make sure to take camera rotation into account (look at correct side of cube)
+    //output.pos = mul(projMatrix, output.pos); // Take perspective into account
+    ////output.pos = CUBE[vID];
+    ////output.pos.z = output.pos.w;
+   
+    //return output;
 }

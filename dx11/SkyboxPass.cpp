@@ -55,9 +55,9 @@ void SkyboxPass::CreateSampler()
 	// Create sampler for skybox
 	D3D11_SAMPLER_DESC samplerDesc = { };
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; //  D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT -- If you use this an go away diagonally to a texture, you will see clearly when LOD changes! (Quality change)
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.MipLODBias = 0;
 	samplerDesc.MaxAnisotropy = 1;									// not used for current filter
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;		// read in detail another time
@@ -76,6 +76,7 @@ void SkyboxPass::CreateTextureCubeFromFiles()
 {
 	// Skybox setup
 	std::vector<std::wstring> filePaths;
+
 	filePaths.push_back(L"Textures/Skyboxes/skybox/right.jpg");
 	filePaths.push_back(L"Textures/Skyboxes/skybox/left.jpg");
 	filePaths.push_back(L"Textures/Skyboxes/skybox/top.jpg");
@@ -118,7 +119,7 @@ void SkyboxPass::CreateRasterizerState()
 	D3D11_RASTERIZER_DESC rssDesc = { };
 	rssDesc.FillMode = D3D11_FILL_SOLID;
 	rssDesc.CullMode = D3D11_CULL_BACK;
-	rssDesc.FrontCounterClockwise = TRUE;	// we are inside box for skybox
+	rssDesc.FrontCounterClockwise = TRUE;	// we are inside box for skybox (not default for d3d)
 	rssDesc.DepthBias = 0;
 	rssDesc.DepthBiasClamp = 0;
 	rssDesc.SlopeScaledDepthBias = 0;
