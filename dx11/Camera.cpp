@@ -70,8 +70,10 @@ void Camera::Update(int deltaX, int deltaY, float moveLeftRight, float moveForwa
 
 	// New orientation
 	camRight = Vector4::Transform(defaultRight, camRotationMatrix);
-	camUp = Vector4::Transform(defaultUp, camRotationMatrix);
+	//camUp = Vector4::Transform(defaultUp, camRotationMatrix);
+	camUp = defaultUp;
 	camForward = Vector4::Transform(defaultForward, camRotationMatrix);
+
 
 	// Make sure to move with the correct orientation and correct speed (diagonal fix)
 	Vector4 moveDirection = moveLeftRight * camRight + moveForwardBack * camForward + moveUpDown * camUp;

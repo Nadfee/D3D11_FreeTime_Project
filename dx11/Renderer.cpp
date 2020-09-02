@@ -350,7 +350,7 @@ ComPtr<ID3D11ShaderResourceView> Renderer::CreateTextureCubeSRVFromFiles(std::ve
 	{
 		DirectX::ScratchImage image;
 		HRESULT hr = DirectX::LoadFromWICFile(filePaths[i].c_str(),
-			DirectX::WIC_FLAGS_IGNORE_SRGB, nullptr, images[i]
+			DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, images[i]
 		);
 		assert(SUCCEEDED(hr));
 	}

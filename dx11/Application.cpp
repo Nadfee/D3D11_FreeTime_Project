@@ -217,20 +217,21 @@ void Application::InitializeScene()
 
 	for (int i = 0; i < 10; ++i)
 	{
-		obj = CreateObject("Cube" + std::to_string(i), cubeVerts, L"Textures/minecraftstonebrick.jpg");
-		obj.SetPosition(4.f * i, 0.f, 4.f);
+		auto& obj2 = CreateObject("Cube" + std::to_string(i), cubeVerts, L"Textures/minecraftstonebrick.jpg");
+		obj2.SetPosition(4.f * i, 0.f, 4.f);
 	}
 
 	FindObject("Triangle1").SetRender(false);
 
-	CreatePointLight("RedLight", Vector3(0.f, 10.f, 0.f), Vector3(1.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.1f));
-	CreatePointLight("GreenLight", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.f), Vector3(0.f, 1.f, 0.1f));
-	CreatePointLight("PurpleLight", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
-	CreatePointLight("BlueLight", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.4f, 0.1f));
+	// Abides physics: Light is inversely proportional to the square distance from the source. Thanks to Gamma correction
+	CreatePointLight("RedLight", Vector3(0.f, 0.f, 0.f), Vector3(1.f, 0.f, 0.f), Vector3(0.f, 0.0f, 1.f));		
+	CreatePointLight("GreenLight", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.4f, 0.f), Vector3(0.f, 0.f, 1.f));
+	CreatePointLight("PurpleLight", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.f, 1.f));
+	CreatePointLight("BlueLight", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.f, 1.f));
 
 
 
-	CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
+	//CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
 
 	/*auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
 	sponza.SetScaling(0.03f);*/
@@ -246,7 +247,7 @@ void Application::UpdateObjects()
 	FindObject("Triangle1").SetPosition(4.f, cosf(counter), cos(counter));
 
 	FindLight("RedLight")->SetPosition( /*17.f + 15.f * cosf(counter * 3.f)*/ 4.f, 1.f, 0.f);
-	FindLight("RedLight")->SetAttenuation(0.f, 0.6f + cosf(counter * 2.f) * 0.2f, 0.f);
+	//FindLight("RedLight")->SetAttenuation(0.f, 0.f, 0.5f + cosf(counter * 2.f) * 0.4f);
 
 	FindLight("GreenLight")->SetPosition( 23.f, 5.f, 12.f + 15.f * cosf(counter * 3.f));
 	FindLight("PurpleLight")->SetPosition(-12.f + 5.f * cosf(counter * 3.f), 2, 5.f * sinf(counter * 3.f));
