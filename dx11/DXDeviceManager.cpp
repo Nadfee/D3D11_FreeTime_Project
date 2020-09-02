@@ -32,7 +32,7 @@ void DXDeviceManager::CreateDevAndSC(const HWND& hwnd)
 	scDesc.BufferDesc.Height = clientHeight;
 	scDesc.BufferDesc.RefreshRate.Numerator = 0;	
 	scDesc.BufferDesc.RefreshRate.Denominator = 0;
-	scDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;	// Monitors generally do not support more than 24-bit color. (Alpha is extra)
+	scDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	// Monitors generally do not support more than 24-bit color. (Alpha is extra)
 	scDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	scDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	

@@ -12,5 +12,5 @@ SamplerState defaultSampler : register(s0);
 float4 PSMAIN(PS_IN input) : SV_TARGET
 {
     //return float4(1.f, 1.f, 1.f, 1.f);
-    return textureCube.Sample(defaultSampler, input.wsPos);
+    return pow(textureCube.Sample(defaultSampler, input.wsPos), float4(1.f / 2.2f, 1.f / 2.2f, 1.f / 2.2f, 1.f));
 }

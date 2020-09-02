@@ -65,8 +65,12 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
     //return float4(normalize(input.nor.xyz), 1.f);
 	//return float4(input.uv.xy, 0.f, 1.f);
     // return diffuseTexture.Sample(defaultSampler, input.uv);
-    return finalColor;
+    return pow(finalColor, float4(1.f / 2.2f, 1.f / 2.2f, 1.f / 2.2f, 1.f));
     
-
+    // NOTE!!!
+    // We are sampling from sRGB textures which when sampled gives us linear RGB values
+    // We calculate with linear values and then gamma correct manually to a non-SRGB backbuffer!
+    // We are doing this to the Skybox too!
+    // Playing around, change return here and in SkyboxPS and change to UNORM_SRGB in DXDeviceManager to get back
 
 }
