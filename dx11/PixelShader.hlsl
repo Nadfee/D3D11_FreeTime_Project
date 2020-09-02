@@ -26,7 +26,7 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
     float4 finalColor = float4(0.f, 0.f, 0.f, 0.f);
     float3 normal = normalize(input.nor);
     
-    finalColor += 0.10f * textureSample;     // ambient
+    finalColor += 0.015f * textureSample;     // ambient
     
     uint lightCount, size;
     lightBuffer.GetDimensions(lightCount, size);

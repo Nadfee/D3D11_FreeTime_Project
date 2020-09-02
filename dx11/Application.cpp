@@ -228,11 +228,12 @@ void Application::InitializeScene()
 	CreatePointLight("PurpleLight", Vector3(0.f, 0.f, 0.f), Vector3(0.3f, 0.f, 0.3f), Vector3(0.f, 0.7f, 0.1f));
 	CreatePointLight("BlueLight", Vector3(0.f, 0.f, 0.f), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 0.4f, 0.1f));
 
-	/*auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
-	sponza.SetScaling(0.03f);*/
+
 
 	CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
 
+	/*auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
+	sponza.SetScaling(0.03f);*/
 
 }
 

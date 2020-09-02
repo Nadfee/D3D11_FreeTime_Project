@@ -289,24 +289,36 @@ ComPtr<ID3D11ShaderResourceView> Renderer::CreateSRVFromFileWIC(std::wstring fil
 	ComPtr<ID3D11ShaderResourceView> srv;
 
 	HRESULT hr;
+	//if (mipMapOn)
+	//{
+	//	hr = DirectX::CreateWICTextureFromFile(
+	//		deviceManager->GetDevice().Get(),
+	//		deviceManager->GetDeviceContext().Get(),
+	//		fileName.c_str(),
+	//		nullptr,
+	//		srv.GetAddressOf()
+	//	);
+	//}
+	//else
+	//{
+	//	hr = DirectX::CreateWICTextureFromFile(
+	//		deviceManager->GetDevice().Get(),
+	//		fileName.c_str(),
+	//		nullptr,
+	//		srv.GetAddressOf()
+	//	);
+	//}
+
 	if (mipMapOn)
 	{
-		hr = DirectX::CreateWICTextureFromFile(
-			deviceManager->GetDevice().Get(),
-			deviceManager->GetDeviceContext().Get(),
-			fileName.c_str(),
-			nullptr,
-			srv.GetAddressOf()
-		);
+
+		hr = DirectX::CreateWICTextureFromFileEx(deviceManager->GetDevice().Get(), deviceManager->GetDeviceContext().Get(), fileName.c_str(), 0, D3D11_USAGE_DEFAULT,
+			D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_GENERATE_MIPS, DirectX::WIC_LOADER_FORCE_SRGB, nullptr, srv.GetAddressOf());
 	}
 	else
 	{
-		hr = DirectX::CreateWICTextureFromFile(
-			deviceManager->GetDevice().Get(),
-			fileName.c_str(),
-			nullptr,
-			srv.GetAddressOf()
-		);
+		hr = DirectX::CreateWICTextureFromFileEx(deviceManager->GetDevice().Get(), fileName.c_str(), 0, D3D11_USAGE_DEFAULT,
+			D3D11_BIND_SHADER_RESOURCE, 0, 0, DirectX::WIC_LOADER_FORCE_SRGB, nullptr, srv.GetAddressOf());
 	}
 
 	assert(SUCCEEDED(hr));
@@ -349,7 +361,7 @@ ComPtr<ID3D11ShaderResourceView> Renderer::CreateTextureCubeSRVFromFiles(std::ve
 	desc.Height = images[0].GetImage(0, 0, 0)->height;;
 	desc.MipLevels = 1;
 	desc.ArraySize = 6;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
