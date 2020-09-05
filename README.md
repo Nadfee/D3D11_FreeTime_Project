@@ -30,6 +30,5 @@ Preview as of September 6th 2020.
  
 ![Alt text](/pic.png?raw=true "Picture")
   
-Example of "interface" to create an object, a point light, and how to modify them during Update! 
-(Uses std::unordered_map)  
+Example of "interface" to create an object, a point light, and how to modify them during Update! (Uses hash map)   
 ![Alt text](/codeSnippet.png?raw=true "Example code")
