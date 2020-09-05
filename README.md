@@ -18,14 +18,17 @@ G : Toggle render state for the floating and rotating cube object (Object and me
 Project should build (DirectXTK Desktop Win10 NuGet package is installed so make sure it is restored)  
 Make sure that SubSystem is set to Windows and the dependencies "d3d11.lib", "dxgi.lib", "d3dcompiler.lib" are added  
   
-Preview as of August 14th 2020.  
+Preview as of September 6th 2020.  
 - Dynamically insert and remove objects (with meshes)  
 - Dynamically insert and remove point lights (Space for 500 (can be user-specified) lights is reserved for the Structured Buffer during initialization)  
   - No code for handling exceeding amount of maximum point lights right now.  
 - Toggle Render State for existing Objects (Graphics will skip drawing that objects mesh)
 - Toggle Update State for existing Point Lights (Ensures an identifier is set for the light (Constant attenuation set to -1) so that HLSL can skip the calculation for that specific light)
+- Gamma correction (inverse square law for attenuation now works well!)
+- Basic GPU simulated particle system (Zink implementation)
+- Skybox
  
-![Alt text](/sponza.gif?raw=true "Gif")  
+![Alt text](/pic.png?raw=true "Picture")
   
 Example of "interface" to create an object, a point light, and how to modify them during Update! 
 (Uses std::unordered_map)  

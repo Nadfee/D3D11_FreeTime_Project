@@ -39,11 +39,12 @@ void Graphics::Render(double deltaTime)
 
 	UpdateLightsData();
 	DrawObjects();	
-	skyboxPass->Render();
 
 	particleSystem->SetPosition(-15.f, 0.f, 0.f);
 	particleSystem->Render(deltaTime);
 
+
+	skyboxPass->Render();
 
 	// ImGui
 	ImGui_ImplDX11_NewFrame();
