@@ -14,9 +14,6 @@ O : Remove the static cube objects in order (WARNING: Intentionally asserting fa
 P : Inserts a triangle infront of the camera  
 G : Toggle render state for the floating and rotating cube object (Object and mesh still lives but user can choose whether to render it or not)  
   
-Project should build (DirectXTK Desktop Win10 NuGet package is installed so make sure it is restored)  
-Make sure that SubSystem is set to Windows and the dependencies "d3d11.lib", "dxgi.lib", "d3dcompiler.lib" are added  
-  
 Preview as of September 6th 2020.  
 - Dynamically insert and remove objects (with meshes)  
 - Dynamically insert and remove point lights (Space for 500 (can be user-specified) lights is reserved for the Structured Buffer during initialization)  
