@@ -1,8 +1,8 @@
 # d3d11_experimental
 Playing around
   
-My main purpose with this project is to play around with DX11, DirectX Tool Kit and get more experience with abstractions. 
-Trying out ways to manage the order and placement of various resources.
+My main purpose with this project is to play around with DX11, DirectX Tool Kit and just try out some ideas (good or bad) that I have in my mind.
+
 
 Controls:  
   
