@@ -287,8 +287,31 @@ ComPtr<ID3D11Buffer> Renderer::CreateAppendConsumeStructuredBuffer(const void* i
 ComPtr<ID3D11ShaderResourceView> Renderer::CreateSRVFromFileWIC(std::wstring fileName, bool mipMapOn)
 {
 	ComPtr<ID3D11ShaderResourceView> srv;
-
 	HRESULT hr;
+
+	TextureManager& texMan = TextureManager::GetInstance();
+
+	std::string str(fileName.length(), ' '); // Make room for characters
+	std::copy(fileName.begin(), fileName.end(), str.begin());
+	if (!texMan.DoesExist(str))
+	{
+		if (mipMapOn)
+		{
+
+			hr = DirectX::CreateWICTextureFromFileEx(deviceManager->GetDevice().Get(), deviceManager->GetDeviceContext().Get(), fileName.c_str(), 0, D3D11_USAGE_DEFAULT,
+				D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_GENERATE_MIPS, DirectX::WIC_LOADER_FORCE_SRGB, nullptr, srv.GetAddressOf());
+		}
+		else
+		{
+			hr = DirectX::CreateWICTextureFromFileEx(deviceManager->GetDevice().Get(), fileName.c_str(), 0, D3D11_USAGE_DEFAULT,
+				D3D11_BIND_SHADER_RESOURCE, 0, 0, DirectX::WIC_LOADER_FORCE_SRGB, nullptr, srv.GetAddressOf());
+		}
+
+		texMan.AddTextureSRV(str, srv);
+	}
+	
+	return texMan.GetTextureSRV(str);
+	
 	//if (mipMapOn)
 	//{
 	//	hr = DirectX::CreateWICTextureFromFile(
@@ -309,20 +332,10 @@ ComPtr<ID3D11ShaderResourceView> Renderer::CreateSRVFromFileWIC(std::wstring fil
 	//	);
 	//}
 
-	if (mipMapOn)
-	{
+	
 
-		hr = DirectX::CreateWICTextureFromFileEx(deviceManager->GetDevice().Get(), deviceManager->GetDeviceContext().Get(), fileName.c_str(), 0, D3D11_USAGE_DEFAULT,
-			D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_GENERATE_MIPS, DirectX::WIC_LOADER_FORCE_SRGB, nullptr, srv.GetAddressOf());
-	}
-	else
-	{
-		hr = DirectX::CreateWICTextureFromFileEx(deviceManager->GetDevice().Get(), fileName.c_str(), 0, D3D11_USAGE_DEFAULT,
-			D3D11_BIND_SHADER_RESOURCE, 0, 0, DirectX::WIC_LOADER_FORCE_SRGB, nullptr, srv.GetAddressOf());
-	}
-
-	assert(SUCCEEDED(hr));
-	return srv;
+	//assert(SUCCEEDED(hr));
+	//return srv;
 }
 
 ComPtr<ID3D11ShaderResourceView> Renderer::CreateBufferShaderResourceView(ID3D11Buffer* buffer, unsigned int elementCount)

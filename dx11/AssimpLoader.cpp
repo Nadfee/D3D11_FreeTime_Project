@@ -12,7 +12,7 @@ void AssimpLoader::LoadModel(const std::string& filePath)
 {
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);		// convertolefthanded deprecated? find alt.
+	const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_ConvertToLeftHanded | aiProcess_GenNormals);		// convertolefthanded deprecated? find alt.
 
 	if (scene == nullptr)
 	{
@@ -22,6 +22,7 @@ void AssimpLoader::LoadModel(const std::string& filePath)
 
 	ProcessNode(scene->mRootNode, scene);
 
+	OutputDebugStringW(L"hawo\n");
 
 }
 
@@ -64,6 +65,8 @@ void AssimpLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		}
 
 		tempVertices.push_back(vert);
+		m_vertexData.push_back(vert);
+
 
 	}
 
@@ -74,6 +77,7 @@ void AssimpLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		for (int j = 0; j < face.mNumIndices; ++j)
 		{
 			indices.push_back(face.mIndices[j]);
+			m_indices.push_back(face.mIndices[j]);
 		}
 
 	}

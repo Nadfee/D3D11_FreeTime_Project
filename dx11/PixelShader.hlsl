@@ -19,9 +19,10 @@ SamplerState defaultSampler : register(s0);
 
 float4 PSMAIN(PS_IN input) : SV_TARGET
 {
+    //return float4(normalize(input.nor), 1.f);
     
     float4 textureSample = diffuseTexture.Sample(defaultSampler, input.uv);
-    //return textureSample;
+    //return pow(textureSample, float4(1.f / 2.2f, 1.f / 2.2f, 1.f / 2.2f, 1.f));
     //textureSample = float4(1.f, 1.f, 1.f, 1.f);
     float4 finalColor = float4(0.f, 0.f, 0.f, 0.f);
     float3 normal = normalize(input.nor);
@@ -65,7 +66,10 @@ float4 PSMAIN(PS_IN input) : SV_TARGET
     //return float4(normalize(input.nor.xyz), 1.f);
 	//return float4(input.uv.xy, 0.f, 1.f);
     // return diffuseTexture.Sample(defaultSampler, input.uv);
+    
+    
     return pow(finalColor, float4(1.f / 2.2f, 1.f / 2.2f, 1.f / 2.2f, 1.f));
+    //return finalColor;
     
     // NOTE!!!
     // We are sampling from sRGB textures which when sampled gives us linear RGB values

@@ -58,16 +58,16 @@ void Application::Run()
 		updateTimer.Stop();
 
 
-		//std::wstring fps(L"FPS: " + std::to_wstring(static_cast<long long>(1.L / updateTimer.GetDeltaTime(GTimer::Duration::SECONDS))));
-		//// Arbitrarily slow down the FPS update so we can see FPS properly
-		//OutputDebugStringW(std::to_wstring(updateTimer.GetDeltaTime(GTimer::Duration::SECONDS)).c_str());
-		//OutputDebugStringW(L"\n");
+		std::wstring fps(L"FPS: " + std::to_wstring(static_cast<long long>(1.L / updateTimer.GetDeltaTime(GTimer::Duration::SECONDS))));
+		// Arbitrarily slow down the FPS update so we can see FPS properly
+		OutputDebugStringW(std::to_wstring(updateTimer.GetDeltaTime(GTimer::Duration::SECONDS)).c_str());
+		OutputDebugStringW(L"\n");
 
-		//if (cnt % 30 == 0)
-		//{
-		//	SetWindowTextW(win->GetHWND(), fps.c_str());
+		if (cnt % 30 == 0)
+		{
+			SetWindowTextW(win->GetHWND(), fps.c_str());
 
-		//}
+		}
 	
 			
 	}
@@ -233,8 +233,12 @@ void Application::InitializeScene()
 
 	//CreatePointLight("Light4", Vector3(0.f, 6.f, -3.f), Vector3(1.f, 1.f, 1.f), Vector3(0.f, 0.7f, 0.1f));
 
-	//auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
-	//sponza.SetScaling(0.03f);
+	auto& nanosuit = CreateObject("nanosuit", "Objs/nanosuit/", "nanosuit.obj");
+	nanosuit.SetScaling(0.4f);
+	nanosuit.SetPosition(0.f, 1.f, 0.f);
+
+	auto& sponza = CreateObject("Sponza", "Objs/Sponza/", "Sponza.fbx");
+	sponza.SetScaling(0.03f);
 
 }
 

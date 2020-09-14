@@ -44,7 +44,7 @@ void DXDeviceManager::CreateDevAndSC(const HWND& hwnd)
 	scDesc.BufferCount = 2;		//  One WINDOW front buffer and One back buffer
 	scDesc.OutputWindow = hwnd;
 	scDesc.Windowed = TRUE;
-	scDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;	// discard the already show buffer after present
+	scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;	// discard the already show buffer after present
 	scDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;							// optional flags for swap chain behaviour
 
 	LRESULT hr = D3D11CreateDeviceAndSwapChain(

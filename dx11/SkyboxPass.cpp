@@ -112,6 +112,8 @@ void SkyboxPass::LoadShaders()
 
 	hr = renderer->GetDevice()->CreatePixelShader(skyboxPsBlob->GetBufferPointer(), skyboxPsBlob->GetBufferSize(), NULL, skyboxPs.GetAddressOf());
 	assert(SUCCEEDED(hr));
+
+	
 }
 
 void SkyboxPass::CreateRasterizerState()

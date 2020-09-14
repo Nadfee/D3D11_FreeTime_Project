@@ -6,6 +6,8 @@
 
 #include <DirectXTex.h>
 
+#include "TextureManager.h"
+
 #include <string>
 #include <assert.h>
 #include <memory>

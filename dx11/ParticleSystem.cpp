@@ -269,7 +269,7 @@ void ParticleSystem::CreateBuffers()
 	// currently not working
 	// Additive blend state
 	D3D11_RENDER_TARGET_BLEND_DESC rtBlendDesc = { };
-	rtBlendDesc.BlendEnable = TRUE;
+	rtBlendDesc.BlendEnable = FALSE;		// no blend
 	rtBlendDesc.SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	rtBlendDesc.DestBlend = D3D11_BLEND_SRC_ALPHA;
 	rtBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;

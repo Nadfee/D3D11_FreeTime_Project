@@ -25,6 +25,9 @@ private:
 	std::vector<std::vector<Vertex>> vertexData;	// HOLY SHIT We are storing ALL THE VERTICES!! MEMORY!!!
 	std::vector<std::string> textures;
 
+	std::vector<unsigned int> m_indices;
+	std::vector<Vertex> m_vertexData;
+
 	void ProcessNode(aiNode* node, const aiScene* scene);
 	void ProcessMesh(aiMesh* mesh, const aiScene* scene);
 

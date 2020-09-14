@@ -2,14 +2,14 @@
 
 Graphics::Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHeight) :
 	renderer(std::make_shared<Renderer>(hwnd, clientWidth, clientHeight)),
-	lightManager(renderer->CreateStructuredBuffer(nullptr, sizeof(PointLightData), 500, true, true), 500)		// Set space for 500 lights in Structured Buffer
+	lightManager(renderer->CreateStructuredBuffer(nullptr, sizeof(PointLightData), 10, true, true), 10)
 {
 	lightManager.SetBufferView(renderer->CreateBufferShaderResourceView(lightManager.GetLightsBuffer().Get(), lightManager.GetMaxLightsCount()));
 	skyboxPass = std::make_unique<SkyboxPass>(renderer);
 	particleSystem = std::make_unique<ParticleSystem>(renderer);
 
 
-	IMGUI_CHECKVERSION();
+	/*IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
@@ -17,7 +17,7 @@ Graphics::Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHe
 
 	ImGui_ImplWin32_Init(hwnd);
 	ImGui_ImplDX11_Init(renderer->GetDevice().Get(), renderer->GetDeviceContext().Get());
-	show_demo_window = true;
+	show_demo_window = true;*/
 
 
 
@@ -25,9 +25,9 @@ Graphics::Graphics(const HWND& hwnd, const int& clientWidth, const int& clientHe
 
 Graphics::~Graphics()
 {
-	ImGui_ImplDX11_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	//ImGui_ImplDX11_Shutdown();
+	//ImGui_ImplWin32_Shutdown();
+	//ImGui::DestroyContext();
 }
 
 void Graphics::Render(double deltaTime)
@@ -46,39 +46,39 @@ void Graphics::Render(double deltaTime)
 
 	skyboxPass->Render();
 
-	// ImGui
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
+	//// ImGui
+	//ImGui_ImplDX11_NewFrame();
+	//ImGui_ImplWin32_NewFrame();
+	//ImGui::NewFrame();
 
 
-	//// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	//{
-	//	static float f = 0.0f;
-	//	static int counter = 0;
+	////// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+	////{
+	////	static float f = 0.0f;
+	////	static int counter = 0;
 
-	//	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+	////	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
-	//	ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-	//	ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-	//	//ImGui::Checkbox("Another Window", &show_another_window);
+	////	ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+	////	ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+	////	//ImGui::Checkbox("Another Window", &show_another_window);
 
-	//	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-	//	//ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+	////	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+	////	//ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
-	//	if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-	//		counter++;
-	//	ImGui::SameLine();
-	//	ImGui::Text("counter = %d", counter);
+	////	if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+	////		counter++;
+	////	ImGui::SameLine();
+	////	ImGui::Text("counter = %d", counter);
 
-	//	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	//	ImGui::End();
-	//}
+	////	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	////	ImGui::End();
+	////}
 
-	ImGui::ShowDemoWindow(&show_demo_window);
+	//ImGui::ShowDemoWindow(&show_demo_window);
 
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	//ImGui::Render();
+	//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 
 
