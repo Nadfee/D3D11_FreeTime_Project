@@ -21,7 +21,7 @@ Preview as of September 6th 2020.
 - Toggle Render State for existing Objects (Graphics will skip drawing that objects mesh)
 - Toggle Update State for existing Point Lights (Ensures an identifier is set for the light (Constant attenuation set to -1) so that HLSL can skip the calculation for that specific light)
 - Gamma correction (inverse square law for attenuation now works well!)
-- Basic GPU simulated particle system (Zink implementation)
+- Basic GPU simulated particle system (Ping Pong buffers implementation explained by Zink in Practical Rendering for D3D11)
 - Skybox
  
 ![Alt text](/pic.png?raw=true "Picture")
