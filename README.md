@@ -23,6 +23,7 @@ Preview as of September 6th 2020.
 - Gamma correction (inverse square law for attenuation now works well!)
 - Basic GPU simulated particle system (Ping Pong buffers implementation explained by Zink in Practical Rendering for D3D11)
 - Skybox
+- Model loading (Sponza)
  
 ![Alt text](/pic.png?raw=true "Picture")
   
