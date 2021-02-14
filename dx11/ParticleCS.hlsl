@@ -196,7 +196,7 @@ void CSMAIN( uint3 DTid : SV_DispatchThreadID )
     static const float m1m2 = m1 * m2;
     static const float eventHorizon = 0.15f;
     
-    float3 ConsumerLocation = float3(0.f, 0.f, 0.f);
+    float3 ConsumerLocation = float3(0.f, 8.f, 0.f);
     
 
     // Check for if this thread should run or not.
