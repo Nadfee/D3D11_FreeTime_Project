@@ -73,7 +73,8 @@ void Renderer::DrawMesh(const MeshPtr& mesh)
 	// Misc.
 	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	devCon->RSSetViewports(1, &deviceManager->GetVP());
+	D3D11_VIEWPORT vpp = deviceManager->GetVP();
+	devCon->RSSetViewports(1, &vpp);
 
 	// View and Projection Matrix
 	devCon->VSSetConstantBuffers(1, 1, viewMatrixBuffer.GetAddressOf());

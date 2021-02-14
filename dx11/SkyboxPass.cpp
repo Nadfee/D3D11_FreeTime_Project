@@ -36,7 +36,8 @@ void SkyboxPass::Render()
 	devCon->OMSetDepthStencilState(skyboxDss.Get(), 0);
 
 	devCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	devCon->RSSetViewports(1, &renderer->GetDeviceManager()->GetVP());
+	D3D11_VIEWPORT vpp = renderer->GetDeviceManager()->GetVP();
+	devCon->RSSetViewports(1, &vpp);
 	devCon->IASetInputLayout(nullptr);
 	devCon->RSSetState(skyboxRss.Get());
 
